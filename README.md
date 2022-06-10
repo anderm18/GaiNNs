@@ -5,4 +5,10 @@
  
  
  
- ## Test
+ ## Development Setup
+ 
+ GaiNNs is written entirely in Java using dyn4j and JavaFX.
+ 
+ ### Installation:
+ 
+ 
