@@ -13,7 +13,7 @@
  > I recommend using IntelliJ IDEA for Java development, but you can use any IDE/Text Editor of your choice. The Installation Guide Provided is for Eclipse and IDEA. Make sure you are running Java 15.0.1. I also recommend using **GitHub Desktop** if you are unfamiliar with git and just want to get working. 
  > 
  > 1. Clone the Repository to your local system
- > 2. Open your respective IDE, 
+ > 2. Open your respective IDE, \
  >       in ItelliJ File > Open > (select the folder storing the Project) \
  >       in Eclipse File > Open Projects from File System... > Directory > (select the folder storing the project) \
  > 3. Test your installation
