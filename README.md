@@ -11,5 +11,5 @@
  
  >### Installation:
  > I recommend using IntelliJ IDEA for Java development, but you can use any IDE/Text Editor of your choice. The Installation Guide Provided is for Eclipse and IDEA. Make sure you are running Java 15.0.1
- >
- >
+ > 
+ > 
