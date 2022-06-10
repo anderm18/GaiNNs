@@ -16,8 +16,8 @@
  > 2. Open your respective IDE, \
  >       in ItelliJ File > Open > (select the folder storing the Project) \
  >       in Eclipse File > Open Projects from File System... > Directory > (select the folder storing the project) \
- > 3. Test your installation
- >       src/main/java > com.example.gainns > Right Click HelloApplication.java and Run
+ > 3. Test your installation\
+ >       src/main/java > com.example.gainns > Right Click HelloApplication.java and Run \
  > 4. If you see a window with a button, Congratulations!
  > 
  > NOTE: It is smart to clone the Repo through Eclipse or IntelliJ directly if you don't want to use Desktop. This way, you can stage commits directly from your IDE!
