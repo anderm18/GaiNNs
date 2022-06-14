@@ -1,3 +1,30 @@
+# Java
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
 # Eclipse
 .metadata
 bin/
@@ -50,11 +77,7 @@ local.properties
 .scala_dependencies
 .worksheet
 
-### Eclipse Patch ###
-# Spring Boot Tooling
-.sts4-cache/
-
-### Intellij ###
+# Intellij
 
 # User
 .idea/**/workspace.xml
@@ -123,32 +146,6 @@ fabric.properties
 .idea/**/markdown-navigator-enh.xml
 .idea/**/markdown-navigator/
 
-# Java
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs
-hs_err_pid*
-replay_pid*
-
 # Maven
 target/
 pom.xml.tag
@@ -190,3 +187,5 @@ buildNumber.properties
 
 # Ignore code-workspaces
 *.code-workspace
+*.class
+*.class
