@@ -187,5 +187,3 @@ buildNumber.properties
 
 # Ignore code-workspaces
 *.code-workspace
-*.class
-*.class
