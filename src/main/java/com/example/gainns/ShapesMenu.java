@@ -1,9 +1,12 @@
 package com.example.gainns;
 
+import javafx.animation.TranslateTransition;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+//import javafx.animation.Transition.*;
+import javafx.util.Duration;
 
 public class ShapesMenu {
 	
@@ -27,12 +30,22 @@ public class ShapesMenu {
 	}	
 	public boolean tabPressed() { // if tab pressed
 		if(hidden) {
-			menu.setHeight(120);
+			//menu.setHeight(120);
+			TranslateTransition tt = new TranslateTransition(Duration.millis(250), menu);
+			tt.setByY(120f);
+			tt.setCycleCount(1);
+			//tt.setAutoReverse(true);
+			tt.play();
 			hidden = false;
 			tab.setText("HIDE");
 		}
 		else {
-			menu.setHeight(0);
+			//menu.setHeight(0);
+			TranslateTransition tt = new TranslateTransition(Duration.millis(250), menu);
+			tt.setByY(-120.0f);
+			tt.setCycleCount(1);
+			//tt.setAutoReverse(true);
+			tt.play();
 			hidden = true;
 			tab.setText("SHOW");
 		}
