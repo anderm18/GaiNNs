@@ -39,9 +39,13 @@ public class Environment extends Application {
         HBox floor = new HBox(0, floorRect);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene
         
+        // shapeList content
         ShapeListView shapeListViewRes = new ShapeListView();
         ListView<Pair<Shape, Color>> shapeListViewMenu = shapeListViewRes.list;
         Label shapeListViewLabel = shapeListViewRes.label;
+        
+        // dragable element - DEMO
+        DragableElement redCircle = new DragableElement(300, 300, 30, Color.BLUE);
         
         // Group group = new Group();
 //        Pane pane = new Pane();
@@ -67,7 +71,7 @@ public class Environment extends Application {
 //        shapesMenu.createMenu(scene);
 //        HBox sMenu = new HBox(0, shapesMenu.getMenu());
 //        HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
-        root.getChildren().addAll(floor, posReporter, shapeListViewMenu, selectionReporter, shapeListViewLabel);
+        root.getChildren().addAll(floor, posReporter, shapeListViewMenu, redCircle.circle, selectionReporter, shapeListViewLabel);
         AnchorPane.setTopAnchor(shapeListViewMenu, 120d);
         AnchorPane.setTopAnchor(selectionReporter, 70d);
         AnchorPane.setTopAnchor(shapeListViewLabel, 85d);

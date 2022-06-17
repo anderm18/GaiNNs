@@ -52,8 +52,7 @@ public class ShapeListView extends ListView<Pair<Shape, Color>>{
 //        Scene scene = new Scene(box, 200, 200);
 //        stage.setScene(scene);
 //        stage.setTitle("ListViewSample");
-//        
-    	// VBox box = new VBox();
+//        Uncomment above to get this window isolated
         VBox.setVgrow(list, Priority.ALWAYS);
         label.setLayoutX(10);
         label.setLayoutY(115);
