@@ -15,6 +15,5 @@
    
     <Label fx:id="welcomeText"/>
     <Button text="Hello!" onAction="#onHelloButtonClick"/>
-    <Image image1=
     
 </VBox>
