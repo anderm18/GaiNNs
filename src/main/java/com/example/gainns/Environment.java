@@ -10,7 +10,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
 import java.io.IOException;
-
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.Mass;
+//import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Vector2;
+import org.dyn4j.world.World;
 
 public class Environment extends Application {
 
@@ -32,6 +37,12 @@ public class Environment extends Application {
         Scene scene = new Scene(root, 1500, 800);
         Rectangle floorRect = createFloor(scene); //floor
         HBox floor = new HBox(0, floorRect);
+        World<Body> world = new World<Body>();
+        Body body = new Body();
+        body.addFixture(Geometry.createCircle(1.0));
+        body.translate(1.0, 0.0);
+        body.setMass(MassType.NORMAL);
+        world.addBody(body);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene
         // Debug info - positioning
         scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
@@ -50,6 +61,18 @@ public class Environment extends Application {
 //        HBox sMenu = new HBox(0, shapesMenu.getMenu());
 //        HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
         root.getChildren().addAll(floor, reporter);
+        
+        scene.setOnMousePressed(new EventHandler<MouseEvent>(){
+        	@Override public void handle(MouseEvent event) {
+        		//instantiateSquare();
+        		instantiateSquare(event.getSceneX(), event.getSceneY());
+            }
+
+			private void instantiateSquare(double x, double y) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
         
         
 //        root.getChildren().addAll(floor, sMenu, tab);							
