@@ -2,20 +2,19 @@ package com.example.gainns;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+
 import java.io.IOException;
-import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.geometry.Mass;
-//import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Vector2;
-import org.dyn4j.world.World;
+
 
 public class Environment extends Application {
 
@@ -31,28 +30,40 @@ public class Environment extends Application {
     
     @Override
     public void start(Stage stage) throws IOException {
-    	final Label reporter = new Label("Debug Info");
+    	final Label posReporter = new Label("[Position] Debug Info");
+    	final Label selectionReporter = new Label("[Selection in Scene] Debug Info: NO selection");
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
         root.setStyle("-fx-background-color: #99F0F5");
         Scene scene = new Scene(root, 1500, 800);
         Rectangle floorRect = createFloor(scene); //floor
         HBox floor = new HBox(0, floorRect);
-        World<Body> world = new World<Body>();
-        Body body = new Body();
-        body.addFixture(Geometry.createCircle(1.0));
-        body.translate(1.0, 0.0);
-        body.setMass(MassType.NORMAL);
-        world.addBody(body);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene
+        
+        // shapeList content
+        ShapeListView shapeListViewRes = new ShapeListView();
+        ListView<Pair<Shape, Color>> shapeListViewMenu = shapeListViewRes.list;
+        Label shapeListViewLabel = shapeListViewRes.label;
+        
+        // dragable element - DEMO
+        DragableElement redCircle = new DragableElement(300, 300, 30, Color.BLUE);
+        
+        // Group group = new Group();
+//        Pane pane = new Pane();
+//
+//        pane.setPrefWidth(300);
+//        pane.setPrefHeight(300);
+
+        // root.getChildren().add(new Circle(0, 0, 10));
+        //group.setTranslateX(pane.getPrefWidth() / 2);
+        //group.setTranslateY(pane.getPrefHeight() / 2);
+        
+        
         // Debug info - positioning
         scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent event) {
-              String msg =
-                "Debug Info:\n(x: "       + event.getX()      + ", y: "       + event.getY()       + ") \n" +
-                "(sceneX: "  + event.getSceneX() + ", sceneY: "  + event.getSceneY()  + ") \n" +
-                "(screenX: " + event.getScreenX()+ ", screenY: " + event.getScreenY() + ")";
-
-              reporter.setText(msg);
+              posReporter.setText("Debug Info:\n(x: " + event.getX() + ", y: " + event.getY() + ") \n" +
+            		  			  "(sceneX: "  + event.getSceneX() + ", sceneY: "  + event.getSceneY()  + ") \n" +
+            		  			  "(screenX: " + event.getScreenX()+ ", screenY: " + event.getScreenY() + ")");
             }
           });
         
@@ -60,20 +71,10 @@ public class Environment extends Application {
 //        shapesMenu.createMenu(scene);
 //        HBox sMenu = new HBox(0, shapesMenu.getMenu());
 //        HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
-        root.getChildren().addAll(floor, reporter);
-        
-        scene.setOnMousePressed(new EventHandler<MouseEvent>(){
-        	@Override public void handle(MouseEvent event) {
-        		//instantiateSquare();
-        		instantiateSquare(event.getSceneX(), event.getSceneY());
-            }
-
-			private void instantiateSquare(double x, double y) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-        
+        root.getChildren().addAll(floor, posReporter, shapeListViewMenu, redCircle.circle, selectionReporter, shapeListViewLabel);
+        AnchorPane.setTopAnchor(shapeListViewMenu, 120d);
+        AnchorPane.setTopAnchor(selectionReporter, 70d);
+        AnchorPane.setTopAnchor(shapeListViewLabel, 85d);
         
 //        root.getChildren().addAll(floor, sMenu, tab);							
 //        AnchorPane.setTopAnchor(tab, 120d);
@@ -93,7 +94,7 @@ public class Environment extends Application {
 //            }
 //         });
         
-        stage.setTitle("GaiNNs - Scence");
+        stage.setTitle("GaiNNs - Scene");
         stage.setScene(scene);
         stage.show();
     }
