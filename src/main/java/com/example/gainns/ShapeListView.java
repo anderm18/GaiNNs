@@ -28,6 +28,22 @@ public class ShapeListView extends ListView<Pair<Shape, Color>>{
     ObservableList<Pair<Shape, Color>> data = FXCollections.observableArrayList(new Pair<>(new Circle(20), Color.BLUE), 
     																			new Pair<>(new Rectangle(50, 50), Color.RED), 
     																			new Pair<>(new Rectangle(100, 50), Color.PINK), 
+    																			new Pair<>(new Ellipse(50, 20), Color.GREEN),
+    																			new Pair<>(new Circle(20), Color.BLUE), 
+    																			new Pair<>(new Rectangle(50, 50), Color.RED), 
+    																			new Pair<>(new Rectangle(100, 50), Color.PINK), 
+    																			new Pair<>(new Ellipse(50, 20), Color.GREEN),
+    																			new Pair<>(new Circle(20), Color.BLUE), 
+    																			new Pair<>(new Rectangle(50, 50), Color.RED), 
+    																			new Pair<>(new Rectangle(100, 50), Color.PINK), 
+    																			new Pair<>(new Ellipse(50, 20), Color.GREEN),
+    																			new Pair<>(new Circle(20), Color.BLUE), 
+    																			new Pair<>(new Rectangle(50, 50), Color.RED), 
+    																			new Pair<>(new Rectangle(100, 50), Color.PINK), 
+    																			new Pair<>(new Ellipse(50, 20), Color.GREEN),
+    																			new Pair<>(new Circle(20), Color.BLUE), 
+    																			new Pair<>(new Rectangle(50, 50), Color.RED), 
+    																			new Pair<>(new Rectangle(100, 50), Color.PINK), 
     																			new Pair<>(new Ellipse(50, 20), Color.GREEN));
     final Label label = new Label();
  
@@ -41,7 +57,7 @@ public class ShapeListView extends ListView<Pair<Shape, Color>>{
         VBox.setVgrow(list, Priority.ALWAYS);
         label.setLayoutX(10);
         label.setLayoutY(115);
-        label.setText("Debug Info: ");
+        label.setText("[The shape content does not represent the final choice]\nDebug Info: ");
         list.setItems(data);
         
         list.setCellFactory(new Callback<ListView<Pair<Shape, Color>>, 
@@ -57,7 +73,8 @@ public class ShapeListView extends ListView<Pair<Shape, Color>>{
             new ChangeListener<Pair<Shape, Color>>() {
                 public void changed(ObservableValue<? extends Pair<Shape,Color>> ov, 
                 		Pair<Shape,Color> old_val, Pair<Shape,Color> new_val) {
-                        label.setText("Debug Info: Select " + new_val.getKey().toString());
+                        label.setText("[The shape content does not represent the final choice]"
+                        		+ "\nDebug Info: Select " + new_val.getKey().toString());
                         label.setTextFill(Color.web(new_val.getValue().toString()));
             }
         });

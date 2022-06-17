@@ -30,7 +30,8 @@ public class Environment extends Application {
     
     @Override
     public void start(Stage stage) throws IOException {
-    	final Label posReporter = new Label("Debug Info");
+    	final Label posReporter = new Label("[Position] Debug Info");
+    	final Label selectionReporter = new Label("[Selection in Scene] Debug Info: NO selection");
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
         root.setStyle("-fx-background-color: #99F0F5");
         Scene scene = new Scene(root, 1500, 800);
@@ -38,7 +39,9 @@ public class Environment extends Application {
         HBox floor = new HBox(0, floorRect);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene
         
-        ListView<Pair<Shape, Color>> shapeListView = new ShapeListView().list;
+        ShapeListView shapeListViewRes = new ShapeListView();
+        ListView<Pair<Shape, Color>> shapeListViewMenu = shapeListViewRes.list;
+        Label shapeListViewLabel = shapeListViewRes.label;
         
         // Group group = new Group();
 //        Pane pane = new Pane();
@@ -64,8 +67,10 @@ public class Environment extends Application {
 //        shapesMenu.createMenu(scene);
 //        HBox sMenu = new HBox(0, shapesMenu.getMenu());
 //        HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
-        root.getChildren().addAll(floor, posReporter, shapeListView);
-        AnchorPane.setTopAnchor(shapeListView, 120d);
+        root.getChildren().addAll(floor, posReporter, shapeListViewMenu, selectionReporter, shapeListViewLabel);
+        AnchorPane.setTopAnchor(shapeListViewMenu, 120d);
+        AnchorPane.setTopAnchor(selectionReporter, 70d);
+        AnchorPane.setTopAnchor(shapeListViewLabel, 85d);
         
 //        root.getChildren().addAll(floor, sMenu, tab);							
 //        AnchorPane.setTopAnchor(tab, 120d);
