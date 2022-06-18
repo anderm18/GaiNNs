@@ -29,9 +29,9 @@ public class ShapesMenu {
 		return tab;
 	}	
 	public boolean tabPressed() { // if tab pressed
+		TranslateTransition tt = new TranslateTransition(Duration.millis(250), menu);
 		if(hidden) {
 			//menu.setHeight(120);
-			TranslateTransition tt = new TranslateTransition(Duration.millis(250), menu);
 			tt.setByY(120f);
 			tt.setCycleCount(1);
 			//tt.setAutoReverse(true);
@@ -41,7 +41,6 @@ public class ShapesMenu {
 		}
 		else {
 			//menu.setHeight(0);
-			TranslateTransition tt = new TranslateTransition(Duration.millis(250), menu);
 			tt.setByY(-120.0f);
 			tt.setCycleCount(1);
 			//tt.setAutoReverse(true);
@@ -49,6 +48,7 @@ public class ShapesMenu {
 			hidden = true;
 			tab.setText("SHOW");
 		}
+
 		return hidden;
 	}
 	
