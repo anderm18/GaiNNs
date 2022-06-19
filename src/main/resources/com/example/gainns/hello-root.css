@@ -1,9 +1,10 @@
 #root-pane {
+	-fx-alignment: center;
 	-fx-background-image: url("Fish_irl.png");
     -fx-background-repeat: no-repeat no-repeat;   
     -fx-background-size: null;
     -fx-background-position: center center;
-    
+
     -fx-hgap: 1.0;
     -fx-vgap: 1.0;
 }

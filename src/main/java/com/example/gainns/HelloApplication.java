@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,12 +25,15 @@ public class HelloApplication extends Application {
 	private GridPane gridPaneRootSetUp() {
 		GridPane root = new GridPane();
         root.setId("root-pane");
-        root.setGridLinesVisible(true);
+//        root.setGridLinesVisible(true);
         
+        welcomeText.setAlignment(Pos.CENTER);
         root.add(welcomeText, 0, 0);
         
         Button hello_button = new Button("Hello!");
         hello_button.setOnAction(value -> { onHelloButtonClick(); } );
+        hello_button.setAlignment(Pos.CENTER);
+        
         root.add(hello_button, 0, 1);
         
         return root;
