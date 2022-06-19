@@ -1,19 +1,44 @@
 package com.example.gainns;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    	
+	
+	private Label welcomeText = new Label();
+	protected void onHelloButtonClick() {
+        welcomeText.setText("Welcome to JavaFX Application!");
+    }	
+	
+	private GridPane gridPaneRootSetUp() {
+		GridPane root = new GridPane();
+        root.setId("root-pane");
+        root.setGridLinesVisible(true);
+        
+        root.add(welcomeText, 0, 0);
+        
+        Button hello_button = new Button("Hello!");
+        hello_button.setOnAction(value -> { onHelloButtonClick(); } );
+        root.add(hello_button, 0, 1);
+        
+        return root;
+	}
+	
 	@Override
     public void start(Stage stage) throws IOException {
-        GridPane root = new GridPane();
-        root.setId("root-pane");
+        Pane root = gridPaneRootSetUp(); 
+                
         Scene scene = new Scene(root);
         scene.getStylesheets().addAll(this.getClass().getResource("hello-root.css").toExternalForm());
         
