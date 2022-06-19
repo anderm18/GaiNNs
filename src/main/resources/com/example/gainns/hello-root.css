@@ -1,0 +1,6 @@
+#root-pane {
+	-fx-background-image: url("Fish_irl.png");
+    -fx-background-repeat: no-repeat no-repeat;   
+    -fx-background-size: null;
+    -fx-background-position: center center;
+}

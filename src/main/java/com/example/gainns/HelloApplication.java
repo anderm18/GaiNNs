@@ -1,20 +1,23 @@
 package com.example.gainns;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    @Override
+    	
+	@Override
     public void start(Stage stage) throws IOException {
-    	// Scene loading from hello-view.css
-        Scene scene = new Scene(new Group());
-        scene.getStylesheets().add("hello-view.css");
-        stage.setTitle("Hello!");
+        GridPane root = new GridPane();
+        root.setId("root-pane");
+        Scene scene = new Scene(root);
+        scene.getStylesheets().addAll(this.getClass().getResource("hello-root.css").toExternalForm());
+        
+		stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
     }
