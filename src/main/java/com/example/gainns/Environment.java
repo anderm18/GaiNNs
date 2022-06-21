@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import java.io.IOException;
@@ -119,6 +121,20 @@ public class Environment extends Application {
 	                	root.getChildren().add(newAddedElement.circle);
 	            }
 	     });
+        
+        stage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (newValue.floatValue()!=oldValue.floatValue()) {
+//                	System.out.println("observable: " + observable.getValue().toString());
+//                	System.out.println("oldValue: " + oldValue.toString());
+//                	System.out.println("newValue: " + newValue.toString());
+                	shapesMenu.getMenu().shapeVisualizedList.setPrefWidth(newValue.doubleValue() - 15);
+                }
+            }
+        });
+       
+        
         
         stage.setTitle("GaiNNs");
         stage.setScene(scene);
