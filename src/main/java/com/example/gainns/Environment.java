@@ -5,7 +5,6 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -14,8 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import java.io.IOException;
@@ -122,6 +119,7 @@ public class Environment extends Application {
 	            }
 	     });
         
+        // event listener: listens to stage width resizes to resize the shapesMenu's width.
         stage.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
