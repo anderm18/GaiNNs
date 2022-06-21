@@ -24,6 +24,7 @@ public class DragableElement {
       c.toFront();
     });
     circle.setOnMouseDragged((t) -> {
+    	
       double offsetX = t.getSceneX() - orgSceneX;
       double offsetY = t.getSceneY() - orgSceneY;
 
@@ -34,6 +35,10 @@ public class DragableElement {
 
       orgSceneX = t.getSceneX();
       orgSceneY = t.getSceneY();
+    });
+    circle.setOnMouseReleased((t) -> {
+    	Circle c = (Circle) (t.getSource());
+    	c.setFill(color.brighter());
     });
   }
 }
