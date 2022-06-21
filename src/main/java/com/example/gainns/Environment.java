@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -30,6 +31,9 @@ public class Environment extends Application {
 	private double mousePosYTraker = 0;
 	private List<DragableElement> shapesInEnv = new ArrayList<DragableElement>();
 	
+	private double screenWidth = Screen.getPrimary().getBounds().getWidth();
+    private double screenHeight = Screen.getPrimary().getBounds().getHeight();
+	
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(1500, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -45,7 +49,7 @@ public class Environment extends Application {
     
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
         root.setStyle("-fx-background-color: #99F0F5");
-        Scene scene = new Scene(root, 1500, 800);
+        Scene scene = new Scene(root, screenWidth, screenHeight);
         Rectangle floorRect = createFloor(scene); //floor
         HBox floor = new HBox(0, floorRect);
         ShapesMenu shapesMenu = new ShapesMenu(); //menu for shapes
