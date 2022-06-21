@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,28 +23,28 @@ public class HelloApplication extends Application {
         welcomeText.setText("Welcome to JavaFX Application!");
     }	
 	
-	private GridPane gridPaneRootSetUp() {
-		GridPane root = new GridPane();
+	private VBox RootSetUp() {
+		VBox root = new VBox();
         root.setId("root-pane");
 //        root.setGridLinesVisible(true);
         
         welcomeText.setAlignment(Pos.CENTER);
-        root.add(welcomeText, 0, 0);
+        root.getChildren().add(welcomeText);
         
         Button hello_button = new Button("Hello!");
         hello_button.setOnAction(value -> { onHelloButtonClick(); } );
         hello_button.setAlignment(Pos.CENTER);
         
-        root.add(hello_button, 0, 1);
+        root.getChildren().add(hello_button);
         
         return root;
 	}
 	
 	@Override
     public void start(Stage stage) throws IOException {
-        Pane root = gridPaneRootSetUp(); 
+        Pane root = RootSetUp(); 
                 
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(root, 500, 500);
         scene.getStylesheets().addAll(this.getClass().getResource("hello-root.css").toExternalForm());
         
 		stage.setTitle("Hello!");
