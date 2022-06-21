@@ -33,6 +33,8 @@ public class Environment extends Application {
 	
 	private double screenWidth = Screen.getPrimary().getBounds().getWidth() - 400;
     private double screenHeight = Screen.getPrimary().getBounds().getHeight() - 300;
+    
+    
 	
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(1500, 100);
@@ -48,8 +50,11 @@ public class Environment extends Application {
     public void start(Stage stage) throws IOException {
     
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
-        root.setStyle("-fx-background-color: #99F0F5");
+//        root.setStyle("-fx-background-color: #99F0F5");
+        root.setId("bg");        
         Scene scene = new Scene(root, screenWidth, screenHeight);
+        scene.getStylesheets().addAll(this.getClass().getResource("bg.css").toExternalForm());
+        
         Rectangle floorRect = createFloor(scene); //floor
         HBox floor = new HBox(0, floorRect);
         ShapesMenu shapesMenu = new ShapesMenu(); //menu for shapes
