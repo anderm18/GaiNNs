@@ -31,8 +31,8 @@ public class Environment extends Application {
 	private double mousePosYTraker = 0;
 	private List<DragableElement> shapesInEnv = new ArrayList<DragableElement>();
 	
-	private double screenWidth = Screen.getPrimary().getBounds().getWidth();
-    private double screenHeight = Screen.getPrimary().getBounds().getHeight();
+	private double screenWidth = Screen.getPrimary().getBounds().getWidth() - 400;
+    private double screenHeight = Screen.getPrimary().getBounds().getHeight() - 300;
 	
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(1500, 100);

@@ -19,10 +19,11 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.stage.Screen;
 import javafx.util.Callback;
 
 public class ShapesMenu {
-	
+		
 		// private Rectangle menu = new Rectangle();
 		private shapeContainer items = new shapeContainer();
 		private Button tab = new Button("HIDE");
@@ -96,11 +97,10 @@ class shapeContainer {
 	
 	//temp debug
 	final Label label = new Label();
-	
 	public shapeContainer() {
 		this.shapeVisualizedList = new ListView<>();	
 		shapeVisualizedList.setItems(data);
-		shapeVisualizedList.setPrefWidth(1500);  // TO-DO: make change?
+		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  // TO-DO: make change?
 		shapeVisualizedList.setPrefHeight(120);
 		shapeVisualizedList.setOrientation(Orientation.HORIZONTAL);
 		shapeVisualizedList.setStyle("-fx-control-inner-background: #4C4C4C; "
