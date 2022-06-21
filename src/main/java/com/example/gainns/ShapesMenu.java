@@ -100,7 +100,8 @@ class shapeContainer {
 	public shapeContainer() {
 		this.shapeVisualizedList = new ListView<>();	
 		shapeVisualizedList.setItems(data);
-		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  // TO-DO: make change?
+		// TO-DO: write an event listener to detect when window is resized. Use setPrefWidth
+		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  
 		shapeVisualizedList.setPrefHeight(120);
 		shapeVisualizedList.setOrientation(Orientation.HORIZONTAL);
 		shapeVisualizedList.setStyle("-fx-control-inner-background: #4C4C4C; "
