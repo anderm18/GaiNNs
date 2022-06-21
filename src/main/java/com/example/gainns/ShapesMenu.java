@@ -100,7 +100,7 @@ class shapeContainer {
 	public shapeContainer() {
 		this.shapeVisualizedList = new ListView<>();	
 		shapeVisualizedList.setItems(data);
-		shapeVisualizedList.setPrefWidth(800);  // TO-DO: make change?
+		shapeVisualizedList.setPrefWidth(1500);  // TO-DO: make change?
 		shapeVisualizedList.setPrefHeight(120);
 		shapeVisualizedList.setOrientation(Orientation.HORIZONTAL);
 		shapeVisualizedList.setStyle("-fx-control-inner-background: #4C4C4C; "
