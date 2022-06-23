@@ -49,7 +49,7 @@ public class Environment extends Application {
     public void start(Stage stage) throws IOException {
     
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
-//        root.setStyle("-fx-background-color: #99F0F5");
+        root.setStyle("-fx-background-color: #99F0F5");
         root.setId("bg");        
         Scene scene = new Scene(root, screenWidth, screenHeight);
         scene.getStylesheets().addAll(this.getClass().getResource("bg.css").toExternalForm());
