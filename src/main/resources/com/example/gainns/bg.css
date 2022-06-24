@@ -1,7 +1,8 @@
 #bg{
 	-fx-alignment: center;
-	-fx-background-image: url("clouds.png");
-    -fx-background-repeat: no-repeat no-repeat;   
-    -fx-background-size: null;
-    -fx-background-position: center center;
+	-fx-background-color: #FFFFFF;
+	-fx-background-image: url("grid-png-43559.png");
+    -fx-background-repeat: repeat repeat;   
+    -fx-background-size: 500;
+    -fx-background-position: bottom left;
 }

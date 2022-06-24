@@ -39,6 +39,7 @@ public class Environment extends Application {
         Rectangle rectangle = new Rectangle(1500, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         rectangle.setFill(Color.valueOf("#F5E799"));
+//        rectangle.setFill(Color.valueOf("#000000"));
         return rectangle;
     }
 
@@ -49,8 +50,9 @@ public class Environment extends Application {
     public void start(Stage stage) throws IOException {
     
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
-        root.setStyle("-fx-background-color: #99F0F5");
+//      root.setStyle("-fx-background-color: #99F0F5"); // can also be set in bg.css
         root.setId("bg");        
+        
         Scene scene = new Scene(root, screenWidth, screenHeight);
         scene.getStylesheets().addAll(this.getClass().getResource("bg.css").toExternalForm());
         
@@ -131,8 +133,6 @@ public class Environment extends Application {
                 }
             }
         });
-       
-        
         
         stage.setTitle("GaiNNs");
         stage.setScene(scene);
