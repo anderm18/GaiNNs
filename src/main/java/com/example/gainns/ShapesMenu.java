@@ -98,7 +98,11 @@ class shapeContainer {
 	//temp debug
 	final Label label = new Label();
 	public shapeContainer() {
-		this.shapeVisualizedList = new ListView<>();	
+		this.shapeVisualizedList = new ListView<>();
+		// scroll-bar
+		shapeVisualizedList.setId("listview");
+		shapeVisualizedList.getStylesheets().addAll(this.getClass().getResource("scrollbar.css").toExternalForm());
+		
 		shapeVisualizedList.setItems(data);
 		// TO-DO: write an event listener to detect when window is resized. Use setPrefWidth
 		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  

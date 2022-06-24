@@ -1,0 +1,4 @@
+#listview .scroll-bar:horizontal,
+#listview .scroll-bar:vertical {
+    -fx-background-color: black;
+}
