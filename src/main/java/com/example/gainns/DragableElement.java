@@ -4,15 +4,25 @@ import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import org.dyn4j.dynamics.joint.RevoluteJoint;
+import org.dyn4j.geometry.Convex;
+import org.dyn4j.geometry.Geometry;
+import org.dyn4j.geometry.MassType;
+import org.dyn4j.geometry.Vector2;
+
 
 public class DragableElement {
 
   Circle circle;
   double orgSceneX;
   double orgSceneY;
+  SimulationBody object;
 
   public DragableElement(double x, double y, double r, Color color) {
     this.circle = new Circle(x, y, r, color);
+    object = new SimulationBody();
+    object.addFixture(circle);
+
 
     circle.setCursor(Cursor.HAND);
 
