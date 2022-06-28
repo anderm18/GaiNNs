@@ -30,6 +30,7 @@ public class Dragable {
 			orgSceneY = t.getSceneY();
 			
 			Shape c = (Shape) (t.getSource());
+			c.setOpacity(0.5);
 			c.toFront();
 	    });
 		
@@ -43,7 +44,7 @@ public class Dragable {
 		
 		this.shape.setOnMouseReleased((t) -> {
 			Shape c = (Shape) (t.getSource());
-			c.setFill(color.brighter());
+			c.setOpacity(80);
 	    });
 	}
 }
