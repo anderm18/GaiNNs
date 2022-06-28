@@ -5,9 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 //import javafx.animation.Transition.*;
 import javafx.util.Duration;
@@ -19,6 +24,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.util.Callback;
 
 public class ShapesMenu {
@@ -71,28 +78,30 @@ public class ShapesMenu {
 }
 
 class shapeContainer {
-	public ListView<Pair<Shape, Color>> shapeVisualizedList;
+	public ListView<DragAndDropListShape> shapeVisualizedList;
 	@SuppressWarnings("unchecked")
-	ObservableList<Pair<Shape, Color>> data = FXCollections.observableArrayList(new Pair<>(new Circle(20), Color.BLUE), 
-																				new Pair<>(new Rectangle(50, 50), Color.RED), 
-																				new Pair<>(new Rectangle(100, 50), Color.PINK), 
-																				new Pair<>(new Ellipse(50, 20), Color.GREEN),
-																				new Pair<>(new Circle(20), Color.BLUE), 
-																				new Pair<>(new Rectangle(50, 50), Color.RED), 
-																				new Pair<>(new Rectangle(100, 50), Color.PINK), 
-																				new Pair<>(new Ellipse(50, 20), Color.GREEN),
-																				new Pair<>(new Circle(20), Color.BLUE), 
-																				new Pair<>(new Rectangle(50, 50), Color.RED), 
-																				new Pair<>(new Rectangle(100, 50), Color.PINK), 
-																				new Pair<>(new Ellipse(50, 20), Color.GREEN),
-																				new Pair<>(new Circle(20), Color.BLUE), 
-																				new Pair<>(new Rectangle(50, 50), Color.RED), 
-																				new Pair<>(new Rectangle(100, 50), Color.PINK), 
-																				new Pair<>(new Ellipse(50, 20), Color.GREEN),
-																				new Pair<>(new Circle(20), Color.BLUE), 
-																				new Pair<>(new Rectangle(50, 50), Color.RED), 
-																				new Pair<>(new Rectangle(100, 50), Color.PINK), 	
-																				new Pair<>(new Ellipse(50, 20), Color.GREEN));
+	ObservableList<DragAndDropListShape> data = FXCollections.observableArrayList(new DragAndDropListShape(new Circle(20), Color.BLUE), 
+																				new DragAndDropListShape(new Rectangle(50, 50), Color.RED), 
+																				new DragAndDropListShape(new Rectangle(100, 50), Color.PINK),
+																				new DragAndDropListShape(new Ellipse(50, 20), Color.GREEN),
+																				new DragAndDropListShape(new Circle(20), Color.YELLOW), 
+																				new DragAndDropListShape(new Rectangle(50, 50), Color.AQUA), 
+																				new DragAndDropListShape(new Rectangle(60, 50), Color.BURLYWOOD),
+																				new DragAndDropListShape(new Ellipse(59, 20), Color.CADETBLUE),
+																				new DragAndDropListShape(new Circle(20), Color.DARKCYAN), 
+																				new DragAndDropListShape(new Rectangle(10, 40), Color.DARKKHAKI), 
+																				new DragAndDropListShape(new Rectangle(50, 80), Color.DARKSLATEBLUE),
+																				new DragAndDropListShape(new Ellipse(50, 20), Color.KHAKI),
+																				new DragAndDropListShape(new Circle(20), Color.RED), 
+																				new DragAndDropListShape(new Rectangle(50, 50), Color.AQUA), 
+																				new DragAndDropListShape(new Rectangle(60, 50), Color.BURLYWOOD),
+																				new DragAndDropListShape(new Ellipse(59, 20), Color.RED),
+																				new DragAndDropListShape(new Circle(20), Color.DARKCYAN),
+																				new DragAndDropListShape(new Circle(20), Color.YELLOW), 
+																				new DragAndDropListShape(new Rectangle(50, 50), Color.SKYBLUE), 
+																				new DragAndDropListShape(new Rectangle(60, 50), Color.BURLYWOOD),
+																				new DragAndDropListShape(new Ellipse(59, 20), Color.CADETBLUE),
+																				new DragAndDropListShape(new Circle(20), Color.BLUE));
 	
 	//temp debug
 	final Label label = new Label();
@@ -100,7 +109,7 @@ class shapeContainer {
 	public shapeContainer() {
 		this.shapeVisualizedList = new ListView<>();	
 		shapeVisualizedList.setItems(data);
-		shapeVisualizedList.setPrefWidth(1500);  // TO-DO: make change?
+		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  // TO-DO: make change?
 		shapeVisualizedList.setPrefHeight(120);
 		shapeVisualizedList.setOrientation(Orientation.HORIZONTAL);
 		shapeVisualizedList.setStyle("-fx-control-inner-background: #4C4C4C; "
@@ -109,22 +118,22 @@ class shapeContainer {
 		label.setText("[The shape content does not represent the final choice]\n");
 		
 		
-		shapeVisualizedList.setCellFactory(new Callback<ListView<Pair<Shape, Color>>, 
-	            ListCell<Pair<Shape, Color>>>() {
+		shapeVisualizedList.setCellFactory(new Callback<ListView<DragAndDropListShape>, 
+				                                        ListCell<DragAndDropListShape>>() {
 	                @Override 
-	                public ListCell<Pair<Shape, Color>> call(ListView<Pair<Shape, Color>> list) {
+	                public ListCell<DragAndDropListShape> call(ListView<DragAndDropListShape> list) {
 	                    return new ColorCell();
 	                }
 	            }
 	        );
 	 
 		shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
-	            new ChangeListener<Pair<Shape, Color>>() {
-	                public void changed(ObservableValue<? extends Pair<Shape,Color>> ov, 
-	                		Pair<Shape,Color> old_val, Pair<Shape,Color> new_val) {
+	            new ChangeListener<DragAndDropListShape>() {
+	                public void changed(ObservableValue<? extends DragAndDropListShape> ov, 
+	                		DragAndDropListShape old_val, DragAndDropListShape new_val) {
 	                        label.setText("[The shape content does not represent the final choice]"
-	                        		+ "\nDebug Info: Select " + new_val.getKey().toString());
-	                        label.setTextFill(Color.web(new_val.getValue().toString()));
+	                        		+ "\nDebug Info: Select " + new_val.getShape().toString());
+	                        label.setTextFill(Color.web(new_val.getColor().toString()));
 	            }
 	        });
 	        
@@ -132,13 +141,26 @@ class shapeContainer {
 //	        stage.show();
 	    }
 	    
-	    static class ColorCell extends ListCell<Pair<Shape, Color>> {
+	    static class ColorCell extends ListCell<DragAndDropListShape> {
 	        @Override
-	        public void updateItem(Pair<Shape, Color> item, boolean empty) {
+	        public void updateItem(DragAndDropListShape item, boolean empty) {
 	            super.updateItem(item, empty);
 	            if (item != null) {
-	            	item.getKey().setFill(Color.web(item.getValue().toString()));
-	                setGraphic(item.getKey());
+	            	item.getShape().setFill(Color.web(item.getColor().toString()));
+	                setGraphic(item.getShape());
+	                item.getShape().setOnDragDetected((MouseEvent event) -> {              
+	                    Dragboard db = item.getShape().startDragAndDrop(TransferMode.ANY);
+	                    SnapshotParameters sp = new SnapshotParameters();
+	                    sp.setFill(Color.TRANSPARENT);
+	                    db.setDragView(item.getShape().snapshot(sp, null), event.getX(), event.getY());
+	                    ClipboardContent content = new ClipboardContent();
+	                    content.putString(item.getShape().toString());
+	                    db.setContent(content);
+	                });
+	        		
+	                item.getShape().setOnMouseDragged((MouseEvent event) -> {
+	                    event.setDragDetect(true);
+	                });
 	            }
 	        }
 	    }

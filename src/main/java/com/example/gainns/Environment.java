@@ -8,10 +8,15 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -28,10 +33,14 @@ public class Environment extends Application {
 	// mouse tracker
 	private double mousePosXTraker = 0;
 	private double mousePosYTraker = 0;
-	private List<DragableElement> shapesInEnv = new ArrayList<DragableElement>();
+	private List<Dragable> shapesInEnv = new ArrayList<Dragable>();
+	
+	// resolution offset
+	private double screenWidth = Screen.getPrimary().getBounds().getWidth() - 400;
+    private double screenHeight = Screen.getPrimary().getBounds().getHeight() - 300;
 	
     private Rectangle createFloor(Scene scene) {
-        Rectangle rectangle = new Rectangle(1500, 100);
+        Rectangle rectangle = new Rectangle(screenWidth, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         rectangle.setFill(Color.valueOf("#F5E799"));
         return rectangle;
@@ -45,7 +54,7 @@ public class Environment extends Application {
     
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
         root.setStyle("-fx-background-color: #99F0F5");
-        Scene scene = new Scene(root, 1500, 800);
+        Scene scene = new Scene(root, screenWidth, screenHeight);
         Rectangle floorRect = createFloor(scene); //floor
         HBox floor = new HBox(0, floorRect);
         ShapesMenu shapesMenu = new ShapesMenu(); //menu for shapes
@@ -60,28 +69,28 @@ public class Environment extends Application {
         AnchorPane.setLeftAnchor(tab, scene.getWidth()/2.0 - shapesMenu.getTab().getWidth()/2.0);
         AnchorPane.setTopAnchor(sMenu, 0d);
         
-        root.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-            	mousePosXTraker = event.getX();
-                mousePosYTraker = event.getY();
-                posReporter.setText("Debug Info:\n(x: " + event.getX() + ", y: " + event.getY() + ") \n" +
-              		  			  "(sceneX: "  + event.getSceneX() + ", sceneY: "  + event.getSceneY()  + ") \n" +
-              		  			  "(screenX: " + event.getScreenX()+ ", screenY: " + event.getScreenY() + ")");
-            }
+        // track mouse info all the time
+        root.setOnMousePressed(e -> {
+            updateMousePosition(e);
         });
-        shapesMenu.getMenu().shapeVisualizedList.setOnMouseMoved(new EventHandler<MouseEvent>() {
-        	@Override
-            public void handle(MouseEvent event) {
-            	mousePosXTraker = event.getX();
-                mousePosYTraker = event.getY();
-                posReporter.setText("Debug Info:\n(x: " + event.getX() + ", y: " + event.getY() + ") \n" +
-              		  			  "(sceneX: "  + event.getSceneX() + ", sceneY: "  + event.getSceneY()  + ") \n" +
-              		  			  "(screenX: " + event.getScreenX()+ ", screenY: " + event.getScreenY() + ")");
-            }
+        root.setOnMouseDragged(e -> {
+            updateMousePosition(e);
         });
-       
+        root.setOnMouseMoved(e -> {
+            updateMousePosition(e);
+        });
+        shapesMenu.getMenu().shapeVisualizedList.setOnMousePressed(e -> {
+            updateMousePosition(e);
+        });
+        shapesMenu.getMenu().shapeVisualizedList.setOnMouseDragged(e -> {
+            updateMousePosition(e);
+        });
+        shapesMenu.getMenu().shapeVisualizedList.setOnMouseMoved(e -> {
+            updateMousePosition(e);
+        });
         
+       
+        // HIDE/SHOW
         shapesMenu.getTab().setOnAction(value ->  { //button(tab) pressed
             if(shapesMenu.tabPressed()) { // if hidden
             	//AnchorPane.setTopAnchor(tab, 0d);
@@ -100,16 +109,46 @@ public class Environment extends Application {
             }
          });
         
-        shapesMenu.getMenu().shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
-	            new ChangeListener<Pair<Shape, Color>>() {
-	                public void changed(ObservableValue<? extends Pair<Shape,Color>> ov, 
-	                		Pair<Shape,Color> old_val, Pair<Shape,Color> new_val) {
-	                	DragableElement newAddedElement = new DragableElement(mousePosXTraker, mousePosYTraker, 40, new_val.getValue());
-	                	shapesInEnv.add(newAddedElement);
-	                	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
-	                	root.getChildren().add(newAddedElement.circle);
-	            }
-	     });
+        
+        // Shape drag and drop
+        scene.setOnDragOver(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+            	updateMousePosition(event);
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                event.consume();
+            }
+        });
+
+        scene.setOnDragDropped((DragEvent event) -> {
+            Dragboard db = event.getDragboard();
+            String shapeInfo = db.getString().replace("[", "!!").replace("]", "!!"); // avoid parsing bug in JAVA 1.8 windows
+//            System.out.println("Select: " + shapeInfo.split("!!")[0]);
+            Dragable newAddedElement = new Dragable(mousePosXTraker, mousePosYTraker, Color.web(shapeInfo.split("fill=")[1].split("!!")[0]), 
+            										shapeInfo.split("!!")[0], Double.parseDouble(db.getString().split(", ")[2].split("=")[1]), 
+            										Double.parseDouble(shapeInfo.split(", ")[3].split("=")[0].equals("fill")? "0":shapeInfo.split(", ")[3].split("=")[1]));
+            shapesInEnv.add(newAddedElement);
+            elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
+            root.getChildren().add(newAddedElement.shape);
+            if (db.hasString()) {
+                System.out.println("Dropped: " + db.getString());
+                event.setDropCompleted(true);
+            } else {
+                event.setDropCompleted(false);
+            }
+            event.consume();
+        });
+        
+//        shapesMenu.getMenu().shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
+//	            new ChangeListener<DragAndDropListShape>() {
+//	                public void changed(ObservableValue<? extends DragAndDropListShape> ov, 
+//	                		DragAndDropListShape old_val, DragAndDropListShape new_val) {
+//	                	System.out.println("Current color: "+ new_val.getColor());
+//	                	Dragable newAddedElement = new Dragable(mousePosXTraker, mousePosYTraker, new_val.getColor(), new_val.getShape());
+//	                	shapesInEnv.add(newAddedElement);
+//	                	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
+//	                	root.getChildren().add(newAddedElement.shape);
+//	            }
+//	     });
         
         stage.setTitle("GaiNNs");
         stage.setScene(scene);
@@ -124,5 +163,20 @@ public class Environment extends Application {
     
     public static void main(String[] args) {
         launch();
+    }
+    
+    public void updateMousePosition(InputEvent event) {
+    	if (event instanceof MouseEvent ) {
+			MouseEvent eventInstance = (MouseEvent) event;
+    		mousePosXTraker = eventInstance.getX();
+            mousePosYTraker = eventInstance.getY();
+            posReporter.setText("Debug Info:\n(x: " + eventInstance.getX() + ", y: " + eventInstance.getY() + ") \n" );
+    	}else if (event instanceof DragEvent) {
+    		DragEvent eventInstance = (DragEvent) event;
+    		mousePosXTraker = eventInstance.getX();
+            mousePosYTraker = eventInstance.getY();
+            posReporter.setText("Debug Info:\n(x: " + eventInstance.getX() + ", y: " + eventInstance.getY() + ") \n" );
+    	}
+    	
     }
 }
