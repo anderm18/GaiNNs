@@ -1,5 +1,7 @@
 package com.example.gainns;
 
+import java.util.List;
+
 import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.paint.Color;
 //import javafx.animation.Transition.*;
 import javafx.util.Duration;
@@ -98,6 +101,7 @@ class shapeContainer {
 	//temp debug
 	final Label label = new Label();
 	public shapeContainer() {
+		
 		this.shapeVisualizedList = new ListView<>();
 		// scroll-bar
 		shapeVisualizedList.setId("listview");
@@ -108,12 +112,13 @@ class shapeContainer {
 		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  
 		shapeVisualizedList.setPrefHeight(120);
 		shapeVisualizedList.setOrientation(Orientation.HORIZONTAL);
-		shapeVisualizedList.setStyle("-fx-control-inner-background: #4C4C4C; "
-				                   + "-fx-control-inner-background-alt: derive(-fx-control-inner-background, 20%)");   // change the color!!
-		
+		shapeVisualizedList.setStyle(/**/
+									"-fx-control-inner-background: #4C4C4C; "
+				                   + "-fx-control-inner-background-alt: derive(-fx-control-inner-background, 20%); "   // change the color!!
+								   + "-fx-opacity: 0.97;"
+				                   );
 		label.setText("[The shape content does not represent the final choice]\n");
-		
-		
+				
 		shapeVisualizedList.setCellFactory(new Callback<ListView<Pair<Shape, Color>>, 
 	            ListCell<Pair<Shape, Color>>>() {
 	                @Override 

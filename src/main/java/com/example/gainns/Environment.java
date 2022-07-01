@@ -38,8 +38,8 @@ public class Environment extends Application {
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(1500, 70);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
-        rectangle.setFill(Color.valueOf("#F5E799"));
-//        rectangle.setFill(Color.valueOf("#000000"));
+//        rectangle.setFill(Color.valueOf("#F5E799"));
+        rectangle.setFill(Color.valueOf("#000000"));
         return rectangle;
     }
 
