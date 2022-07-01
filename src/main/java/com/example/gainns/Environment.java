@@ -62,6 +62,8 @@ public class Environment extends Application {
         shapesMenu.createMenu(scene);
         HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
         HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
+        tab.setStyle("-fx-color: black; ");
+        
         root.getChildren().addAll(floor, sMenu, tab, posReporter, elementInEnvReporter);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene									
         AnchorPane.setTopAnchor(tab, 120d);
