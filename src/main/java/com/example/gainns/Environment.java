@@ -69,19 +69,18 @@ public class Environment extends Application {
         
         //menu for shapes
         ShapesMenu shapesMenu = new ShapesMenu(); 
-        shapesMenu.createMenu(scene);
-        HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
+        // shapesMenu.createMenu(scene);
         HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
-        
+        HBox toolBar = new HBox(0, shapesMenu.toolBar);
         // config layout
-        root.getChildren().addAll(env, floor, sMenu, tab, posReporter, elementInEnvReporter, dragAndDropReporter);
+        root.getChildren().addAll(env, floor, toolBar, tab, posReporter, elementInEnvReporter, dragAndDropReporter);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene									
-        AnchorPane.setTopAnchor(tab, 120d);
+        AnchorPane.setTopAnchor(tab, 160d);
         AnchorPane.setTopAnchor(posReporter, 680d);
         AnchorPane.setTopAnchor(dragAndDropReporter, 715d);
         AnchorPane.setTopAnchor(elementInEnvReporter, 740d);
         AnchorPane.setLeftAnchor(tab, scene.getWidth()/2.0 - shapesMenu.getTab().getWidth()/2.0);
-        AnchorPane.setTopAnchor(sMenu, 0d);
+        AnchorPane.setTopAnchor(toolBar, 0d);
         
         // track mouse info all the time
         root.setOnMousePressed(e -> {
