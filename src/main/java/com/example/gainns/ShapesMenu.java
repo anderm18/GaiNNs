@@ -45,7 +45,10 @@ public class ShapesMenu {
 	}
 	public Button getTab() {
 		return tab;
-	}	
+	}
+	public boolean isHidden() {
+		return hidden;
+	}
 	
 	public boolean tabPressed() { // if tab pressed
 		TranslateTransition tt = new TranslateTransition(Duration.millis(250), this.items.shapeVisualizedList);
@@ -57,6 +60,8 @@ public class ShapesMenu {
 			tt.play();
 			hidden = false;
 			tab.setText("HIDE");
+			tab.setStyle("-fx-color: white; ");
+			
 		}
 		else {
 			//menu.setHeight(0);
@@ -66,6 +71,7 @@ public class ShapesMenu {
 			tt.play();
 			hidden = true;
 			tab.setText("SHOW");
+			tab.setStyle("-fx-color: black; ");
 		}
 
 		return hidden;

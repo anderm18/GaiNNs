@@ -59,13 +59,49 @@ public class Environment extends Application {
         
         Rectangle floorRect = createFloor(scene); //floor
         HBox floor = new HBox(0, floorRect);
+        
         ShapesMenu shapesMenu = new ShapesMenu(); //menu for shapes
         shapesMenu.createMenu(scene);
         HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
+        
         HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
-        tab.setStyle("-fx-color: black; ");
+        tab.setStyle("-fx-color: white; ");
+        tab.setOpacity(0.5);
+        
+        // event handler to set opacity of button to 1.0 when mouse hovers over it when the shape menu is not hidden 
+        tab.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+        	new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (!shapesMenu.isHidden()) {
+						// fade transition animation
+						FadeTransition ft = new FadeTransition(new Duration(100), tab);
+						ft.setFromValue(0.5);
+						ft.setToValue(1.0);
+						ft.play();
+						tab.setOpacity(1.0);
+					}
+				}
+        });
+        
+        // event handler to set opacity of button to 0.5 when mouse exits and when the shape menu is not hidden 
+        tab.addEventHandler(MouseEvent.MOUSE_EXITED, 
+        	new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					if (!shapesMenu.isHidden()) {
+						// fade transition animation
+						FadeTransition ft = new FadeTransition(new Duration(100), tab);
+						ft.setFromValue(1.0);
+						ft.setToValue(0.5);
+						ft.play();
+						tab.setOpacity(0.5);
+					}
+				}
+        });
         
         root.getChildren().addAll(floor, sMenu, tab, posReporter, elementInEnvReporter);
+        
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene									
         AnchorPane.setTopAnchor(tab, 120d);
         AnchorPane.setTopAnchor(posReporter, 620d);
@@ -124,7 +160,7 @@ public class Environment extends Application {
 		            }
 		    });
         
-        // event handlers for shape Menu: when mouse enters the shape menu, the opacity increases to 1
+        // event handler for shape Menu: when mouse enters the shape menu, the opacity increases to 1
         shapesMenu.getMenu().shapeVisualizedList.addEventHandler(MouseEvent.MOUSE_ENTERED, 
         		new EventHandler<MouseEvent>() {
 					public void handle(MouseEvent event) {
