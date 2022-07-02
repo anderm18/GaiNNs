@@ -115,7 +115,7 @@ class shapeContainer {
 		shapeVisualizedList.setStyle(/**/
 									"-fx-control-inner-background: #4C4C4C; "
 				                   + "-fx-control-inner-background-alt: derive(-fx-control-inner-background, 20%); "   // change the color!!
-								   + "-fx-opacity: 0.97;"
+								   + "-fx-opacity: 0.5;"
 				                   );
 		label.setText("[The shape content does not represent the final choice]\n");
 				
@@ -141,7 +141,7 @@ class shapeContainer {
 	        // box.getChildren().addAll(list, label);
 //	        stage.show();
 	    }
-	    
+		    
 	    static class ColorCell extends ListCell<Pair<Shape, Color>> {
 	        @Override
 	        public void updateItem(Pair<Shape, Color> item, boolean empty) {

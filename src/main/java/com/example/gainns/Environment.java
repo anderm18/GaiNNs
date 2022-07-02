@@ -1,5 +1,6 @@
 package com.example.gainns;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -120,8 +121,34 @@ public class Environment extends Application {
 	                	shapesInEnv.add(newAddedElement);
 	                	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
 	                	root.getChildren().add(newAddedElement.circle);
-	            }
-	     });
+		            }
+		    });
+        
+        // event handlers for shape Menu: when mouse enters the shape menu, the opacity increases to 1
+        shapesMenu.getMenu().shapeVisualizedList.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+        		new EventHandler<MouseEvent>() {
+					public void handle(MouseEvent event) {
+						// fade transition animation
+						FadeTransition ft = new FadeTransition(new Duration(100), shapesMenu.getMenu().shapeVisualizedList);
+						ft.setFromValue(0.5);
+						ft.setToValue(1.0);
+						ft.play();
+						shapesMenu.getMenu().shapeVisualizedList.setOpacity(1.0);
+					}
+        	});
+        
+        // event handler for shape Menu: when mouse exits the shape menu, the opacity decreases to 0.5
+        shapesMenu.getMenu().shapeVisualizedList.addEventHandler(MouseEvent.MOUSE_EXITED, 
+        		new EventHandler<MouseEvent>() {
+					public void handle(MouseEvent event) {
+						// fade transition animation
+						FadeTransition ft = new FadeTransition(new Duration(100), shapesMenu.getMenu().shapeVisualizedList);
+						ft.setFromValue(1.0);
+						ft.setToValue(0.5);
+						ft.play();
+						shapesMenu.getMenu().shapeVisualizedList.setOpacity(0.5);
+					}
+        	});
         
         // event listener: listens to stage width resizes to resize the shapesMenu's width.
         stage.widthProperty().addListener(new ChangeListener<Number>() {
