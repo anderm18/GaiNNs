@@ -142,9 +142,12 @@ public class Environment extends Application {
 //            System.out.println("Select: " + shapeInfo.split("!!")[0]);
             double shapeParam0 = Double.parseDouble(db.getString().split(", ")[2].split("=")[1]);
             double shapeParam1 = Double.parseDouble(shapeInfo.split(", ")[3].split("=")[0].equals("fill")? "0":shapeInfo.split(", ")[3].split("=")[1]);
-            Dragable newAddedElement = new Dragable(mousePosXTraker, mousePosYTraker, 
+            Dragable dragController = new Dragable(shapeInfo.split("!!")[0]);
+            
+            /*Dragable newAddedElement = new Dragable(mousePosXTraker, mousePosYTraker, 
             										Color.web(shapeInfo.split("fill=")[1].split("!!")[0]), 
             										shapeInfo.split("!!")[0], shapeParam0, shapeParam1);
+            */
             shapesInEnv.add(newAddedElement);
             elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());           
             root.getChildren().add(newAddedElement.shape);
