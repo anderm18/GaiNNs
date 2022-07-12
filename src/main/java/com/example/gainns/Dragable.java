@@ -12,6 +12,9 @@ public class Dragable {
 	Shape shape;
 	double orgSceneX;
 	double orgSceneY;
+	double orgTranslateX;
+	double orgTranslateY;
+	
 	public Dragable(double x, double y, Color color, String shapeName, double shapeParam0, double shapeParam1) {
 		if (shapeName.equals("Circle")) {
 			this.shape = new Circle(x, y, shapeParam0, color);
@@ -25,21 +28,22 @@ public class Dragable {
 				  
 		this.shape.setCursor(Cursor.HAND);
 
-		this.shape.setOnMousePressed((t) -> {
-			orgSceneX = t.getSceneX();
-			orgSceneY = t.getSceneY();
-			
+		this.shape.setOnMousePressed((t) -> {		
 			Shape c = (Shape) (t.getSource());
 			c.setOpacity(0.5);
 			c.toFront();
-	    });
-		
-		this.shape.setOnMouseDragged((t) -> {    				
-			Shape movingShape = (Shape) (t.getSource());
-			movingShape.relocate(t.getSceneX(), t.getSceneY());
 			
 			orgSceneX = t.getSceneX();
-			orgSceneY = t.getSceneY();
+            orgSceneY = t.getSceneY();
+            orgTranslateX = ((Shape)(t.getSource())).getTranslateX();
+            orgTranslateY = ((Shape)(t.getSource())).getTranslateY();
+
+	    });
+		
+		this.shape.setOnMouseDragged((t) -> {
+			((Shape)(t.getSource())).setTranslateX(orgTranslateX + t.getSceneX() - orgSceneX);
+			((Shape)(t.getSource())).setTranslateY(orgTranslateY + t.getSceneY() - orgSceneY);
+		
 	    });
 		
 		this.shape.setOnMouseReleased((t) -> {
