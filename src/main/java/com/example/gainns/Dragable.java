@@ -14,6 +14,7 @@ public class Dragable {
 	double orgSceneY;
 	double orgTranslateX;
 	double orgTranslateY;
+	ShapesMenu shapesMenu;
 	
 	public Dragable(double x, double y, Color color, String shapeName, double shapeParam0, double shapeParam1) {
 		if (shapeName.equals("Circle")) {
@@ -25,7 +26,8 @@ public class Dragable {
 			this.shape = new Ellipse(x, y, shapeParam0, shapeParam1);
 			this.shape.setFill(color);
 		}
-				  
+		
+		this.shapesMenu = shapesMenu;
 		this.shape.setCursor(Cursor.HAND);
 
 		this.shape.setOnMousePressed((t) -> {		
@@ -48,6 +50,7 @@ public class Dragable {
 		
 		this.shape.setOnMouseReleased((t) -> {
 			Shape c = (Shape) (t.getSource());
+			c.setViewOrder(1);
 			c.setOpacity(80);
 	    });
 	}

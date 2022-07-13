@@ -55,7 +55,7 @@ public class Environment extends Application {
     
         AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
         root.setStyle("-fx-background-color: #99F0F5");
-        Scene scene = new Scene(root, windowWidth, windowHeight);   
+        Scene scene = new Scene(root, windowWidth, windowHeight);
         
         Rectangle floorRect = createFloor(scene); //floor
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
@@ -65,7 +65,9 @@ public class Environment extends Application {
         
         
         HBox floor = new HBox(0, floorRect);
+        floor.setViewOrder(2);
         HBox env = new HBox(0, sceneRect);
+        env.setViewOrder(3);
         
         //menu for shapes
         ShapesMenu shapesMenu = new ShapesMenu(); 
