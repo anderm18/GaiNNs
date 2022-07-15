@@ -20,6 +20,7 @@ public class PhysObj extends Body {
 
     public PhysObj() {	// for non visible physics objects
         super();
+        transform = getTransform();
         bodies.add(this);
     }
 

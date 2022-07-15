@@ -70,7 +70,7 @@ public class main extends Application {
             f.setFriction(0.8);
             f.setRestitution(0.4);
             rectangle.addFixture(f);
-            rectangle.setMass();
+            rectangle.setMass(MassType.INFINITE);
             rectangle.translate(rnd(-3,3), 9.0+rnd(-4,2));
             rectangle.getTransform().setRotation(rnd(-3.141,3.141));
             this.world.addBody(rectangle);
@@ -81,7 +81,7 @@ public class main extends Application {
             long last;
 
             @Override
-            public void handle(long now) { // now is in nanoseconds
+            public void handle(long now) { // now is in nanoseconds 
                 float delta = 1f / (1000.0f / ((now-last) / 1000000));  // seems long winded but avoids precision issues
                 world.updatev(delta);
                 PhysObj.update();
