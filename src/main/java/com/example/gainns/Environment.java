@@ -84,6 +84,7 @@ public class Environment extends Application {
         AnchorPane.setTopAnchor(elementInEnvReporter, 740d);
         AnchorPane.setLeftAnchor(tab, scene.getWidth()/2.0 - shapesMenu.getTab().getWidth()/2.0);
         AnchorPane.setTopAnchor(sMenu, 0d);
+        sMenu.setPickOnBounds(false);
         
         // track mouse info all the time
         root.setOnMousePressed(e -> {
@@ -105,19 +106,15 @@ public class Environment extends Application {
             updateMousePosition(e);
         });
         
-       
         // HIDE/SHOW
         shapesMenu.getTab().setOnAction(value ->  { //button(tab) pressed
             if(shapesMenu.tabPressed()) { // if hidden
-            	//AnchorPane.setTopAnchor(tab, 0d);
                 TranslateTransition tt = new TranslateTransition(Duration.millis(250), tab);
                 tt.setByY(-120f);
                 tt.setCycleCount(1);
                 //tt.setAutoReverse(true);
                 tt.play();
-            }
-            else {
-            	//AnchorPane.setTopAnchor(tab, 120d);
+            } else {
                 TranslateTransition tt = new TranslateTransition(Duration.millis(250), tab);
                 tt.setByY(120f);
                 tt.setCycleCount(1);
