@@ -44,7 +44,7 @@ public class PhysObj extends Body {
                 Transform t = po.getTransform();
                 po.iv.setTranslateX(t.getTranslationX()*Settings.SCALE);
                 po.iv.setTranslateY(t.getTranslationY()*Settings.SCALE);
-                po.iv.setRotate(po.transform.getRotation()/0.017453292519943295);
+                po.iv.setRotate(po.transform.getRotation().toRadians()/0.017453292519943295);
             }
         }
     }
