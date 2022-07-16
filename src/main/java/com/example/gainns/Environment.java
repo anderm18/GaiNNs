@@ -19,7 +19,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
-import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -31,16 +30,13 @@ import java.util.List;
 public class Environment extends Application {
 	double resizeBlockWidth = 6, resizeBlockWidthOffset = resizeBlockWidth / 2;
     double lastX, lastY;
-    double lX, lY, sX, sY, sWidth, sHeight;
-    ScrollPane scrollPane;
+    double pressedMousePosX, pressedMousePosY, shapeLayoutX, shapeLayoutY, sWidth, sHeight;
     Group overlay = null;
+    AnchorPane root;
     
     // scale change point
     Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
-    
-    Dragable selectedElement;
- 
-    AnchorPane root;
+    Dragable selectedElement;  
     
 	//temp debug
 	final Label posReporter = new Label();
@@ -75,7 +71,6 @@ public class Environment extends Application {
         this.root.setOnMousePressed(me -> select(null));
         
         Scene scene = new Scene(root, windowWidth, windowHeight);
-        
         Rectangle floorRect = createFloor(scene); //floor
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -208,9 +203,10 @@ public class Environment extends Application {
         if (this.overlay == null && element != null) iniOverlay();
         if (element != this.selectedElement) {
         	this.overlay.setVisible(element != null);
-            // if (element != null) element.toFront();
+            if (element != null) element.toFront();
             this.selectedElement = element;
             updateOverlay();
+            System.out.println("to front");
         }
     }
 
@@ -274,40 +270,29 @@ public class Environment extends Application {
 
     void handleMouse(Node node) {
         node.setOnMousePressed(me -> {
-        	this.lX = me.getX();
-        	this.lY = me.getY();
-        	this.sX = this.selectedElement.getLayoutX();
-        	this.sY = this.selectedElement.getLayoutY();
+        	this.pressedMousePosX = me.getX();
+        	this.pressedMousePosY = me.getY();
+        	this.shapeLayoutX = this.selectedElement.getLayoutX();
+        	this.shapeLayoutY = this.selectedElement.getLayoutY();
         	this.sWidth = this.selectedElement.widthProperty().get();
         	this.sHeight = this.selectedElement.heightProperty().get();
-            me.consume();
+            // me.consume();
         });
         node.setOnMouseDragged(me -> {
-            double dx = (me.getX() - this.lX);
-            double dy = (me.getY() - this.lY);
+            double dx = (me.getX() - this.pressedMousePosX);
+            double dy = (me.getY() - this.pressedMousePosY);
             Object source = me.getSource();
-            if (source == this.srBnd) relocate(this.sX + dx, this.sY + dy);
-            else if (source == this.srNW) { setHSize(this.sX + dx, true); setVSize(this.sY + dy, true); }
-            else if (source == this.srN) setVSize(this.sY + dy, true);
-            else if (source == this.srNE) { setHSize(this.sX + this.sWidth + dx, false); setVSize(this.sY + dy, true); }
-            else if (source == this.srE) setHSize(this.sX + this.sWidth + dx, false);
-            else if (source == this.srSE) { setHSize(this.sX + this.sWidth + dx, false); setVSize(this.sY + this.sHeight + dy, false); }
-            else if (source == this.srS) setVSize(this.sY + this.sHeight + dy, false);
-            else if (source == this.srSW) { setHSize(this.sX + dx, true); setVSize(this.sY + this.sHeight + dy, false); }
-            else if (source == this.srW) setHSize(this.sX + dx, true);
+            if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
+            else if (source == this.srNW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + dy, true); }
+            else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
+            else if (source == this.srNE) { setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + dy, true); }
+            else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            else if (source == this.srSE) { setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
+            else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            else if (source == this.srSW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
+            else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             me.consume();
         });
-//        node.setOnMouseReleased(me -> {
-//            Object source = me.getSource();
-//            if (source == this.srBnd) relocate(this.selectedElement.getLayoutX(), this.selectedElement.getLayoutY());
-//            else {
-//                if (source == this.srNW || source == this.srN || source == this.srNE) setVSize(this.selectedElement.getLayoutY(), true);
-//                else if (source == this.srSW || source == this.srS || source == this.srSE) setVSize(this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get(), false);
-//                if (source == this.srNW || source == this.srW || source == this.srSW) setHSize(this.selectedElement.getLayoutX(), true);
-//                else if (source == this.srNE || source == this.srE || source == this.srSE) setHSize(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get(), false);
-//            }
-//            me.consume();
-//        });
       }
 
     void setHSize(double h, boolean b) {
@@ -316,12 +301,12 @@ public class Environment extends Application {
         if (h < this.area.getMinX()) h = this.area.getMinX();
         if (h > this.area.getMaxX()) h = this.area.getMaxX();
         if (b) {
-          width = w + x - h;
-          if (width < as) { width = as; h = x + w - as; }
-          this.selectedElement.setLayoutX(h);
+            width = w + x - h;
+            if (width < as) { width = as; h = x + w - as; }
+            this.selectedElement.setLayoutX(h);
         } else {
-          width = h - x;
-          if (width < as) width = as;
+            width = h - x;
+            if (width < as) width = as;
         }
         this.selectedElement.widthProperty().set(width);
     }
@@ -333,12 +318,12 @@ public class Environment extends Application {
         if (v < this.area.getMinY()) v = this.area.getMinY();
         if (v > this.area.getMaxY()) v = this.area.getMaxY();
         if (b) {
-          height = h + y - v;
-          if (height < as) { height = as; v = y + h - as; }
-          this.selectedElement.setLayoutY(v);
+            height = h + y - v;
+            if (height < as) { height = as; v = y + h - as; }
+            this.selectedElement.setLayoutY(v);
         } else {
-          height = v - y;
-          if (height < as) height = as;
+            height = v - y;
+            if (height < as) height = as;
         }
         this.selectedElement.heightProperty().set(height);
     }

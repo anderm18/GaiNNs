@@ -15,6 +15,9 @@ class Dragable extends Group {
     Circle circle = new Circle();
     DoubleProperty widthProperty = new SimpleDoubleProperty();
     DoubleProperty heightProperty = new SimpleDoubleProperty();
+    
+    ShapesMenu shapesMenu;
+    
     Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
     	if (shapeName.equals("Rectangle")) {
 			widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
@@ -25,26 +28,27 @@ class Dragable extends Group {
 		    heightProperty.set(shapeParam1);
 		    rectangle.setFill(fill);
 		    getChildren().add(rectangle);
-		}else if (shapeName.equals("Ellipse")) {
+		    
+		    // set transparency during moving
+		    rectangle.setOnMouseDragged(me -> rectangle.setOpacity(0.7));
+		    rectangle.setOnMouseReleased(me -> rectangle.setOpacity(1));
+		}else if (shapeName.equals("Ellipse") || shapeName.equals("Circle")) {
 			widthProperty.addListener((v, o, n) -> { ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
 			heightProperty.addListener((v, o, n) -> { ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
 		    setLayoutX(x);
 		    setLayoutY(y);
 		    widthProperty.set(shapeParam0*2);
-		    heightProperty.set(shapeParam1*2);
+		    if (shapeName.equals("Circle")) heightProperty.set(shapeParam0*2);
+		    else heightProperty.set(shapeParam1*2);
 		    ellipse.setFill(fill);
 		    getChildren().add(ellipse);
-		}else if (shapeName.equals("Circle")) {
-			widthProperty.addListener((v, o, n) -> { ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
-			heightProperty.addListener((v, o, n) -> { ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
-		    setLayoutX(x);
-		    setLayoutY(y);
-		    widthProperty.set(shapeParam0*2);
-		    heightProperty.set(shapeParam0*2);
-		    ellipse.setFill(fill);
-		    getChildren().add(ellipse);
+		    
+		    // set transparency during moving
+		    ellipse.setOnMouseDragged(me -> ellipse.setOpacity(0.7));
+		    ellipse.setOnMouseReleased(me -> ellipse.setOpacity(1));
 		}
     }
+    
     
     DoubleProperty widthProperty() { return widthProperty; }
     DoubleProperty heightProperty() { return heightProperty; }
