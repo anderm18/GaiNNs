@@ -9,13 +9,10 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 //import javafx.animation.Transition.*;
 import javafx.util.Duration;
@@ -33,17 +30,20 @@ import javafx.util.Callback;
 
 public class ShapesMenu {
 	
-	private shapeContainer items;
-	private Button tab;
-	private boolean hidden = false;
-	public VBox toolBar;
+		// private Rectangle menu = new Rectangle();
+		private shapeContainer items = new shapeContainer();
+		private Button tab = new Button("HIDE");
+		private boolean hidden = false;
 	
-	public ShapesMenu() {
-		this.items = new shapeContainer();
-		this.tab = new Button("HIDE");
-		this.toolBar = new VBox();
-		toolBar.getChildren().addAll(items.shapeVisualizedList, items.sliderForDraggableShape);
+	public void createMenu(Scene scene) { //set up shape proportions and color for menu
+//		menu.setWidth(1500);
+//		menu.setHeight(120);
+//		menu.widthProperty().bind(scene.widthProperty());
+//		menu.setFill(Color.valueOf("#4C4C4C"));
+//		tab.setStyle("-fx-background-color: #4C4C4C; -fx-text-fill: #FFFFFF");
+		
 	}
+
 	public shapeContainer getMenu() {
 		return items;
 	}
@@ -52,7 +52,7 @@ public class ShapesMenu {
 	}	
 	
 	public boolean tabPressed() { // if tab pressed
-		TranslateTransition tt = new TranslateTransition(Duration.millis(250), this.toolBar);
+		TranslateTransition tt = new TranslateTransition(Duration.millis(250), this.items.shapeVisualizedList);
 		if(hidden) {
 			//menu.setHeight(120);
 			tt.setByY(120f);
@@ -80,8 +80,6 @@ public class ShapesMenu {
 
 class shapeContainer {
 	public ListView<DragAndDropListShape> shapeVisualizedList;
-	public Slider sliderForDraggableShape = new Slider(0, 1, 0.5);
-	
 	@SuppressWarnings("unchecked")
 	ObservableList<DragAndDropListShape> data = FXCollections.observableArrayList(new DragAndDropListShape(new Circle(20), Color.BLUE), 
 																				new DragAndDropListShape(new Rectangle(50, 50), Color.RED), 
@@ -110,13 +108,6 @@ class shapeContainer {
 	final Label label = new Label();
 	
 	public shapeContainer() {
-		// slider for shape
-		sliderForDraggableShape.setShowTickMarks(true);
-		sliderForDraggableShape.setShowTickLabels(true);
-		sliderForDraggableShape.setMajorTickUnit(0.25f);
-		sliderForDraggableShape.setBlockIncrement(0.1f);
-		
-		// list shape
 		this.shapeVisualizedList = new ListView<>();	
 		shapeVisualizedList.setItems(data);
 		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  // TO-DO: make change?
@@ -130,12 +121,12 @@ class shapeContainer {
 		
 		shapeVisualizedList.setCellFactory(new Callback<ListView<DragAndDropListShape>, 
 				                                        ListCell<DragAndDropListShape>>() {
-                @Override 
-                public ListCell<DragAndDropListShape> call(ListView<DragAndDropListShape> list) {
-                    return new ColorCell();
-                }
-            }
-        );
+	                @Override 
+	                public ListCell<DragAndDropListShape> call(ListView<DragAndDropListShape> list) {
+	                    return new ColorCell();
+	                }
+	            }
+	        );
 	 
 		shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
 	            new ChangeListener<DragAndDropListShape>() {

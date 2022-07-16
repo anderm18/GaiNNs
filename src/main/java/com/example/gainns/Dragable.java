@@ -1,50 +1,52 @@
 package com.example.gainns;
 
-import javafx.scene.Cursor;
-import javafx.scene.paint.Color;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.Group;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 
-public class Dragable {
+class Dragable extends Group {
 
-	Shape shape;
-	double orgSceneX;
-	double orgSceneY;
-	public Dragable(double x, double y, Color color, String shapeName, double shapeParam0, double shapeParam1) {
-		if (shapeName.equals("Circle")) {
-			this.shape = new Circle(x, y, shapeParam0, color);
-		}else if (shapeName.equals("Rectangle")) {
-			this.shape = new Rectangle(x, y, shapeParam0, shapeParam1);
-			this.shape.setFill(color);
+    Rectangle rectangle = new Rectangle();
+    Ellipse ellipse = new Ellipse();
+    Circle circle = new Circle();
+    DoubleProperty widthProperty = new SimpleDoubleProperty();
+    DoubleProperty heightProperty = new SimpleDoubleProperty();
+    Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
+    	if (shapeName.equals("Rectangle")) {
+			widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
+		    heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
+		    setLayoutX(x);
+		    setLayoutY(y);
+		    widthProperty.set(shapeParam0);
+		    heightProperty.set(shapeParam1);
+		    rectangle.setFill(fill);
+		    getChildren().add(rectangle);
 		}else if (shapeName.equals("Ellipse")) {
-			this.shape = new Ellipse(x, y, shapeParam0, shapeParam1);
-			this.shape.setFill(color);
+			widthProperty.addListener((v, o, n) -> { ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
+			heightProperty.addListener((v, o, n) -> { ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
+		    setLayoutX(x);
+		    setLayoutY(y);
+		    widthProperty.set(shapeParam0*2);
+		    heightProperty.set(shapeParam1*2);
+		    ellipse.setFill(fill);
+		    getChildren().add(ellipse);
+		}else if (shapeName.equals("Circle")) {
+			widthProperty.addListener((v, o, n) -> { ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
+			heightProperty.addListener((v, o, n) -> { ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
+		    setLayoutX(x);
+		    setLayoutY(y);
+		    widthProperty.set(shapeParam0*2);
+		    heightProperty.set(shapeParam0*2);
+		    ellipse.setFill(fill);
+		    getChildren().add(ellipse);
 		}
-				  
-		this.shape.setCursor(Cursor.HAND);
-
-		this.shape.setOnMousePressed((t) -> {
-			orgSceneX = t.getSceneX();
-			orgSceneY = t.getSceneY();
-			
-			Shape c = (Shape) (t.getSource());
-			c.setOpacity(0.5);
-			c.toFront();
-	    });
-		
-		this.shape.setOnMouseDragged((t) -> {    				
-			Shape movingShape = (Shape) (t.getSource());
-			movingShape.relocate(t.getSceneX(), t.getSceneY());
-			
-			orgSceneX = t.getSceneX();
-			orgSceneY = t.getSceneY();
-	    });
-		
-		this.shape.setOnMouseReleased((t) -> {
-			Shape c = (Shape) (t.getSource());
-			c.setOpacity(80);
-	    });
-	}
+    }
+    
+    DoubleProperty widthProperty() { return widthProperty; }
+    DoubleProperty heightProperty() { return heightProperty; }
+    @Override public String toString() { return "[" + getLayoutX() + ", " + getLayoutY() + ", " + widthProperty.get() + ", " + heightProperty.get() + "]"; }
 }
