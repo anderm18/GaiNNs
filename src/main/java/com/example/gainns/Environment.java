@@ -79,9 +79,9 @@ public class Environment extends Application {
         
         // set layer and position for of base env
         HBox floor = new HBox(0, floorRect);
-        floor.setViewOrder(2);
+        floor.setViewOrder(3);
         HBox env = new HBox(0, sceneRect);
-        env.setViewOrder(3);
+        env.setViewOrder(4);
         
         //menu for shapes
         ShapesMenu shapesMenu = new ShapesMenu(); 
@@ -94,9 +94,9 @@ public class Environment extends Application {
         		                  posReporter, elementInEnvReporter, dragAndDropReporter);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene									
         AnchorPane.setTopAnchor(tab, 120d);
-        AnchorPane.setTopAnchor(posReporter, 680d);
-        AnchorPane.setTopAnchor(dragAndDropReporter, 715d);
-        AnchorPane.setTopAnchor(elementInEnvReporter, 740d);
+        AnchorPane.setBottomAnchor(posReporter, 65d);
+        AnchorPane.setBottomAnchor(dragAndDropReporter, 50d);
+        AnchorPane.setBottomAnchor(elementInEnvReporter, 0d);
         AnchorPane.setLeftAnchor(tab, scene.getWidth()/2.0 - shapesMenu.getTab().getWidth()/2.0);
         AnchorPane.setTopAnchor(sMenu, 0d);
         
@@ -234,6 +234,7 @@ public class Environment extends Application {
 										  this.srSE, this.srS, 
 									      this.srSW, this.srW);
         this.root.getChildren().add(this.overlay);
+        this.overlay.setViewOrder(1);
     }
 
     void updateOverlay() {
@@ -345,6 +346,7 @@ public class Environment extends Application {
 		  Dragable element = new Dragable(x, y, fill, shapeName, width, height);
 	      element.setOnMousePressed(me -> {
 		      select(element);
+		      element.setViewOrder(2);
 		      srBnd.fireEvent(me);
 		      me.consume();
 	      });

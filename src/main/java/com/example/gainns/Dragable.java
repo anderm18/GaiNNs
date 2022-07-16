@@ -12,7 +12,6 @@ class Dragable extends Group {
 
     Rectangle rectangle = new Rectangle();
     Ellipse ellipse = new Ellipse();
-    Circle circle = new Circle();
     DoubleProperty widthProperty = new SimpleDoubleProperty();
     DoubleProperty heightProperty = new SimpleDoubleProperty();
     
@@ -45,7 +44,7 @@ class Dragable extends Group {
 		    
 		    // set transparency during moving
 		    ellipse.setOnMouseDragged(me -> ellipse.setOpacity(0.7));
-		    ellipse.setOnMouseReleased(me -> ellipse.setOpacity(1));
+		    ellipse.setOnMouseReleased(me ->ellipse.setOpacity(1));
 		}
     }
     
