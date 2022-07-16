@@ -9,7 +9,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
@@ -87,6 +86,7 @@ public class Environment extends Application {
         ShapesMenu shapesMenu = new ShapesMenu(); 
         shapesMenu.createMenu(scene);
         HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
+        sMenu.setPickOnBounds(false);
         HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
         
         // config layout

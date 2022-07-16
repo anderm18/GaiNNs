@@ -16,15 +16,12 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 //import javafx.animation.Transition.*;
 import javafx.util.Duration;
-import javafx.util.Pair;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListCell;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.util.Callback;
 
@@ -47,6 +44,7 @@ public class ShapesMenu {
 	public shapeContainer getMenu() {
 		return items;
 	}
+	
 	public Button getTab() {
 		return tab;
 	}	
