@@ -29,13 +29,11 @@ import java.util.List;
 
 
 public class Environment extends Application {
-	double resizeBlockWidth = 6, a2 = resizeBlockWidth / 2;
-    double gridSize = -1;
+	double resizeBlockWidth = 6, resizeBlockWidthOffset = resizeBlockWidth / 2;
     double lastX, lastY;
     double lX, lY, sX, sY, sWidth, sHeight;
     ScrollPane scrollPane;
-    Group group, overlay = null;
-    
+    Group overlay = null;
     
     // scale change point
     Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
@@ -48,6 +46,7 @@ public class Environment extends Application {
 	final Label posReporter = new Label();
 	final Label elementInEnvReporter = new Label();
 	final Label dragAndDropReporter = new Label();
+	
 	// mouse tracker
 	private double mousePosXTraker = 0;
 	private double mousePosYTraker = 0;
@@ -73,15 +72,9 @@ public class Environment extends Application {
     @Override
     public void start(Stage stage) throws IOException { 	
         this.root = new AnchorPane(); //AnchorPane had better functions then border pane
-        group = new Group();
         this.root.setOnMousePressed(me -> select(null));
-	    
-	    Scale scale = new Scale();
-	    group.getTransforms().add(scale);
-	    
-	    scrollPane = new ScrollPane(new Group(root));
         
-        Scene scene = new Scene(scrollPane, windowWidth, windowHeight);
+        Scene scene = new Scene(root, windowWidth, windowHeight);
         
         Rectangle floorRect = createFloor(scene); //floor
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
@@ -223,7 +216,7 @@ public class Environment extends Application {
 
     void iniOverlay() {
     	this.overlay = new Group();
-        //overlay.setVisible(false);
+        // overlay.setVisible(false);
     	this.srBnd = new Rectangle();
     	this.srBnd.setStroke(Color.BLACK);
     	this.srBnd.setStrokeType(StrokeType.INSIDE);
@@ -255,20 +248,20 @@ public class Environment extends Application {
             this.srBnd.setHeight(this.selectedElement.heightProperty().get());
             this.srNW.setX(this.selectedElement.getLayoutX());
             this.srNW.setY(this.selectedElement.getLayoutY());
-            this.srN.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.a2);
+            this.srN.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
             this.srN.setY(this.selectedElement.getLayoutY());
             this.srNE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - this.resizeBlockWidth);
             this.srNE.setY(this.selectedElement.getLayoutY());
             this.srE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - this.resizeBlockWidth);
-            this.srE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.a2);
+            this.srE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
             this.srSE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - this.resizeBlockWidth);
             this.srSE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
-            this.srS.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.a2);
+            this.srS.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
             this.srS.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
             this.srSW.setX(this.selectedElement.getLayoutX());
             this.srSW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
             this.srW.setX(this.selectedElement.getLayoutX());
-            this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.a2);
+            this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
         }
       }
 
