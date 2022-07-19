@@ -1,5 +1,6 @@
 package com.example.gainns;
 
+import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -9,6 +10,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
@@ -18,20 +20,33 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.MassType;
+import org.dyn4j.world.World;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Random;
 
 public class Environment extends Application {
 	double resizeBlockWidth = 6, resizeBlockWidthOffset = resizeBlockWidth / 2;
     double lastX, lastY;
     double pressedMousePosX, pressedMousePosY, shapeLayoutX, shapeLayoutY, sWidth, sHeight;
     Group overlay = null;
+    World world;
     AnchorPane root;
+
+    Random random = new Random();
+    double rnd(double from, double to) {
+        return to + (from - to) * random.nextDouble();
+    }
     
     // scale change point
     Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
@@ -67,19 +82,61 @@ public class Environment extends Application {
     @Override
     public void start(Stage stage) throws IOException { 	
         this.root = new AnchorPane(); //AnchorPane had better functions then border pane
-        
+
         Scene scene = new Scene(root, windowWidth, windowHeight);
         Rectangle floorRect = createFloor(scene); //floor
+        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
+        PhysObj floorphys = new PhysObj();
+        floorphys.addFixture(new BodyFixture(physicsRect));
+        floorphys.setMass(MassType.INFINITE);
+
+
+
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         sceneRect.heightProperty().bind(scene.heightProperty()); //keep as high as window
         sceneRect.setFill(Color.valueOf("#99F0F5"));
-        
+        PhysObj.setMainPane(this.root);
         // set layer and position for of base env
         HBox floor = new HBox(0, floorRect);
         floor.setViewOrder(3);
         HBox env = new HBox(0, sceneRect);
         env.setViewOrder(4);
+        this.world = new World();
+
+        this.world.addBody(floorphys);
+
+        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1.0, 1.0);
+        Image img = new Image("file:img/smile.png");
+        for(int i = 0; i < 32; i++) {
+            PhysObj rectangle = new PhysObj(img);
+            BodyFixture f = new BodyFixture(rect);
+            f.setDensity(1.2);
+            f.setFriction(0.8);
+            f.setRestitution(0.4);
+            rectangle.addFixture(f);
+            rectangle.setMass(MassType.NORMAL);
+            rectangle.translate(rnd(-3,3), 9.0+rnd(-4,2));
+            rectangle.getTransform().setRotation(rnd(-3.141,3.141));
+            this.world.addBody(rectangle);
+        }
+
+
+        AnimationTimer gameLoop = new AnimationTimer() {
+
+            long last;
+
+            @Override
+            public void handle(long now) { // now is in nanoseconds
+                float delta = 1f / (1000.0f / ((now-last) / 1000000));  // seems long winded but avoids precision issues
+                world.updatev(delta);
+                PhysObj.update();
+
+                last = now;
+            }
+
+        };
+
         
         // deselecting overlay
         env.setOnMousePressed(me -> select(null));
@@ -179,6 +236,8 @@ public class Environment extends Application {
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
     		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0 - shapesMenu.getTab().getWidth()/2.0);
     	});
+
+        gameLoop.start();
         
         
     }
