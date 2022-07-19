@@ -67,7 +67,6 @@ public class Environment extends Application {
     @Override
     public void start(Stage stage) throws IOException { 	
         this.root = new AnchorPane(); //AnchorPane had better functions then border pane
-        this.root.setOnMousePressed(me -> select(null));
         
         Scene scene = new Scene(root, windowWidth, windowHeight);
         Rectangle floorRect = createFloor(scene); //floor
@@ -81,6 +80,10 @@ public class Environment extends Application {
         floor.setViewOrder(3);
         HBox env = new HBox(0, sceneRect);
         env.setViewOrder(4);
+        
+        // deselecting overlay
+        env.setOnMousePressed(me -> select(null));
+        floor.setOnMousePressed(me -> select(null));
         
         //menu for shapes
         ShapesMenu shapesMenu = new ShapesMenu(); 
@@ -206,13 +209,12 @@ public class Environment extends Application {
             if (element != null) element.toFront();
             this.selectedElement = element;
             updateOverlay();
-            System.out.println("to front");
         }
     }
 
     void iniOverlay() {
     	this.overlay = new Group();
-        // overlay.setVisible(false);
+        overlay.setVisible(false);
     	this.srBnd = new Rectangle();
     	this.srBnd.setStroke(Color.BLACK);
     	this.srBnd.setStrokeType(StrokeType.INSIDE);
