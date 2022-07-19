@@ -91,16 +91,20 @@ public class Environment extends Application {
         HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
         sMenu.setPickOnBounds(false);
         HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
+        HBox changeMenu = new HBox(0, shapesMenu.getChangeMenuTab());
         
         // config layout
-        root.getChildren().addAll(env, floor, sMenu, tab, 
+        root.getChildren().addAll(env, floor, sMenu, tab, changeMenu, 
         		                  posReporter, elementInEnvReporter, dragAndDropReporter);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene									
         AnchorPane.setTopAnchor(tab, 120d);
+        AnchorPane.setTopAnchor(changeMenu, 120d);
         AnchorPane.setBottomAnchor(posReporter, 65d);
         AnchorPane.setBottomAnchor(dragAndDropReporter, 50d);
         AnchorPane.setBottomAnchor(elementInEnvReporter, 0d);
-        AnchorPane.setLeftAnchor(tab, scene.getWidth()/2.0 - shapesMenu.getTab().getWidth()/2.0);
+        AnchorPane.setLeftAnchor(tab, (scene.getWidth()/2.13));
+        AnchorPane.setLeftAnchor(changeMenu, scene.getWidth()/2);
+
         AnchorPane.setTopAnchor(sMenu, 0d);
         
         // track mouse info all the time
@@ -127,20 +131,30 @@ public class Environment extends Application {
         // HIDE/SHOW
         shapesMenu.getTab().setOnAction(value ->  { //button(tab) pressed
             if(shapesMenu.tabPressed()) { // if hidden
-            	//AnchorPane.setTopAnchor(tab, 0d);
-                TranslateTransition tt = new TranslateTransition(Duration.millis(250), tab);
-                tt.setByY(-120f);
-                tt.setCycleCount(1);
-                //tt.setAutoReverse(true);
-                tt.play();
+                TranslateTransition tabShow = new TranslateTransition(Duration.millis(250), tab);
+                tabShow.setByY(-120f);
+                tabShow.setCycleCount(1);
+                tabShow.play();
+                TranslateTransition changeMenuShow = new TranslateTransition(Duration.millis(250), changeMenu);
+                changeMenuShow.setByY(-120f);
+                changeMenuShow.setCycleCount(1);
+                changeMenuShow.play();
             }
             else {
-            	//AnchorPane.setTopAnchor(tab, 120d);
-                TranslateTransition tt = new TranslateTransition(Duration.millis(250), tab);
-                tt.setByY(120f);
-                tt.setCycleCount(1);
-                tt.play();
+                TranslateTransition tabHide = new TranslateTransition(Duration.millis(250), tab);
+                tabHide.setByY(120f);
+                tabHide.setCycleCount(1);
+                tabHide.play();
+                TranslateTransition changeMenuHide = new TranslateTransition(Duration.millis(250), changeMenu);
+                changeMenuHide.setByY(120f);
+                changeMenuHide.setCycleCount(1);
+                changeMenuHide.play();
             }
+         });
+
+         // CHANGE MENU
+         shapesMenu.getChangeMenuTab().setOnAction(value ->  {
+            
          });
         
         
