@@ -9,6 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
@@ -18,12 +19,21 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.MassType;
+
+import org.dyn4j.dynamics.*;
+import org.dyn4j.geometry.*;
+import org.dyn4j.world.World;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class Environment extends Application {
@@ -35,8 +45,8 @@ public class Environment extends Application {
     
     // scale change point
     Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
-    Dragable selectedElement;  
-    
+    Dragable selectedElement;
+
 	//temp debug
 	final Label posReporter = new Label();
 	final Label elementInEnvReporter = new Label();
@@ -53,7 +63,7 @@ public class Environment extends Application {
     
     // hard limit: shape will not reach ground
     Rectangle2D area = new Rectangle2D(0, 0, windowWidth, windowHeight-100);
-    
+    main m;
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(windowWidth, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -63,14 +73,15 @@ public class Environment extends Application {
 
     //Menu bar is good for creating for general menus, not really for drag and drop. We probably
     //should use it to make a general menu (File, Edit, Help, etc).
-    
+
+
     @Override
     public void start(Stage stage) throws IOException { 	
         this.root = new AnchorPane(); //AnchorPane had better functions then border pane
         
         Scene scene = new Scene(root, windowWidth, windowHeight);
         Rectangle floorRect = createFloor(scene); //floor
-        Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
+        Rectangle sceneRect = new Rectangle(windowWidth/2, windowHeight/2); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         sceneRect.heightProperty().bind(scene.heightProperty()); //keep as high as window
         sceneRect.setFill(Color.valueOf("#99F0F5"));
@@ -84,7 +95,7 @@ public class Environment extends Application {
         // deselecting overlay
         env.setOnMousePressed(me -> select(null));
         floor.setOnMousePressed(me -> select(null));
-        
+
         //menu for shapes
         ShapesMenu shapesMenu = new ShapesMenu(); 
         shapesMenu.createMenu(scene);
@@ -179,8 +190,7 @@ public class Environment extends Application {
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
     		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0 - shapesMenu.getTab().getWidth()/2.0);
     	});
-        
-        
+
     }
     
     public static void main(String[] args) {
