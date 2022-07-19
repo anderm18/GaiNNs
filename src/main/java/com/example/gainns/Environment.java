@@ -301,10 +301,12 @@ public class Environment extends Application {
             	double ratio = 1.0;
             	if (pressedKeys.contains(KeyCode.SHIFT)) {
             		ratio = this.sHeight / this.sWidth;
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + dx * ratio, true);
+            	} else {
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + dy, true);
             	}
-            	setHSize(this.shapeLayoutX + dx, true); 
-            	setVSize(this.shapeLayoutY + dx * ratio, true);
-            	
             }
             else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
             else if (source == this.srNE) { 
