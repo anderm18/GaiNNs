@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
@@ -21,6 +22,8 @@ import javafx.scene.shape.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -220,6 +223,7 @@ public class Environment extends Application {
     	this.srBnd.getStrokeDashArray().addAll(2d, 4d);
     	this.srBnd.setFill(Color.TRANSPARENT);
         handleMouse(this.srBnd);
+        handleKeyboard(this.srBnd);
         this.srNW = srCreate(Cursor.NW_RESIZE);
         this.srN = srCreate(Cursor.N_RESIZE);
         this.srNE = srCreate(Cursor.NE_RESIZE);
@@ -279,6 +283,7 @@ public class Environment extends Application {
         	this.sHeight = this.selectedElement.heightProperty().get();
             // me.consume();
         });
+        
         node.setOnMouseDragged(me -> {
             double dx = (me.getX() - this.pressedMousePosX);
             double dy = (me.getY() - this.pressedMousePosY);
@@ -288,13 +293,21 @@ public class Environment extends Application {
             else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
             else if (source == this.srNE) { setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + dy, true); }
             else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            else if (source == this.srSE) { setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
+            else if (source == this.srSE) {	setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
             else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
             else if (source == this.srSW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             me.consume();
         });
-      }
+    }
+    
+    void handleKeyboard(Node node) {
+    	node.setOnKeyPressed(ke -> {
+    		if (ke.getCode() == KeyCode.SHIFT) {
+    			System.out.println("SHIFT pressed");
+    		}
+    	});
+    }
 
     void setHSize(double h, boolean b) {
         double x = this.selectedElement.getLayoutX(), w = this.selectedElement.widthProperty().get(), width;
