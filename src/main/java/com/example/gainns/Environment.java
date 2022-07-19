@@ -26,7 +26,9 @@ import javafx.util.Duration;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class Environment extends Application {
@@ -57,6 +59,9 @@ public class Environment extends Application {
     // hard limit: shape will not reach ground
     Rectangle2D area = new Rectangle2D(0, 0, windowWidth, windowHeight-100);
     
+    // A container to store all pressed keys
+    private Set<KeyCode> pressedKeys = new HashSet<>();
+    
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(windowWidth, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -73,6 +78,10 @@ public class Environment extends Application {
         this.root.setOnMousePressed(me -> select(null));
         
         Scene scene = new Scene(root, windowWidth, windowHeight);
+        // Listen for keys
+        scene.setOnKeyPressed(e -> pressedKeys.add(e.getCode()));
+        scene.setOnKeyReleased(e -> pressedKeys.remove(e.getCode()));
+        
         Rectangle floorRect = createFloor(scene); //floor
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -223,7 +232,6 @@ public class Environment extends Application {
     	this.srBnd.getStrokeDashArray().addAll(2d, 4d);
     	this.srBnd.setFill(Color.TRANSPARENT);
         handleMouse(this.srBnd);
-        handleKeyboard(this.srBnd);
         this.srNW = srCreate(Cursor.NW_RESIZE);
         this.srN = srCreate(Cursor.N_RESIZE);
         this.srNE = srCreate(Cursor.NE_RESIZE);
@@ -289,24 +297,33 @@ public class Environment extends Application {
             double dy = (me.getY() - this.pressedMousePosY);
             Object source = me.getSource();
             if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
-            else if (source == this.srNW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + dy, true); }
+            else if (source == this.srNW) {
+            	double ratio = 1.0;
+            	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		ratio = this.sHeight / this.sWidth;
+            	}
+            	setHSize(this.shapeLayoutX + dx, true); 
+            	setVSize(this.shapeLayoutY + dx * ratio, true);
+            	
+            }
             else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
-            else if (source == this.srNE) { setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + dy, true); }
+            else if (source == this.srNE) { 
+            	setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            	setVSize(this.shapeLayoutY + dy, true); 
+            }
             else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            else if (source == this.srSE) {	setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
+            else if (source == this.srSE) {	
+            	setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
+            	setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            }
             else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            else if (source == this.srSW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
+            else if (source == this.srSW) { 
+            	setHSize(this.shapeLayoutX + dx, true); 
+            	setVSize(this.shapeLayoutY + this.sHeight + dy, false); 
+            }
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             me.consume();
         });
-    }
-    
-    void handleKeyboard(Node node) {
-    	node.setOnKeyPressed(ke -> {
-    		if (ke.getCode() == KeyCode.SHIFT) {
-    			System.out.println("SHIFT pressed");
-    		}
-    	});
     }
 
     void setHSize(double h, boolean b) {
