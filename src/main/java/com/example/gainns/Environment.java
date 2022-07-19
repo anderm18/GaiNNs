@@ -331,8 +331,14 @@ public class Environment extends Application {
             }
             else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
             else if (source == this.srSW) { 
-            	setHSize(this.shapeLayoutX + dx, true); 
-            	setVSize(this.shapeLayoutY + this.sHeight + dy, false); 
+            	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		double ratio = this.sHeight / this.sWidth;
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + this.sHeight + dx * ratio * -1, false);
+            	} else {
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            	}
             }
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             me.consume();
