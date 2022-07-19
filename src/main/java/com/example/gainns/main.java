@@ -70,7 +70,7 @@ public class main extends Application {
             f.setFriction(0.8);
             f.setRestitution(0.4);
             rectangle.addFixture(f);
-            rectangle.setMass(MassType.INFINITE);
+            rectangle.setMass(MassType.NORMAL);
             rectangle.translate(rnd(-3,3), 9.0+rnd(-4,2));
             rectangle.getTransform().setRotation(rnd(-3.141,3.141));
             this.world.addBody(rectangle);
