@@ -298,9 +298,8 @@ public class Environment extends Application {
             Object source = me.getSource();
             if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srNW) {
-            	double ratio = 1.0;
             	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		ratio = this.sHeight / this.sWidth;
+            		double ratio = this.sHeight / this.sWidth;
             		setHSize(this.shapeLayoutX + dx, true); 
             		setVSize(this.shapeLayoutY + dx * ratio, true);
             	} else {
@@ -310,8 +309,14 @@ public class Environment extends Application {
             }
             else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
             else if (source == this.srNE) { 
-            	setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            	setVSize(this.shapeLayoutY + dy, true); 
+            	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		double ratio = this.sHeight / this.sWidth;
+            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		setVSize(this.shapeLayoutY + dx * ratio * -1, true);
+            	} else {
+            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		setVSize(this.shapeLayoutY + dy, true); 
+            	}
             }
             else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
             else if (source == this.srSE) {	
