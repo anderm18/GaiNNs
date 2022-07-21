@@ -28,11 +28,12 @@ import javafx.util.Callback;
 public class ShapesMenu {
 	
 		// private Rectangle menu = new Rectangle();
-		private shapeContainer menu = new shapeContainer();
+		private shapeContainer items = new shapeContainer();
 
 		private Button tab = new Button("HIDE");
 		private Button changeMenu = new Button("Scene Editor");
 		private boolean hidden = false;
+		private boolean charMenuShowing = true;
 	
 	public void createMenu(Scene scene) { //set up shape proportions and color for menu
 //		menu.setWidth(1500);
@@ -44,7 +45,7 @@ public class ShapesMenu {
 	}
 
 	public shapeContainer getMenu() {
-		return menu;
+		return items;
 	}
 	
 	public Button getTab() {
@@ -53,6 +54,19 @@ public class ShapesMenu {
 	
 	public Button getChangeMenuTab() {
 		return changeMenu;
+	}
+
+	public void changeMenu() { //switch from env to char menu or vice versa
+		items.changeMenu();
+		if (charMenuShowing) {
+			changeMenu.setText("Character Editor");
+			charMenuShowing = false;
+		}
+		else {
+			changeMenu.setText("Scene Editor");
+			charMenuShowing = true;
+		}
+		return;
 	}
 	
 	public boolean tabPressed() { // if tab pressed
@@ -82,16 +96,6 @@ public class ShapesMenu {
 	// Add functions for adding shapes to menu or store shapes as private variables
 }
 
-void changeMenu(ListView<DragAndDropListShape> l, ObservableList<DragAndDropListShape> charData, ObservableList<DragAndDropListShape> envData) {
-	if(l.getItems() == charData) {
-		l.setItems(envData);
-	}
-	else {
-		l.setItems(charData);
-	}
-	return;
-}
-
 class shapeContainer {
 	public ListView<DragAndDropListShape> shapeVisualizedList;
 	@SuppressWarnings("unchecked")
@@ -102,6 +106,16 @@ class shapeContainer {
 	
 	//temp debug
 	final Label label = new Label();
+
+	void changeMenu() {
+		if(shapeVisualizedList.getItems() == charData) {
+			shapeVisualizedList.setItems(envData);
+		}
+		else {
+			shapeVisualizedList.setItems(charData);
+		}
+		return;
+	}
 	
 	public shapeContainer() { //c == character menu, e = enviornment menu
 		this.shapeVisualizedList = new ListView<>();

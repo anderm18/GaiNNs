@@ -102,7 +102,7 @@ public class Environment extends Application {
         AnchorPane.setBottomAnchor(posReporter, 65d);
         AnchorPane.setBottomAnchor(dragAndDropReporter, 50d);
         AnchorPane.setBottomAnchor(elementInEnvReporter, 0d);
-        AnchorPane.setLeftAnchor(tab, (scene.getWidth()/2.13));
+        AnchorPane.setLeftAnchor(tab, (scene.getWidth()/2.15));
         AnchorPane.setLeftAnchor(changeMenu, scene.getWidth()/2);
 
         AnchorPane.setTopAnchor(sMenu, 0d);
@@ -154,7 +154,7 @@ public class Environment extends Application {
 
          // CHANGE MENU
          shapesMenu.getChangeMenuTab().setOnAction(value ->  {
-            
+            shapesMenu.changeMenu();
          });
         
         
