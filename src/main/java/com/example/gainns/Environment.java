@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
@@ -152,7 +153,17 @@ public class Environment extends Application {
                 event.consume();
             }
         });
-
+    
+//        selectedElement.setOnKeyPressed(ke -> {
+//        	if (ke.getCode() == KeyCode.DELETE) {
+//        		// delete selectedElement when user deletes shape
+//        		System.out.println("DELETE pressed");
+//        		root.getChildren().remove(selectedElement);
+//        		shapesInEnv.remove(selectedElement);
+//        	}
+//        });
+        
+        
         
         sceneRect.setOnDragDropped((DragEvent event) -> {
             Dragboard db = event.getDragboard();
