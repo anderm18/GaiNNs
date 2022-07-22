@@ -153,15 +153,16 @@ public class Environment extends Application {
                 event.consume();
             }
         });
-    
-//        selectedElement.setOnKeyPressed(ke -> {
-//        	if (ke.getCode() == KeyCode.DELETE) {
-//        		// delete selectedElement when user deletes shape
-//        		System.out.println("DELETE pressed");
-//        		root.getChildren().remove(selectedElement);
-//        		shapesInEnv.remove(selectedElement);
-//        	}
-//        });
+        
+		// delete selectedElement when user deletes shape
+        scene.setOnKeyPressed(ke -> {
+        	if (ke.getCode() == KeyCode.DELETE && selectedElement != null) {
+        		System.out.println("DELETE pressed");
+        		root.getChildren().remove(overlay);
+        		root.getChildren().remove(selectedElement);
+        		shapesInEnv.remove(selectedElement);
+        	}
+        });
         
         
         
@@ -248,6 +249,7 @@ public class Environment extends Application {
 									      this.srSW, this.srW);
         this.root.getChildren().add(this.overlay);
         this.overlay.setViewOrder(1);
+        
     }
 
     void updateOverlay() {
