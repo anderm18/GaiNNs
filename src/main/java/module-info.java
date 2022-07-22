@@ -7,6 +7,7 @@ module com.example.gainns {
 	requires javafx.graphics;
 	requires javafx.base;
 	requires org.dyn4j;
+	requires java.desktop;
 
     opens com.example.gainns to javafx.fxml;
     exports com.example.gainns;
