@@ -16,15 +16,12 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 //import javafx.animation.Transition.*;
 import javafx.util.Duration;
-import javafx.util.Pair;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListCell;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.util.Callback;
 
@@ -43,9 +40,11 @@ public class ShapesMenu {
 //		tab.setStyle("-fx-background-color: #4C4C4C; -fx-text-fill: #FFFFFF");
 		
 	}
+
 	public shapeContainer getMenu() {
 		return items;
 	}
+	
 	public Button getTab() {
 		return tab;
 	}	
@@ -77,31 +76,12 @@ public class ShapesMenu {
 	// Add functions for adding shapes to menu or store shapes as private variables
 }
 
+
 class shapeContainer {
 	public ListView<DragAndDropListShape> shapeVisualizedList;
 	@SuppressWarnings("unchecked")
-	ObservableList<DragAndDropListShape> data = FXCollections.observableArrayList(new DragAndDropListShape(new Circle(20), Color.BLUE), 
-																				new DragAndDropListShape(new Rectangle(50, 50), Color.RED), 
-																				new DragAndDropListShape(new Rectangle(100, 50), Color.PINK),
-																				new DragAndDropListShape(new Ellipse(50, 20), Color.GREEN),
-																				new DragAndDropListShape(new Circle(20), Color.YELLOW), 
-																				new DragAndDropListShape(new Rectangle(50, 50), Color.AQUA), 
-																				new DragAndDropListShape(new Rectangle(60, 50), Color.BURLYWOOD),
-																				new DragAndDropListShape(new Ellipse(59, 20), Color.CADETBLUE),
-																				new DragAndDropListShape(new Circle(20), Color.DARKCYAN), 
-																				new DragAndDropListShape(new Rectangle(10, 40), Color.DARKKHAKI), 
-																				new DragAndDropListShape(new Rectangle(50, 80), Color.DARKSLATEBLUE),
-																				new DragAndDropListShape(new Ellipse(50, 20), Color.KHAKI),
-																				new DragAndDropListShape(new Circle(20), Color.RED), 
-																				new DragAndDropListShape(new Rectangle(50, 50), Color.AQUA), 
-																				new DragAndDropListShape(new Rectangle(60, 50), Color.BURLYWOOD),
-																				new DragAndDropListShape(new Ellipse(59, 20), Color.RED),
-																				new DragAndDropListShape(new Circle(20), Color.DARKCYAN),
-																				new DragAndDropListShape(new Circle(20), Color.YELLOW), 
-																				new DragAndDropListShape(new Rectangle(50, 50), Color.SKYBLUE), 
-																				new DragAndDropListShape(new Rectangle(60, 50), Color.BURLYWOOD),
-																				new DragAndDropListShape(new Ellipse(59, 20), Color.CADETBLUE),
-																				new DragAndDropListShape(new Circle(20), Color.BLUE));
+	ObservableList<DragAndDropListShape> data = FXCollections.observableArrayList(new DragAndDropListShape(new Circle(25), Color.BLUE), 
+																				new DragAndDropListShape(new Rectangle(50, 50), Color.RED));
 	
 	//temp debug
 	final Label label = new Label();
@@ -187,4 +167,3 @@ class shapeContainer {
 //		primaryStage.setScene(scene);
 //		primaryStage.show();
 //	}
-
