@@ -92,10 +92,10 @@ public class Environment extends Application {
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         Rectangle floorRect = createFloor(scene); //floor
-        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
+        /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
         PhysObj floorphys = new PhysObj();
         floorphys.addFixture(new BodyFixture(physicsRect));
-        floorphys.setMass(MassType.INFINITE);
+        floorphys.setMass(MassType.INFINITE);*/
 
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -109,7 +109,7 @@ public class Environment extends Application {
         env.setViewOrder(4);
         this.world = new World();
         this.world.setGravity(0, 9.81);
-        floorphys.translate(7.5, 7.25);
+        /*floorphys.translate(7.5, 7.25);
         this.world.addBody(floorphys);
 
         org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1.0, 1.0);
@@ -126,7 +126,7 @@ public class Environment extends Application {
             rectangle.translate(10, 0);
             rectangle.getTransform().setRotation(rnd(-3.141,3.141));
             this.world.addBody(rectangle);
-        }
+        }*/
 
 
 
