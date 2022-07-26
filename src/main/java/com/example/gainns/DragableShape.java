@@ -3,6 +3,7 @@ package com.example.gainns;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
@@ -25,7 +26,10 @@ class Dragable extends Group {
 		    widthProperty.set(shapeParam0);
 		    heightProperty.set(shapeParam1);
 		    rectangle.setFill(fill);
+		    ellipse.setFill(Color.BLUE);
+		   
 		    getChildren().add(rectangle);
+		    
 		    
 		    // set transparency during moving
 		    rectangle.setOnMouseDragged(me -> rectangle.setOpacity(0.7));

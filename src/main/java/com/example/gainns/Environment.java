@@ -35,6 +35,7 @@ public class Environment extends Application {
     
     // scale change point
     Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
+    Circle srCen, srRotate;
     Dragable selectedElement;  
     
 	//temp debug
@@ -230,7 +231,8 @@ public class Environment extends Application {
         this.srS = srCreate(Cursor.S_RESIZE);
         this.srSW = srCreate(Cursor.SW_RESIZE);
         this.srW = srCreate(Cursor.W_RESIZE);
-        this.overlay.getChildren().addAll(this.srBnd, 
+        this.srCen = srCreate(Cursor.OPEN_HAND, true);
+        this.overlay.getChildren().addAll(this.srBnd,this.srCen,
 										  this.srNW, this.srN, 
 										  this.srNE, this.srE, 
 										  this.srSE, this.srS, 
@@ -261,6 +263,8 @@ public class Environment extends Application {
             this.srSW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
             this.srW.setX(this.selectedElement.getLayoutX());
             this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
+            this.srCen.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
+            this.srCen.setCenterY((this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2));
         }
       }
 
@@ -270,6 +274,21 @@ public class Environment extends Application {
         handleMouse(rectangle);
         return rectangle;
      }
+    
+    Circle srCreate(Cursor cursor, boolean isCenter) {
+    	Circle circle;
+    	if (isCenter) {
+    		circle = new Circle(this.resizeBlockWidth/2);
+    		circle.setStroke(Color.BLACK);
+    		circle.setFill(Color.TRANSPARENT);
+    	}else {
+    		circle = new Circle(this.resizeBlockWidth/2, Color.BLACK);
+    	}
+    	
+    	circle.setCursor(cursor);
+        handleMouse(circle);
+        return circle;
+    }
 
     void handleMouse(Node node) {
         node.setOnMousePressed(me -> {
