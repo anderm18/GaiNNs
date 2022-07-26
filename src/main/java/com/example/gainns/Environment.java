@@ -32,22 +32,25 @@ import java.util.List;
 
 
 public class Environment extends Application {
+	// resize storage param
 	double resizeBlockWidth = 6, resizeBlockWidthOffset = resizeBlockWidth / 2;
     double lastX, lastY;
     double pressedMousePosX, pressedMousePosY, shapeLayoutX, shapeLayoutY, sWidth, sHeight;
-    Group overlay = null;
-    AnchorPane root;
+    private Group overlay = null;
+    private AnchorPane root;
     
     // scale change point
-    Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
-    Circle srCen, srRotate;
-    Dragable selectedElement;  
+    private Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
+    private double rotationLengthOffsetY = 0;
+    private double rotationLengthOffsetX = 0;
+    private Circle srCen, srRotate;
+    private Dragable selectedElement;  
     
 	//temp debug
-	final Label posReporter = new Label();
-	final Label elementInEnvReporter = new Label();
-	final Label dragAndDropReporter = new Label();
-	final Label rotateReporter = new Label();
+	private final Label posReporter = new Label();
+	private final Label elementInEnvReporter = new Label();
+	private final Label dragAndDropReporter = new Label();
+	private final Label rotateReporter = new Label();
 	
 	// mouse tracker
 	private double mousePosXTraker = 0;
@@ -161,7 +164,7 @@ public class Environment extends Application {
             }
         });
 
-        
+        // drop event - create shape
         sceneRect.setOnDragDropped((DragEvent event) -> {
             Dragboard db = event.getDragboard();
             String shapeInfo = db.getString().replace("[", "!!").replace("]", "!!"); // avoid parsing bug in JAVA 1.8 for windows
@@ -181,20 +184,24 @@ public class Environment extends Application {
             event.consume();
         });
         
+        // set up window
         stage.setTitle("GaiNNs");
         stage.setScene(scene);
         stage.show();
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
     		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0 - shapesMenu.getTab().getWidth()/2.0);
-    	});
-        
-        
+    	}); 
     }
     
     public static void main(String[] args) {
         launch();
     }
     
+    /**
+     * for dev, update the mouse position and 
+     * display in main window
+     * @param event the mouse event, store all pos info
+     */
     public void updateMousePosition(InputEvent event) {
     	if (event instanceof MouseEvent ) {
 			MouseEvent eventInstance = (MouseEvent) event;
@@ -210,6 +217,11 @@ public class Environment extends Application {
     	
     }
     
+    /**
+     * helper function for event when a shape in env
+     * is selected, generate overlay
+     * @param element the selected shape
+     */
     void select(Dragable element) {
         if (this.overlay == null && element != null) iniOverlay();
         if (element != this.selectedElement) {
@@ -220,6 +232,10 @@ public class Environment extends Application {
         }
     }
 
+    /**
+     *  helper function used when overlay is null
+     *  and need to create and add to window
+     */
     void iniOverlay() {
     	this.overlay = new Group();
         overlay.setVisible(false);
@@ -250,35 +266,63 @@ public class Environment extends Application {
         this.overlay.setViewOrder(1);
     }
 
+    /**
+     * helper function used when shape event triggered
+     * update overlay position and size
+     */
     void updateOverlay() {
         if (this.selectedElement != null) {
-            this.srBnd.setX(this.selectedElement.getLayoutX());
-            this.srBnd.setY(this.selectedElement.getLayoutY());
-            this.srBnd.setWidth(this.selectedElement.widthProperty().get());
-            this.srBnd.setHeight(this.selectedElement.heightProperty().get());
-            this.srNW.setX(this.selectedElement.getLayoutX());
-            this.srNW.setY(this.selectedElement.getLayoutY());
+        	// border
+            this.srBnd.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
+            this.srBnd.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
+            this.srBnd.setWidth(this.selectedElement.widthProperty().get() + this.rotationLengthOffsetX);
+            this.srBnd.setHeight(this.selectedElement.heightProperty().get() + this.rotationLengthOffsetY);
+            // north west
+            this.srNW.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
+            this.srNW.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
+            // north
             this.srN.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
-            this.srN.setY(this.selectedElement.getLayoutY());
-            this.srNE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - this.resizeBlockWidth);
-            this.srNE.setY(this.selectedElement.getLayoutY());
-            this.srE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - this.resizeBlockWidth);
+            this.srN.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
+            // north east
+            this.srNE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
+            		        this.resizeBlockWidth + this.rotationLengthOffsetX/2);
+            this.srNE.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
+            // east
+            this.srE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
+            		       this.resizeBlockWidth + this.rotationLengthOffsetX/2);
             this.srE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
-            this.srSE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - this.resizeBlockWidth);
-            this.srSE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
+            // south east
+            this.srSE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
+            		        this.resizeBlockWidth + this.rotationLengthOffsetX/2);
+            this.srSE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
+            		        this.resizeBlockWidth + this.rotationLengthOffsetY/2);
+            // south
             this.srS.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
-            this.srS.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
-            this.srSW.setX(this.selectedElement.getLayoutX());
-            this.srSW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
-            this.srW.setX(this.selectedElement.getLayoutX());
+            this.srS.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
+            		       this.resizeBlockWidth + this.rotationLengthOffsetY/2);
+            // south west
+            this.srSW.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
+            this.srSW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
+            		        this.resizeBlockWidth + this.rotationLengthOffsetY/2);
+            // west
+            this.srW.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
             this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
+            // center dot
             this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
             this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
+            // rotate dot
             this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
-            this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10);
+            this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10 - this.rotationLengthOffsetY/2);
         }
       }
 
+    /**
+     * constructor of square overlay point
+     * @param cursor    set the cursor style when 
+     * 				    cursor pass this point
+     * @return a rectangle represents the overlay point
+     * 		   in a specific position
+     */
     Rectangle srCreate(Cursor cursor) {
         Rectangle rectangle = new Rectangle(this.resizeBlockWidth, this.resizeBlockWidth, Color.BLACK);
         rectangle.setCursor(cursor);
@@ -286,6 +330,16 @@ public class Environment extends Application {
         return rectangle;
      }
     
+    /**
+     * constructor of circle overlay point
+     * @param cursor    set the cursor style when 
+     * 				    cursor pass this point
+     * @param isCenter  true if needs to create 
+     *                  center overlay point, 
+     *                  no fill in this case
+     * @return a circle represents the overlay point
+     * 		   in a specific position
+     */
     Circle srCreate(Cursor cursor, boolean isCenter) {
     	Circle circle;
     	if (isCenter) {
@@ -301,8 +355,17 @@ public class Environment extends Application {
         return circle;
     }
 
+    /**
+     * event manager for all overlay element 
+     * @param node the element to set these action
+     */
     void handleMouse(Node node) {
-    	node.setOnMouseReleased(me -> {if (node == this.srRotate) this.srRotate.setCursor(Cursor.OPEN_HAND);});
+    	node.setOnMouseReleased(me -> {
+    		if (node == this.srRotate) {
+    			setRotate(me.getX(), me.getY(), true);
+    			this.srRotate.setCursor(Cursor.OPEN_HAND);
+    		}
+    	});
         node.setOnMousePressed(me -> {
         	this.pressedMousePosX = me.getX();
         	this.pressedMousePosY = me.getY();
@@ -327,66 +390,108 @@ public class Environment extends Application {
             else if (source == this.srSW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
-            else if (source == this.srRotate) setRotate(me.getX(), me.getY());
+            else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
             me.consume();
         });        
       }
 
-    void setRotate(double horizontalParam, double verticalParam) {
+    /**
+     * function handle the rotation event for dragable shape
+     * @param horizontalParam the center of shape in x
+     * @param verticalParam   the center of shape in y
+     * @param needStore       true if the updated angle needs
+     * 						  to save in element
+     */
+    void setRotate(double horizontalParam, double verticalParam, boolean needStore) {
+    	// set centre
+    	// TODO: editable center based on srCen
     	double centerShapeX = this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2;
     	double centerShapeY = this.selectedElement.getLayoutY() + this.selectedElement.widthProperty().get() / 2;
+    	
+    	double degree = (Math.toDegrees(Math.atan((horizontalParam - centerShapeX)/(centerShapeY- verticalParam)))
+    					+ this.selectedElement.getRotationDegree())%360;
+    	// update rotation of shape
     	if (centerShapeY >= verticalParam){ // First and forth quadrant
-    		this.selectedElement.setRotate(Math.toDegrees(Math.atan((horizontalParam - centerShapeX)/(centerShapeY- verticalParam))));
+    		this.selectedElement.setRotate(degree> 0? degree: 360 + degree, needStore);
     	}else {
-    		this.selectedElement.setRotate(Math.toDegrees(Math.toRadians(180)+Math.atan((horizontalParam - centerShapeX)/(centerShapeY-verticalParam))));
+    		this.selectedElement.setRotate((Math.toDegrees(Math.toRadians(180 + degree))), needStore);
     	}
-    	Image image = textToImage((this.selectedElement.getRotate() > 0? Math.round(this.selectedElement.getRotate()):
-    		                       (360 + Math.round(this.selectedElement.getRotate())))  + "°");
+    	// set cursor
+    	Image image = textToImage(Math.round(this.selectedElement.getRotate()) + "°");
     	this.srRotate.setCursor(new ImageCursor(image, image.getWidth() / 2, image.getHeight() /2));
+    	
+    	// for dev, update debug info
     	this.rotateReporter.setText("Current cursor position: "+horizontalParam + " " + verticalParam
     							   +"\nCenter point:"+centerShapeX+" " + centerShapeY
     			                   +"\nCurrent angle: " + this.selectedElement.getRotate() + "°");
     	
-    	
-    	// Forth quadrant
+    	// set boarder
+    	Double degreeFitOffset = this.selectedElement.getRotate() % 180;
+    	if ((degreeFitOffset >= 0 && degreeFitOffset < 90)) {
+    		this.rotationLengthOffsetY = (this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset)) + 
+    				this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset))) - this.selectedElement.heightProperty().get();
+    		this.rotationLengthOffsetX = (this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset)) + 
+    				this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset))) - this.selectedElement.widthProperty().get();
+    	}else if ((degreeFitOffset >= 90 && degreeFitOffset < 180)){
+    		this.rotationLengthOffsetY = (this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
+    									  this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) - 
+    									  this.selectedElement.heightProperty().get();
+    		this.rotationLengthOffsetX = (this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
+    									  this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) -
+    									  this.selectedElement.widthProperty().get();
+    	}
     	
     }
     
-    private WritableImage textToImage(String text) {
-        Text t = new Text(text);
-        t.setFont(Font.font ("Verdana", 20));
-        return t.snapshot(null, null);
+    /**
+     * Helper function to generate image based on string
+     * @param inputText the input string
+     * @return a image containing inputText
+     */
+    private WritableImage textToImage(String inputText) {
+        Text textImageContent = new Text(inputText);
+        textImageContent.setFont(Font.font ("Verdana", 20));
+        return textImageContent.snapshot(null, null);
     }
     
-    void setHSize(double horizontalParam, boolean b) {
+    /**
+     * function for changing the horizontal length of shape
+     * @param horizontalParam
+     * @param needOffset
+     */
+    void setHSize(double horizontalParam, boolean needOffset) {
         double x = this.selectedElement.getLayoutX(), w = this.selectedElement.widthProperty().get(), width;
-        double as = this.resizeBlockWidth * 3;
+        double hardLimitForResize = this.resizeBlockWidth * 3;
         if (horizontalParam < this.area.getMinX()) horizontalParam = this.area.getMinX();
         if (horizontalParam > this.area.getMaxX()) horizontalParam = this.area.getMaxX();
-        if (b) {
+        if (needOffset) {
             width = w + x - horizontalParam;
-            if (width < as) { width = as; horizontalParam = x + w - as; }
+            if (width < hardLimitForResize) { width = hardLimitForResize; horizontalParam = x + w - hardLimitForResize; }
             this.selectedElement.setLayoutX(horizontalParam);
         } else {
             width = horizontalParam - x;
-            if (width < as) width = as;
+            if (width < hardLimitForResize) width = hardLimitForResize;
         }
         this.selectedElement.widthProperty().set(width);
     }
 
-    // set vertical size
-    void setVSize(double verticalParam, boolean b) {
+    /**
+     * function for changing the vertical length of shape
+     * @param verticalParam
+     * @param needOffset
+     */
+    void setVSize(double verticalParam, boolean needOffset) {
         double y = this.selectedElement.getLayoutY(), h = this.selectedElement.heightProperty().get(), height;
-        double as = this.resizeBlockWidth * 3;
+        double hardLimitForResize = this.resizeBlockWidth * 3;
         if (verticalParam < this.area.getMinY()) verticalParam = this.area.getMinY();
         if (verticalParam > this.area.getMaxY()) verticalParam = this.area.getMaxY();
-        if (b) {
+        if (needOffset) {
             height = h + y - verticalParam;
-            if (height < as) { height = as; verticalParam = y + h - as; }
+            if (height < hardLimitForResize) { height = hardLimitForResize; verticalParam = y + h - hardLimitForResize; }
             this.selectedElement.setLayoutY(verticalParam);
         } else {
             height = verticalParam - y;
-            if (height < as) height = as;
+            if (height < hardLimitForResize) height = hardLimitForResize;
         }
         this.selectedElement.heightProperty().set(height);
     }
@@ -395,10 +500,14 @@ public class Environment extends Application {
     	
     }
 
-    // move func
+    /**
+     * function for moving the dragable shape
+     * @param x
+     * @param y
+     */
     public void relocate(double x, double y) {
-        double maxX = this.area.getMaxX() - this.selectedElement.widthProperty().get();
-        double maxY = this.area.getMaxY() - this.selectedElement.heightProperty().get();
+        double maxX = this.area.getMaxX() - this.srBnd.getWidth() + this.rotationLengthOffsetX/2;
+        double maxY = this.area.getMaxY() - this.srBnd.getHeight() + this.rotationLengthOffsetY/2;
         if (x < this.area.getMinX()) x = this.area.getMinX();
         if (y < this.area.getMinY()) y = this.area.getMinY();
         if (x > maxX) x = maxX;

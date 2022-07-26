@@ -14,10 +14,11 @@ class Dragable extends Group {
     Ellipse ellipse = new Ellipse();
     DoubleProperty widthProperty = new SimpleDoubleProperty();
     DoubleProperty heightProperty = new SimpleDoubleProperty();
-    
     ShapesMenu shapesMenu;
+    Double rotataionDegree;
     
     Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
+    	this.rotataionDegree = 0.0;
     	if (shapeName.equals("Rectangle")) {
 			widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
 		    heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
@@ -51,6 +52,16 @@ class Dragable extends Group {
 		}
     }
     
+    public void setRotate(double angle, boolean needStore) {
+    	this.setRotate(angle);
+    	if (needStore) {
+    		this.rotataionDegree = angle;
+    	}
+    }
+    
+    public double getRotationDegree() {
+    	return this.rotataionDegree;
+    }
     
     DoubleProperty widthProperty() { return widthProperty; }
     DoubleProperty heightProperty() { return heightProperty; }
