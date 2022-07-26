@@ -10,12 +10,13 @@ import javafx.scene.shape.Rectangle;
 
 class Dragable extends Group {
 
-    Rectangle rectangle = new Rectangle();
-    Ellipse ellipse = new Ellipse();
-    DoubleProperty widthProperty = new SimpleDoubleProperty();
-    DoubleProperty heightProperty = new SimpleDoubleProperty();
-    ShapesMenu shapesMenu;
-    Double rotataionDegree;
+	private Rectangle rectangle = new Rectangle();
+	private Ellipse ellipse = new Ellipse();
+	private DoubleProperty widthProperty = new SimpleDoubleProperty();
+	private DoubleProperty heightProperty = new SimpleDoubleProperty();
+	private double rotataionDegree;
+    private double rotationLengthOffsetY = 0;
+    private double rotationLengthOffsetX = 0;
     
     Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
     	this.rotataionDegree = 0.0;
@@ -50,6 +51,22 @@ class Dragable extends Group {
 		    ellipse.setOnMouseDragged(me -> ellipse.setOpacity(0.7));
 		    ellipse.setOnMouseReleased(me ->ellipse.setOpacity(1));
 		}
+    }
+    
+    public double getRotationLengthOffsetY(){
+    	return this.rotationLengthOffsetY;
+    }
+    
+    public double getRotationLengthOffsetX() {
+    	return this.rotationLengthOffsetX;
+    }
+    
+    public void setRotationLengthOffsetY(Double rotationLengthOffsetY) {
+    	this.rotationLengthOffsetY = rotationLengthOffsetY;
+    }
+    
+    public void setRotationLengthOffsetX(Double rotationLengthOffsetX) {
+    	this.rotationLengthOffsetX = rotationLengthOffsetX;
     }
     
     public void setRotate(double angle, boolean needStore) {

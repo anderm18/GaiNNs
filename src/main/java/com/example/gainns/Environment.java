@@ -41,8 +41,6 @@ public class Environment extends Application {
     
     // scale change point
     private Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
-    private double rotationLengthOffsetY = 0;
-    private double rotationLengthOffsetX = 0;
     private Circle srCen, srRotate;
     private Dragable selectedElement;  
     
@@ -273,46 +271,46 @@ public class Environment extends Application {
     void updateOverlay() {
         if (this.selectedElement != null) {
         	// border
-            this.srBnd.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
-            this.srBnd.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
-            this.srBnd.setWidth(this.selectedElement.widthProperty().get() + this.rotationLengthOffsetX);
-            this.srBnd.setHeight(this.selectedElement.heightProperty().get() + this.rotationLengthOffsetY);
-            // north west
-            this.srNW.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
-            this.srNW.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
-            // north
-            this.srN.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
-            this.srN.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
-            // north east
-            this.srNE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
-            		        this.resizeBlockWidth + this.rotationLengthOffsetX/2);
-            this.srNE.setY(this.selectedElement.getLayoutY() - this.rotationLengthOffsetY/2);
-            // east
-            this.srE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
-            		       this.resizeBlockWidth + this.rotationLengthOffsetX/2);
-            this.srE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
-            // south east
-            this.srSE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
-            		        this.resizeBlockWidth + this.rotationLengthOffsetX/2);
-            this.srSE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
-            		        this.resizeBlockWidth + this.rotationLengthOffsetY/2);
-            // south
-            this.srS.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
-            this.srS.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
-            		       this.resizeBlockWidth + this.rotationLengthOffsetY/2);
-            // south west
-            this.srSW.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
-            this.srSW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
-            		        this.resizeBlockWidth + this.rotationLengthOffsetY/2);
-            // west
-            this.srW.setX(this.selectedElement.getLayoutX() - this.rotationLengthOffsetX/2);
-            this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
-            // center dot
-            this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
-            this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
-            // rotate dot
-            this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
-            this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10 - this.rotationLengthOffsetY/2);
+        	this.srBnd.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
+        	this.srBnd.setY(this.selectedElement.getLayoutY() - this.selectedElement.getRotationLengthOffsetY()/2);
+        	this.srBnd.setWidth(this.selectedElement.widthProperty().get() + this.selectedElement.getRotationLengthOffsetX());
+        	this.srBnd.setHeight(this.selectedElement.heightProperty().get() + this.selectedElement.getRotationLengthOffsetY());
+        	// north west
+        	this.srNW.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
+        	this.srNW.setY(this.selectedElement.getLayoutY() - this.selectedElement.getRotationLengthOffsetY()/2);
+        	// north
+        	this.srN.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
+        	this.srN.setY(this.selectedElement.getLayoutY() - this.selectedElement.getRotationLengthOffsetY()/2);
+        	// north east
+        	this.srNE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
+        					this.resizeBlockWidth + this.selectedElement.getRotationLengthOffsetX()/2);
+        	this.srNE.setY(this.selectedElement.getLayoutY() - this.selectedElement.getRotationLengthOffsetY()/2);
+        	// east
+        	this.srE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
+        				   this.resizeBlockWidth + this.selectedElement.getRotationLengthOffsetX()/2);
+        	this.srE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
+        	// south east
+        	this.srSE.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get()) - 
+        					this.resizeBlockWidth + this.selectedElement.getRotationLengthOffsetX()/2);
+        	this.srSE.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
+        					this.resizeBlockWidth + this.selectedElement.getRotationLengthOffsetY()/2);
+        	// south
+        	this.srS.setX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2) - this.resizeBlockWidthOffset);
+        	this.srS.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
+        				   this.resizeBlockWidth + this.selectedElement.getRotationLengthOffsetY()/2);
+        	// south west
+        	this.srSW.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
+        	this.srSW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - 
+        					this.resizeBlockWidth + this.selectedElement.getRotationLengthOffsetY()/2);
+        	// west
+        	this.srW.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
+        	this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
+        	// center dot
+        	this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
+        	this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
+        	// rotate dot
+        	this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
+        	this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10 - this.selectedElement.getRotationLengthOffsetY()/2);
         }
       }
 
@@ -428,17 +426,17 @@ public class Environment extends Application {
     	// set boarder
     	Double degreeFitOffset = this.selectedElement.getRotate() % 180;
     	if ((degreeFitOffset >= 0 && degreeFitOffset < 90)) {
-    		this.rotationLengthOffsetY = (this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset)) + 
-    				this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset))) - this.selectedElement.heightProperty().get();
-    		this.rotationLengthOffsetX = (this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset)) + 
-    				this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset))) - this.selectedElement.widthProperty().get();
+    		this.selectedElement.setRotationLengthOffsetX((this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset)) + 
+    				this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset))) - this.selectedElement.heightProperty().get());
+    		this.selectedElement.setRotationLengthOffsetY((this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset)) + 
+    				this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset))) - this.selectedElement.widthProperty().get());
     	}else if ((degreeFitOffset >= 90 && degreeFitOffset < 180)){
-    		this.rotationLengthOffsetY = (this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
+    		this.selectedElement.setRotationLengthOffsetX((this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
     									  this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) - 
-    									  this.selectedElement.heightProperty().get();
-    		this.rotationLengthOffsetX = (this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
+    									  this.selectedElement.heightProperty().get());
+    		this.selectedElement.setRotationLengthOffsetY((this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
     									  this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) -
-    									  this.selectedElement.widthProperty().get();
+    									  this.selectedElement.widthProperty().get());
     	}
     	
     }
@@ -506,10 +504,10 @@ public class Environment extends Application {
      * @param y
      */
     public void relocate(double x, double y) {
-        double maxX = this.area.getMaxX() - this.srBnd.getWidth() + this.rotationLengthOffsetX/2;
-        double maxY = this.area.getMaxY() - this.srBnd.getHeight() + this.rotationLengthOffsetY/2;
-        if (x < this.area.getMinX() - this.rotationLengthOffsetX) x = this.area.getMinX() + this.rotationLengthOffsetX/2;
-        if (y < this.area.getMinY() - this.rotationLengthOffsetY) y = this.area.getMinY() + this.rotationLengthOffsetY/2;
+        double maxX = this.area.getMaxX() - this.srBnd.getWidth() + this.selectedElement.getRotationLengthOffsetX()/2;
+        double maxY = this.area.getMaxY() - this.srBnd.getHeight() + this.selectedElement.getRotationLengthOffsetY()/2;
+        if (x < this.area.getMinX() + this.selectedElement.getRotationLengthOffsetX()/2) x = this.area.getMinX() + this.selectedElement.getRotationLengthOffsetX()/2;
+        if (y < this.area.getMinY() + this.selectedElement.getRotationLengthOffsetY()/2) y = this.area.getMinY() + this.selectedElement.getRotationLengthOffsetY()/2;
         if (x > maxX) x = maxX;
         if (y > maxY) y = maxY;
         this.selectedElement.setLayoutX(x);
