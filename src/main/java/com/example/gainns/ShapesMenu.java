@@ -29,8 +29,11 @@ public class ShapesMenu {
 	
 		// private Rectangle menu = new Rectangle();
 		private shapeContainer items = new shapeContainer();
+
 		private Button tab = new Button("HIDE");
+		private Button changeMenu = new Button("Scene Editor");
 		private boolean hidden = false;
+		private boolean charMenuShowing = true;
 	
 	public void createMenu(Scene scene) { //set up shape proportions and color for menu
 //		menu.setWidth(1500);
@@ -47,7 +50,24 @@ public class ShapesMenu {
 	
 	public Button getTab() {
 		return tab;
-	}	
+	}
+	
+	public Button getChangeMenuTab() {
+		return changeMenu;
+	}
+
+	public void changeMenu() { //switch from env to char menu or vice versa
+		items.changeMenu();
+		if (charMenuShowing) {
+			changeMenu.setText("Character Editor");
+			charMenuShowing = false;
+		}
+		else {
+			changeMenu.setText("Scene Editor");
+			charMenuShowing = true;
+		}
+		return;
+	}
 	
 	public boolean tabPressed() { // if tab pressed
 		TranslateTransition tt = new TranslateTransition(Duration.millis(250), this.items.shapeVisualizedList);
@@ -76,19 +96,30 @@ public class ShapesMenu {
 	// Add functions for adding shapes to menu or store shapes as private variables
 }
 
-
 class shapeContainer {
 	public ListView<DragAndDropListShape> shapeVisualizedList;
 	@SuppressWarnings("unchecked")
-	ObservableList<DragAndDropListShape> data = FXCollections.observableArrayList(new DragAndDropListShape(new Circle(25), Color.BLUE), 
+	ObservableList<DragAndDropListShape> charData = FXCollections.observableArrayList(new DragAndDropListShape(new Circle(25), Color.BLUE), 
 																				new DragAndDropListShape(new Rectangle(50, 50), Color.RED));
+	ObservableList<DragAndDropListShape> envData = FXCollections.observableArrayList(new DragAndDropListShape(new Circle(25), Color.YELLOW), 
+																				new DragAndDropListShape(new Rectangle(50, 50), Color.GREEN));
 	
 	//temp debug
 	final Label label = new Label();
+
+	void changeMenu() {
+		if(shapeVisualizedList.getItems() == charData) {
+			shapeVisualizedList.setItems(envData);
+		}
+		else {
+			shapeVisualizedList.setItems(charData);
+		}
+		return;
+	}
 	
-	public shapeContainer() {
-		this.shapeVisualizedList = new ListView<>();	
-		shapeVisualizedList.setItems(data);
+	public shapeContainer() { //c == character menu, e = enviornment menu
+		this.shapeVisualizedList = new ListView<>();
+		shapeVisualizedList.setItems(charData);
 		shapeVisualizedList.setPrefWidth(Screen.getPrimary().getBounds().getWidth() - 400);  // TO-DO: make change?
 		shapeVisualizedList.setPrefHeight(120);
 		shapeVisualizedList.setOrientation(Orientation.HORIZONTAL);
@@ -96,7 +127,7 @@ class shapeContainer {
 				                   + "-fx-control-inner-background-alt: derive(-fx-control-inner-background, 20%)");   // change the color!!
 		
 		label.setText("[The shape content does not represent the final choice]\n");
-		
+
 		
 		shapeVisualizedList.setCellFactory(new Callback<ListView<DragAndDropListShape>, 
 				                                        ListCell<DragAndDropListShape>>() {
