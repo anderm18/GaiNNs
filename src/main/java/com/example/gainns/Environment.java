@@ -1,7 +1,5 @@
 package com.example.gainns;
 
-import javafx.animation.FadeTransition;
-
 import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -80,8 +78,7 @@ public class Environment extends Application {
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(windowWidth, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
-//        rectangle.setFill(Color.valueOf("#F5E799"));
-        rectangle.setFill(Color.valueOf("#000000"));
+        rectangle.setFill(Color.valueOf("#F5E799"));
         return rectangle;
     }
 
@@ -90,15 +87,10 @@ public class Environment extends Application {
 
 
     @Override
-    public void start(Stage stage) throws IOException {
-    
-        AnchorPane root = new AnchorPane(); //AnchorPane had better functions then border pane
-//      root.setStyle("-fx-background-color: #99F0F5"); // can also be set in bg.css
-        root.setId("bg");        
-        
-        Scene scene = new Scene(root, screenWidth, screenHeight);
-        scene.getStylesheets().addAll(this.getClass().getResource("bg.css").toExternalForm());
-        
+    public void start(Stage stage) throws IOException { 	
+        this.root = new AnchorPane(); //AnchorPane had better functions then border pane
+
+        Scene scene = new Scene(root, windowWidth, windowHeight);
         Rectangle floorRect = createFloor(scene); //floor
         /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
         PhysObj floorphys = new PhysObj();
@@ -112,51 +104,6 @@ public class Environment extends Application {
         PhysObj.setMainPane(this.root);
         // set layer and position for of base env
         HBox floor = new HBox(0, floorRect);
-        
-        ShapesMenu shapesMenu = new ShapesMenu(); //menu for shapes
-        shapesMenu.createMenu(scene);
-        HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
-        sMenu.setPickOnBounds(false);
-        
-        
-        HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
-        tab.setStyle("-fx-color: white; ");
-        tab.setOpacity(0.5);
-        
-        // event handler to set opacity of button to 1.0 when mouse hovers over it when the shape menu is not hidden 
-        tab.addEventHandler(MouseEvent.MOUSE_ENTERED, 
-        	new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					if (!shapesMenu.isHidden()) {
-						// fade transition animation
-						FadeTransition ft = new FadeTransition(new Duration(100), tab);
-						ft.setFromValue(0.5);
-						ft.setToValue(1.0);
-						ft.play();
-						tab.setOpacity(1.0);
-					}
-				}
-        });
-        
-        // event handler to set opacity of button to 0.5 when mouse exits and when the shape menu is not hidden 
-        tab.addEventHandler(MouseEvent.MOUSE_EXITED, 
-        	new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					if (!shapesMenu.isHidden()) {
-						// fade transition animation
-						FadeTransition ft = new FadeTransition(new Duration(100), tab);
-						ft.setFromValue(1.0);
-						ft.setToValue(0.5);
-						ft.play();
-						tab.setOpacity(0.5);
-					}
-				}
-        });
-        
-        root.getChildren().addAll(floor, sMenu, tab, posReporter, elementInEnvReporter);
-        
         floor.setViewOrder(3);
         HBox env = new HBox(0, sceneRect);
         env.setViewOrder(4);
@@ -203,7 +150,12 @@ public class Environment extends Application {
         env.setOnMousePressed(me -> select(null));
         floor.setOnMousePressed(me -> select(null));
 
-  
+        //menu for shapes
+        ShapesMenu shapesMenu = new ShapesMenu(); 
+        shapesMenu.createMenu(scene);
+        HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
+        sMenu.setPickOnBounds(false);
+        HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
         
         // config layout
         root.getChildren().addAll(env, floor, sMenu, tab, 
@@ -256,54 +208,6 @@ public class Environment extends Application {
             }
          });
         
-        shapesMenu.getMenu().shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
-	            new ChangeListener<Pair<Shape, Color>>() {
-	                public void changed(ObservableValue<? extends Pair<Shape,Color>> ov, 
-	                		Pair<Shape,Color> old_val, Pair<Shape,Color> new_val) {
-	                	DragableElement newAddedElement = new DragableElement(mousePosXTraker, mousePosYTraker, 40, new_val.getValue());
-	                	shapesInEnv.add(newAddedElement);
-	                	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
-	                	root.getChildren().add(newAddedElement.circle);
-		            }
-		    });
-        
-        // event handler for shape Menu: when mouse enters the shape menu, the opacity increases to 1
-        shapesMenu.getMenu().shapeVisualizedList.addEventHandler(MouseEvent.MOUSE_ENTERED, 
-        		new EventHandler<MouseEvent>() {
-					public void handle(MouseEvent event) {
-						// fade transition animation
-						FadeTransition ft = new FadeTransition(new Duration(100), shapesMenu.getMenu().shapeVisualizedList);
-						ft.setFromValue(0.5);
-						ft.setToValue(1.0);
-						ft.play();
-						shapesMenu.getMenu().shapeVisualizedList.setOpacity(1.0);
-					}
-        	});
-        
-        // event handler for shape Menu: when mouse exits the shape menu, the opacity decreases to 0.5
-        shapesMenu.getMenu().shapeVisualizedList.addEventHandler(MouseEvent.MOUSE_EXITED, 
-        		new EventHandler<MouseEvent>() {
-					public void handle(MouseEvent event) {
-						// fade transition animation
-						FadeTransition ft = new FadeTransition(new Duration(100), shapesMenu.getMenu().shapeVisualizedList);
-						ft.setFromValue(1.0);
-						ft.setToValue(0.5);
-						ft.play();
-						shapesMenu.getMenu().shapeVisualizedList.setOpacity(0.5);
-					}
-        	});
-        
-        // event listener: listens to stage width resizes to resize the shapesMenu's width.
-        stage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (newValue.floatValue()!=oldValue.floatValue()) {
-//                	System.out.println("observable: " + observable.getValue().toString());
-//                	System.out.println("oldValue: " + oldValue.toString());
-//                	System.out.println("newValue: " + newValue.toString());
-                	shapesMenu.getMenu().shapeVisualizedList.setPrefWidth(newValue.doubleValue() - 15);
-                }
-            }
         
         // Shape drag and drop
         sceneRect.setOnDragOver(new EventHandler<DragEvent>() {
