@@ -6,9 +6,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
@@ -18,6 +21,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -267,8 +272,8 @@ public class Environment extends Application {
             this.srSW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get()) - this.resizeBlockWidth);
             this.srW.setX(this.selectedElement.getLayoutX());
             this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
-            this.srCen.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
-            this.srCen.setCenterY((this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2));
+            this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
+            this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
             this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
             this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10);
         }
@@ -328,13 +333,29 @@ public class Environment extends Application {
       }
 
     void setRotate(double horizontalParam, double verticalParam) {
-    	this.rotateReporter.setText("Current cursor position: " + horizontalParam + ", "+ verticalParam 
-    								+ "\nWhen press: " + this.pressedMousePosX + " " + this.pressedMousePosY
-    								+ "\nRotate param set: " + 
-    								Math.sqrt(Math.pow(horizontalParam - this.pressedMousePosX, 2) 
-    										+ Math.pow(verticalParam - this.pressedMousePosY, 2)));
-    	this.selectedElement.setRotate(Math.sqrt(Math.pow(horizontalParam - this.pressedMousePosX, 2) 
-    											+Math.pow(verticalParam - this.pressedMousePosY, 2)));
+    	double centerShapeX = this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2;
+    	double centerShapeY = this.selectedElement.getLayoutY() + this.selectedElement.widthProperty().get() / 2;
+    	if (centerShapeY >= verticalParam){ // First and forth quadrant
+    		this.selectedElement.setRotate(Math.toDegrees(Math.atan((horizontalParam - centerShapeX)/(centerShapeY- verticalParam))));
+    	}else {
+    		this.selectedElement.setRotate(Math.toDegrees(Math.toRadians(180)+Math.atan((horizontalParam - centerShapeX)/(centerShapeY-verticalParam))));
+    	}
+    	Image image = textToImage((this.selectedElement.getRotate() > 0? Math.round(this.selectedElement.getRotate()):
+    		                       (360 + Math.round(this.selectedElement.getRotate())))  + "°");
+    	this.srRotate.setCursor(new ImageCursor(image, image.getWidth() / 2, image.getHeight() /2));
+    	this.rotateReporter.setText("Current cursor position: "+horizontalParam + " " + verticalParam
+    							   +"\nCenter point:"+centerShapeX+" " + centerShapeY
+    			                   +"\nCurrent angle: " + this.selectedElement.getRotate() + "°");
+    	
+    	
+    	// Forth quadrant
+    	
+    }
+    
+    private WritableImage textToImage(String text) {
+        Text t = new Text(text);
+        t.setFont(Font.font ("Verdana", 20));
+        return t.snapshot(null, null);
     }
     
     void setHSize(double horizontalParam, boolean b) {
