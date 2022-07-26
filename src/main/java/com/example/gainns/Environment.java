@@ -508,8 +508,8 @@ public class Environment extends Application {
     public void relocate(double x, double y) {
         double maxX = this.area.getMaxX() - this.srBnd.getWidth() + this.rotationLengthOffsetX/2;
         double maxY = this.area.getMaxY() - this.srBnd.getHeight() + this.rotationLengthOffsetY/2;
-        if (x < this.area.getMinX()) x = this.area.getMinX();
-        if (y < this.area.getMinY()) y = this.area.getMinY();
+        if (x < this.area.getMinX() - this.rotationLengthOffsetX) x = this.area.getMinX() + this.rotationLengthOffsetX/2;
+        if (y < this.area.getMinY() - this.rotationLengthOffsetY) y = this.area.getMinY() + this.rotationLengthOffsetY/2;
         if (x > maxX) x = maxX;
         if (y > maxY) y = maxY;
         this.selectedElement.setLayoutX(x);
