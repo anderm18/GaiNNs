@@ -42,6 +42,7 @@ public class Environment extends Application {
 	final Label posReporter = new Label();
 	final Label elementInEnvReporter = new Label();
 	final Label dragAndDropReporter = new Label();
+	final Label rotateReporter = new Label();
 	
 	// mouse tracker
 	private double mousePosXTraker = 0;
@@ -95,12 +96,13 @@ public class Environment extends Application {
         
         // config layout
         root.getChildren().addAll(env, floor, sMenu, tab, 
-        		                  posReporter, elementInEnvReporter, dragAndDropReporter);
+        		                  posReporter, elementInEnvReporter, dragAndDropReporter, rotateReporter);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene									
         AnchorPane.setTopAnchor(tab, 120d);
         AnchorPane.setBottomAnchor(posReporter, 65d);
         AnchorPane.setBottomAnchor(dragAndDropReporter, 50d);
         AnchorPane.setBottomAnchor(elementInEnvReporter, 0d);
+        AnchorPane.setBottomAnchor(rotateReporter, 110d);
         AnchorPane.setLeftAnchor(tab, scene.getWidth()/2.0 - shapesMenu.getTab().getWidth()/2.0);
         AnchorPane.setTopAnchor(sMenu, 0d);
         
@@ -231,12 +233,14 @@ public class Environment extends Application {
         this.srS = srCreate(Cursor.S_RESIZE);
         this.srSW = srCreate(Cursor.SW_RESIZE);
         this.srW = srCreate(Cursor.W_RESIZE);
-        this.srCen = srCreate(Cursor.OPEN_HAND, true);
-        this.overlay.getChildren().addAll(this.srBnd,this.srCen,
+        this.srCen = srCreate(Cursor.CROSSHAIR, true);
+        this.srRotate = srCreate(Cursor.OPEN_HAND, false);
+        this.overlay.getChildren().addAll(this.srBnd,
 										  this.srNW, this.srN, 
 										  this.srNE, this.srE, 
 										  this.srSE, this.srS, 
-									      this.srSW, this.srW);
+									      this.srSW, this.srW, 
+									      this.srCen, this.srRotate);
         this.root.getChildren().add(this.overlay);
         this.overlay.setViewOrder(1);
     }
@@ -265,6 +269,8 @@ public class Environment extends Application {
             this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
             this.srCen.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
             this.srCen.setCenterY((this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2));
+            this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
+            this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10);
         }
       }
 
@@ -291,6 +297,7 @@ public class Environment extends Application {
     }
 
     void handleMouse(Node node) {
+    	node.setOnMouseReleased(me -> {if (node == this.srRotate) this.srRotate.setCursor(Cursor.OPEN_HAND);});
         node.setOnMousePressed(me -> {
         	this.pressedMousePosX = me.getX();
         	this.pressedMousePosY = me.getY();
@@ -298,6 +305,7 @@ public class Environment extends Application {
         	this.shapeLayoutY = this.selectedElement.getLayoutY();
         	this.sWidth = this.selectedElement.widthProperty().get();
         	this.sHeight = this.selectedElement.heightProperty().get();
+        	if (node == this.srRotate) this.srRotate.setCursor(Cursor.CLOSED_HAND);
             // me.consume();
         });
         node.setOnMouseDragged(me -> {
@@ -313,41 +321,57 @@ public class Environment extends Application {
             else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
             else if (source == this.srSW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
+            else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
+            else if (source == this.srRotate) setRotate(me.getX(), me.getY());
             me.consume();
-        });
+        });        
       }
 
-    void setHSize(double h, boolean b) {
+    void setRotate(double horizontalParam, double verticalParam) {
+    	this.rotateReporter.setText("Current cursor position: " + horizontalParam + ", "+ verticalParam 
+    								+ "\nWhen press: " + this.pressedMousePosX + " " + this.pressedMousePosY
+    								+ "\nRotate param set: " + 
+    								Math.sqrt(Math.pow(horizontalParam - this.pressedMousePosX, 2) 
+    										+ Math.pow(verticalParam - this.pressedMousePosY, 2)));
+    	this.selectedElement.setRotate(Math.sqrt(Math.pow(horizontalParam - this.pressedMousePosX, 2) 
+    											+Math.pow(verticalParam - this.pressedMousePosY, 2)));
+    }
+    
+    void setHSize(double horizontalParam, boolean b) {
         double x = this.selectedElement.getLayoutX(), w = this.selectedElement.widthProperty().get(), width;
         double as = this.resizeBlockWidth * 3;
-        if (h < this.area.getMinX()) h = this.area.getMinX();
-        if (h > this.area.getMaxX()) h = this.area.getMaxX();
+        if (horizontalParam < this.area.getMinX()) horizontalParam = this.area.getMinX();
+        if (horizontalParam > this.area.getMaxX()) horizontalParam = this.area.getMaxX();
         if (b) {
-            width = w + x - h;
-            if (width < as) { width = as; h = x + w - as; }
-            this.selectedElement.setLayoutX(h);
+            width = w + x - horizontalParam;
+            if (width < as) { width = as; horizontalParam = x + w - as; }
+            this.selectedElement.setLayoutX(horizontalParam);
         } else {
-            width = h - x;
+            width = horizontalParam - x;
             if (width < as) width = as;
         }
         this.selectedElement.widthProperty().set(width);
     }
 
     // set vertical size
-    void setVSize(double v, boolean b) {
+    void setVSize(double verticalParam, boolean b) {
         double y = this.selectedElement.getLayoutY(), h = this.selectedElement.heightProperty().get(), height;
         double as = this.resizeBlockWidth * 3;
-        if (v < this.area.getMinY()) v = this.area.getMinY();
-        if (v > this.area.getMaxY()) v = this.area.getMaxY();
+        if (verticalParam < this.area.getMinY()) verticalParam = this.area.getMinY();
+        if (verticalParam > this.area.getMaxY()) verticalParam = this.area.getMaxY();
         if (b) {
-            height = h + y - v;
-            if (height < as) { height = as; v = y + h - as; }
-            this.selectedElement.setLayoutY(v);
+            height = h + y - verticalParam;
+            if (height < as) { height = as; verticalParam = y + h - as; }
+            this.selectedElement.setLayoutY(verticalParam);
         } else {
-            height = v - y;
+            height = verticalParam - y;
             if (height < as) height = as;
         }
         this.selectedElement.heightProperty().set(height);
+    }
+    
+    void setCenter(double horizontalParam, double verticalParam) {
+    	
     }
 
     // move func
