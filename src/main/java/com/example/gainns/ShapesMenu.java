@@ -88,6 +88,7 @@ public class ShapesMenu {
 			tt.play();
 			hidden = true;
 			tab.setText("SHOW");
+			this.items.shapeVisualizedList.getSelectionModel().clearSelection();
 		}
 
 		return hidden;
@@ -137,7 +138,7 @@ class shapeContainer {
 	                }
 	            }
 	        );
-	 
+		
 		shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
 	            new ChangeListener<DragAndDropListShape>() {
 	                public void changed(ObservableValue<? extends DragAndDropListShape> ov, 
