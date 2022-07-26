@@ -168,8 +168,8 @@ public class Environment extends Application {
         AnchorPane.setBottomAnchor(posReporter, 65d);
         AnchorPane.setBottomAnchor(dragAndDropReporter, 50d);
         AnchorPane.setBottomAnchor(elementInEnvReporter, 0d);
-        AnchorPane.setLeftAnchor(tab, (scene.getWidth()/2.15));
-        AnchorPane.setLeftAnchor(changeMenu, scene.getWidth()/2);
+        AnchorPane.setLeftAnchor(tab, ((double)scene.getWidth())/1.98);
+        AnchorPane.setLeftAnchor(changeMenu, ((double)scene.getWidth())/2.28);
 
         AnchorPane.setTopAnchor(sMenu, 0d);
         
@@ -266,10 +266,12 @@ public class Environment extends Application {
         
         stage.setTitle("GaiNNs");
         stage.setScene(scene);
+        stage.setMinHeight(600);
+        stage.setMinWidth(800);
         stage.show();
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
-    		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.15 - shapesMenu.getTab().getWidth());
-            AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getTab().getWidth());
+    		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0);
+            AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getChangeMenuTab().getWidth());
     	});
 
         gameLoop.start();
