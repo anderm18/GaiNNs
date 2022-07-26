@@ -34,7 +34,7 @@ public class ShapesMenu {
 		private Button changeMenu = new Button("Scene Editor");
 		private boolean hidden = false;
 		private boolean charMenuShowing = true;
-	
+		
 	public void createMenu(Scene scene) { //set up shape proportions and color for menu
 //		menu.setWidth(1500);
 //		menu.setHeight(120);
@@ -79,6 +79,10 @@ public class ShapesMenu {
 			tt.play();
 			hidden = false;
 			tab.setText("HIDE");
+			
+//			if (selectedIndex != null){
+//				this.items.shapeVisualizedList.getSelectionModel().select(selectedIndex);
+//			}
 		}
 		else {
 			//menu.setHeight(0);
@@ -88,6 +92,9 @@ public class ShapesMenu {
 			tt.play();
 			hidden = true;
 			tab.setText("SHOW");
+			
+			// deselect the selected element when hiding menu. Also remember the last selected element
+//			selectedIndex = this.items.shapeVisualizedList.getSelectionModel().getSelectedIndex(); 
 			this.items.shapeVisualizedList.getSelectionModel().clearSelection();
 		}
 
