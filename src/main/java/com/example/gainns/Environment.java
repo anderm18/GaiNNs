@@ -1,5 +1,6 @@
 package com.example.gainns;
 
+import javafx.animation.AnimationTimer;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -15,34 +16,45 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.dyn4j.world.World;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Random;
 
 public class Environment extends Application {
 	// resize storage param
 	double resizeBlockWidth = 6, resizeBlockWidthOffset = resizeBlockWidth / 2;
-    double lastX, lastY;
-    double pressedMousePosX, pressedMousePosY, shapeLayoutX, shapeLayoutY, sWidth, sHeight;
-    private Group overlay = null;
-    private AnchorPane root;
-    
-    // scale change point
-    private Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
-    private Circle srCen, srRotate;
-    private Dragable selectedElement;  
+	double lastX, lastY;
+	double pressedMousePosX, pressedMousePosY, shapeLayoutX, shapeLayoutY, sWidth, sHeight;
+	Group overlay = null;
+	World world;
+	AnchorPane root;
+
+	Random random = new Random();
+	double rnd(double from, double to) {
+		return to + (from - to) * random.nextDouble();
+	}
+
+	// scale change point
+	private Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
+	private Circle srCen, srRotate;
+	private Dragable selectedElement; 
     
 	//temp debug
 	private final Label posReporter = new Label();
@@ -61,7 +73,6 @@ public class Environment extends Application {
     
     // hard limit: shape will not reach ground
     Rectangle2D area = new Rectangle2D(0, 0, windowWidth, windowHeight-100);
-    
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(windowWidth, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -74,41 +85,88 @@ public class Environment extends Application {
     @Override
     public void start(Stage stage) throws IOException { 	
         this.root = new AnchorPane(); //AnchorPane had better functions then border pane
-        
+
         Scene scene = new Scene(root, windowWidth, windowHeight);
         Rectangle floorRect = createFloor(scene); //floor
+        /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
+        PhysObj floorphys = new PhysObj();
+        floorphys.addFixture(new BodyFixture(physicsRect));
+        floorphys.setMass(MassType.INFINITE);*/
+
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         sceneRect.heightProperty().bind(scene.heightProperty()); //keep as high as window
         sceneRect.setFill(Color.valueOf("#99F0F5"));
-        
+        PhysObj.setMainPane(this.root);
         // set layer and position for of base env
         HBox floor = new HBox(0, floorRect);
         floor.setViewOrder(3);
         HBox env = new HBox(0, sceneRect);
         env.setViewOrder(4);
+        this.world = new World();
+        this.world.setGravity(0, 9.81);
+        /*floorphys.translate(7.5, 7.25);
+        this.world.addBody(floorphys);
+
+        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1.0, 1.0);
+        Image img = new Image("file:img/smile.png");
+        for(int i = 0; i < 32; i++) {
+            PhysObj rectangle = new PhysObj(img);
+            BodyFixture f = new BodyFixture(rect);
+            f.setDensity(1.2);
+            f.setFriction(0.8);
+            f.setRestitution(0.4);
+            rectangle.addFixture(f);
+            rectangle.setMass(MassType.NORMAL);
+            //rectangle.translate(rnd(-3,3), 9.0+rnd(-4,2));
+            rectangle.translate(10, 0);
+            rectangle.getTransform().setRotation(rnd(-3.141,3.141));
+            this.world.addBody(rectangle);
+        }*/
+
+
+
+        AnimationTimer gameLoop = new AnimationTimer() {
+
+            long last;
+
+            @Override
+            public void handle(long now) { // now is in nanoseconds
+                float delta = 1f / (1000.0f / ((now-last) / 1000000));  // seems long winded but avoids precision issues
+                world.updatev(delta);
+                PhysObj.update();
+
+                last = now;
+            }
+
+        };
+
         
         // deselecting overlay
         env.setOnMousePressed(me -> select(null));
         floor.setOnMousePressed(me -> select(null));
-        
+
         //menu for shapes
         ShapesMenu shapesMenu = new ShapesMenu(); 
         shapesMenu.createMenu(scene);
         HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
         sMenu.setPickOnBounds(false);
         HBox tab = new HBox(0, shapesMenu.getTab()); //tab to close menu
+        HBox changeMenu = new HBox(0, shapesMenu.getChangeMenuTab());
         
         // config layout
-        root.getChildren().addAll(env, floor, sMenu, tab, 
+        root.getChildren().addAll(env, floor, sMenu, tab, changeMenu, 
         		                  posReporter, elementInEnvReporter, dragAndDropReporter, rotateReporter);
         AnchorPane.setBottomAnchor(floor, 0d); // positioning shapes in scene									
         AnchorPane.setTopAnchor(tab, 120d);
+        AnchorPane.setTopAnchor(changeMenu, 120d);
         AnchorPane.setBottomAnchor(posReporter, 65d);
         AnchorPane.setBottomAnchor(dragAndDropReporter, 50d);
         AnchorPane.setBottomAnchor(elementInEnvReporter, 0d);
         AnchorPane.setBottomAnchor(rotateReporter, 110d);
-        AnchorPane.setLeftAnchor(tab, scene.getWidth()/2.0 - shapesMenu.getTab().getWidth()/2.0);
+        AnchorPane.setLeftAnchor(tab, ((double)scene.getWidth())/1.98);
+        AnchorPane.setLeftAnchor(changeMenu, ((double)scene.getWidth())/2.28);
+
         AnchorPane.setTopAnchor(sMenu, 0d);
         
         // track mouse info all the time
@@ -135,20 +193,30 @@ public class Environment extends Application {
         // HIDE/SHOW
         shapesMenu.getTab().setOnAction(value ->  { //button(tab) pressed
             if(shapesMenu.tabPressed()) { // if hidden
-            	//AnchorPane.setTopAnchor(tab, 0d);
-                TranslateTransition tt = new TranslateTransition(Duration.millis(250), tab);
-                tt.setByY(-120f);
-                tt.setCycleCount(1);
-                //tt.setAutoReverse(true);
-                tt.play();
+                TranslateTransition tabShow = new TranslateTransition(Duration.millis(250), tab);
+                tabShow.setByY(-120f);
+                tabShow.setCycleCount(1);
+                tabShow.play();
+                TranslateTransition changeMenuShow = new TranslateTransition(Duration.millis(250), changeMenu);
+                changeMenuShow.setByY(-120f);
+                changeMenuShow.setCycleCount(1);
+                changeMenuShow.play();
             }
             else {
-            	//AnchorPane.setTopAnchor(tab, 120d);
-                TranslateTransition tt = new TranslateTransition(Duration.millis(250), tab);
-                tt.setByY(120f);
-                tt.setCycleCount(1);
-                tt.play();
+                TranslateTransition tabHide = new TranslateTransition(Duration.millis(250), tab);
+                tabHide.setByY(120f);
+                tabHide.setCycleCount(1);
+                tabHide.play();
+                TranslateTransition changeMenuHide = new TranslateTransition(Duration.millis(250), changeMenu);
+                changeMenuHide.setByY(120f);
+                changeMenuHide.setCycleCount(1);
+                changeMenuHide.play();
             }
+         });
+
+         // CHANGE MENU
+         shapesMenu.getChangeMenuTab().setOnAction(value ->  {
+            shapesMenu.changeMenu();
          });
         
         
@@ -159,6 +227,16 @@ public class Environment extends Application {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 event.consume();
             }
+        });
+        
+		    // delete selectedElement when user deletes shape
+        scene.setOnKeyPressed(ke -> {
+        	if (ke.getCode() == KeyCode.DELETE && selectedElement != null) {
+        		System.out.println("DELETE pressed");
+        		root.getChildren().remove(overlay);
+        		root.getChildren().remove(selectedElement);
+        		shapesInEnv.remove(selectedElement);
+        	}
         });
 
         // drop event - create shape
@@ -184,10 +262,14 @@ public class Environment extends Application {
         // set up window
         stage.setTitle("GaiNNs");
         stage.setScene(scene);
+        stage.setMinHeight(600);
+        stage.setMinWidth(800);
         stage.show();
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
-    		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0 - shapesMenu.getTab().getWidth()/2.0);
-    	}); 
+    		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0);
+        AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getChangeMenuTab().getWidth());
+    	});
+        gameLoop.start();
     }
     
     public static void main(String[] args) {
@@ -261,6 +343,7 @@ public class Environment extends Application {
 									      this.srCen, this.srRotate);
         this.root.getChildren().add(this.overlay);
         this.overlay.setViewOrder(1);
+        
     }
 
     /**
