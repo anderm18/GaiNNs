@@ -70,8 +70,7 @@ public class Environment extends Application {
     }
 
     //Menu bar is good for creating for general menus, not really for drag and drop. We probably
-    //should use it to make a general menu (File, Edit, Help, etc).
-    
+    //should use it to make a general menu (File, Edit, Help, etc). 
     @Override
     public void start(Stage stage) throws IOException { 	
         this.root = new AnchorPane(); //AnchorPane had better functions then border pane
@@ -270,7 +269,6 @@ public class Environment extends Application {
      */
     void updateOverlay() {
         if (this.selectedElement != null) {
-        	// border
         	this.srBnd.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
         	this.srBnd.setY(this.selectedElement.getLayoutY() - this.selectedElement.getRotationLengthOffsetY()/2);
         	this.srBnd.setWidth(this.selectedElement.widthProperty().get() + this.selectedElement.getRotationLengthOffsetX());
@@ -424,24 +422,34 @@ public class Environment extends Application {
     			                   +"\nCurrent angle: " + this.selectedElement.getRotate() + "°");
     	
     	// set boarder
-    	Double degreeFitOffset = this.selectedElement.getRotate() % 180;
-    	if ((degreeFitOffset >= 0 && degreeFitOffset < 90)) {
-    		this.selectedElement.setRotationLengthOffsetX((this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset)) + 
-    				this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset))) - this.selectedElement.heightProperty().get());
-    		this.selectedElement.setRotationLengthOffsetY((this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset)) + 
-    				this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset))) - this.selectedElement.widthProperty().get());
-    	}else if ((degreeFitOffset >= 90 && degreeFitOffset < 180)){
-    		this.selectedElement.setRotationLengthOffsetX((this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
-    									  this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) - 
-    									  this.selectedElement.heightProperty().get());
-    		this.selectedElement.setRotationLengthOffsetY((this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
-    									  this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) -
-    									  this.selectedElement.widthProperty().get());
-    	}
+    	borderOffsetCorrection();
     	
     }
     
     /**
+     * helper function used when a shape change 
+     * its shape irregularly and the border sizes
+     * needs trigonometric update
+     */
+    private void borderOffsetCorrection() {
+    	Double degreeFitOffset = this.selectedElement.getRotate() % 180;
+    	if ((degreeFitOffset >= 0 && degreeFitOffset < 90)) {
+    		this.selectedElement.setRotationLengthOffsetY((this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset)) + 
+    				this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset))) - this.selectedElement.heightProperty().get());
+    		this.selectedElement.setRotationLengthOffsetX((this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset)) + 
+    				this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset))) - this.selectedElement.widthProperty().get());
+    	}else if ((degreeFitOffset >= 90 && degreeFitOffset < 180)){
+    		this.selectedElement.setRotationLengthOffsetY((this.selectedElement.heightProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
+    									  this.selectedElement.widthProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) - 
+    									  this.selectedElement.heightProperty().get());
+    		this.selectedElement.setRotationLengthOffsetX((this.selectedElement.widthProperty().get() * Math.sin(Math.toRadians(degreeFitOffset - 90)) +
+    									  this.selectedElement.heightProperty().get() * Math.cos(Math.toRadians(degreeFitOffset - 90))) -
+    									  this.selectedElement.widthProperty().get());
+    	}
+		
+	}
+
+	/**
      * Helper function to generate image based on string
      * @param inputText the input string
      * @return a image containing inputText
@@ -471,6 +479,7 @@ public class Environment extends Application {
             if (width < hardLimitForResize) width = hardLimitForResize;
         }
         this.selectedElement.widthProperty().set(width);
+        borderOffsetCorrection();
     }
 
     /**
@@ -492,10 +501,11 @@ public class Environment extends Application {
             if (height < hardLimitForResize) height = hardLimitForResize;
         }
         this.selectedElement.heightProperty().set(height);
+        borderOffsetCorrection();
     }
     
     void setCenter(double horizontalParam, double verticalParam) {
-    	
+    	// TODO
     }
 
     /**
@@ -504,7 +514,7 @@ public class Environment extends Application {
      * @param y
      */
     public void relocate(double x, double y) {
-        double maxX = this.area.getMaxX() - this.srBnd.getWidth() + this.selectedElement.getRotationLengthOffsetX()/2;
+    	double maxX = this.area.getMaxX() - this.srBnd.getWidth() + this.selectedElement.getRotationLengthOffsetX()/2;
         double maxY = this.area.getMaxY() - this.srBnd.getHeight() + this.selectedElement.getRotationLengthOffsetY()/2;
         if (x < this.area.getMinX() + this.selectedElement.getRotationLengthOffsetX()/2) x = this.area.getMinX() + this.selectedElement.getRotationLengthOffsetX()/2;
         if (y < this.area.getMinY() + this.selectedElement.getRotationLengthOffsetY()/2) y = this.area.getMinY() + this.selectedElement.getRotationLengthOffsetY()/2;
