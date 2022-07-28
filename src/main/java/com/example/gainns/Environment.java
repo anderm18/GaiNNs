@@ -30,9 +30,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.World;
 
 import java.io.IOException;
@@ -91,10 +88,10 @@ public class Environment extends Application {
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         Rectangle floorRect = createFloor(scene); //floor
-        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(50, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
+        /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
         PhysObj floorphys = new PhysObj();
         floorphys.addFixture(new BodyFixture(physicsRect));
-        floorphys.setMass(MassType.INFINITE);
+        floorphys.setMass(MassType.INFINITE);*/
 
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -108,12 +105,12 @@ public class Environment extends Application {
         env.setViewOrder(4);
         this.world = new World();
         this.world.setGravity(0, 9.81);
-        floorphys.translate(0.0, windowHeight/Settings.SCALE - 1.55f);
+        /*floorphys.translate(7.5, 7.25);
         this.world.addBody(floorphys);
-        
+
         org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1.0, 1.0);
         Image img = new Image("file:img/smile.png");
-        for(int i = 0; i < 16; i++) {
+        for(int i = 0; i < 32; i++) {
             PhysObj rectangle = new PhysObj(img);
             BodyFixture f = new BodyFixture(rect);
             f.setDensity(1.2);
@@ -125,22 +122,8 @@ public class Environment extends Application {
             rectangle.translate(10, 0);
             rectangle.getTransform().setRotation(rnd(-3.141,3.141));
             this.world.addBody(rectangle);
-        }
+        }*/
 
-        // adding a circle to the scene
-        org.dyn4j.geometry.Circle circle = new org.dyn4j.geometry.Circle(1.0);
-        //Image img = new Image("file:img/smile.png");
-        PhysObj physCircle = new PhysObj(img);
-        BodyFixture f = new BodyFixture(circle);
-        f.setDensity(1.2);
-        f.setFriction(0.8);
-        f.setRestitution(0.4);
-        physCircle.addFixture(f);
-        physCircle.setMass(MassType.NORMAL);
-        //rectangle.translate(rnd(-3,3), 9.0+rnd(-4,2));
-        physCircle.translate(10, 0);
-        physCircle.getTransform().setRotation(rnd(-3.141,3.141));
-        this.world.addBody(physCircle);
 
 
         AnimationTimer gameLoop = new AnimationTimer() {
