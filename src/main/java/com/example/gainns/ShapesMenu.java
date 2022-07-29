@@ -79,10 +79,6 @@ public class ShapesMenu {
 			tt.play();
 			hidden = false;
 			tab.setText("HIDE");
-			
-//			if (selectedIndex != null){
-//				this.items.shapeVisualizedList.getSelectionModel().select(selectedIndex);
-//			}
 		}
 		else {
 			//menu.setHeight(0);
@@ -93,9 +89,7 @@ public class ShapesMenu {
 			hidden = true;
 			tab.setText("SHOW");
 			
-			// deselect the selected element when hiding menu. Also remember the last selected element
-//			selectedIndex = this.items.shapeVisualizedList.getSelectionModel().getSelectedIndex(); 
-			this.items.shapeVisualizedList.getSelectionModel().clearSelection();
+//			this.items.shapeVisualizedList.getSelectionModel().clearSelection();
 		}
 
 		return hidden;
