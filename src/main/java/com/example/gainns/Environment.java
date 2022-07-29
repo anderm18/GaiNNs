@@ -247,7 +247,15 @@ public class Environment extends Application {
         
         // Copy shape
         KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
-        Runnable copyShapeRunnable = () -> System.out.println("Accelerator Ctrl + C pressed");
+        Runnable copyShapeRunnable = () -> {
+//        	System.out.println("Accelerator Ctrl + C pressed");
+        	if (this.selectedElement != null) {
+        		this.copiedShape = this.selectedElement;
+//        		System.out.println("Shape copied");
+//        		System.out.println("Shape name: " + this.copiedShape.getShapeName());
+        	} 
+//        	else System.out.println("No shape selected");
+        };
         scene.getAccelerators().put(copyShapeKeyCombo, copyShapeRunnable);
         
         // drop event - create shape
