@@ -30,11 +30,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import java.awt.event.KeyEvent;
 import org.dyn4j.world.World;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Random;
 
 public class Environment extends Application {
@@ -73,6 +75,10 @@ public class Environment extends Application {
     
     // hard limit: shape will not reach ground
     Rectangle2D area = new Rectangle2D(0, 0, windowWidth, windowHeight-100);
+    
+    // A container to store all pressed keys
+    private Set<KeyCode> pressedKeys = new HashSet<>();
+    
     private Rectangle createFloor(Scene scene) {
         Rectangle rectangle = new Rectangle(windowWidth, 100);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -87,6 +93,10 @@ public class Environment extends Application {
         this.root = new AnchorPane(); //AnchorPane had better functions then border pane
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
+        // Listen for keys
+        scene.setOnKeyPressed(e -> pressedKeys.add(e.getCode()));
+        scene.setOnKeyReleased(e -> pressedKeys.remove(e.getCode()));
+        
         Rectangle floorRect = createFloor(scene); //floor
         /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
         PhysObj floorphys = new PhysObj();
@@ -459,18 +469,55 @@ public class Environment extends Application {
         	if (node == this.srRotate) this.srRotate.setCursor(Cursor.CLOSED_HAND);
             // me.consume();
         });
+        
         node.setOnMouseDragged(me -> {
             double dx = (me.getX() - this.pressedMousePosX);
             double dy = (me.getY() - this.pressedMousePosY);
             Object source = me.getSource();
             if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
-            else if (source == this.srNW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + dy, true); }
+            else if (source == this.srNW) {
+            	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		double ratio = this.sHeight / this.sWidth;
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + dx * ratio, true);
+            	} else {
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + dy, true);
+            	}
+            }
             else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
-            else if (source == this.srNE) { setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + dy, true); }
+            else if (source == this.srNE) { 
+            	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		double ratio = this.sHeight / this.sWidth;
+            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		setVSize(this.shapeLayoutY + dx * ratio * -1, true);
+            	} else {
+            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		setVSize(this.shapeLayoutY + dy, true); 
+            	}
+            }
             else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            else if (source == this.srSE) { setHSize(this.shapeLayoutX + this.sWidth + dx, false); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
+            else if (source == this.srSE) {	
+            	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		double ratio = this.sHeight / this.sWidth;
+            		setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
+            		setVSize(this.shapeLayoutY + this.sHeight + dx * ratio, false);
+            	} else {
+            		setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
+            		setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            	}
+            }
             else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            else if (source == this.srSW) { setHSize(this.shapeLayoutX + dx, true); setVSize(this.shapeLayoutY + this.sHeight + dy, false); }
+            else if (source == this.srSW) { 
+            	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		double ratio = this.sHeight / this.sWidth;
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + this.sHeight + dx * ratio * -1, false);
+            	} else {
+            		setHSize(this.shapeLayoutX + dx, true); 
+            		setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            	}
+            }
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
