@@ -236,6 +236,7 @@ public class Environment extends Application {
         		root.getChildren().remove(overlay);
         		root.getChildren().remove(selectedElement);
         		shapesInEnv.remove(selectedElement);
+        		overlay = null;
         	}
         });
 
