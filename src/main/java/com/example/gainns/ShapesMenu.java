@@ -34,7 +34,7 @@ public class ShapesMenu {
 		private Button changeMenu = new Button("   Scene Editor   ");
 		private boolean hidden = false;
 		private boolean charMenuShowing = true;
-	
+		
 	public void createMenu(Scene scene) { //set up shape proportions and color for menu
 //		menu.setWidth(1500);
 //		menu.setHeight(120);
@@ -88,6 +88,8 @@ public class ShapesMenu {
 			tt.play();
 			hidden = true;
 			tab.setText("SHOW");
+			
+//			this.items.shapeVisualizedList.getSelectionModel().clearSelection();
 		}
 
 		return hidden;
@@ -137,7 +139,7 @@ class shapeContainer {
 	                }
 	            }
 	        );
-	 
+		
 		shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
 	            new ChangeListener<DragAndDropListShape>() {
 	                public void changed(ObservableValue<? extends DragAndDropListShape> ov, 
