@@ -31,7 +31,7 @@ public class ShapesMenu {
 		private shapeContainer items = new shapeContainer();
 
 		private Button tab = new Button("HIDE");
-		private Button changeMenu = new Button("Scene Editor");
+		private Button changeMenu = new Button("   Scene Editor   ");
 		private boolean hidden = false;
 		private boolean charMenuShowing = true;
 		
@@ -63,7 +63,7 @@ public class ShapesMenu {
 			charMenuShowing = false;
 		}
 		else {
-			changeMenu.setText("Scene Editor");
+			changeMenu.setText("   Scene Editor   ");
 			charMenuShowing = true;
 		}
 		return;
