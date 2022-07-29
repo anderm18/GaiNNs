@@ -17,6 +17,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
@@ -79,6 +81,9 @@ public class Environment extends Application {
         rectangle.setFill(Color.valueOf("#F5E799"));
         return rectangle;
     }
+    
+    // Copy and Paste Shapes: record the copied shapes
+    private Dragable copiedShape = null;
 
     //Menu bar is good for creating for general menus, not really for drag and drop. We probably
     //should use it to make a general menu (File, Edit, Help, etc). 
@@ -229,7 +234,7 @@ public class Environment extends Application {
             }
         });
         
-		    // delete selectedElement when user deletes shape
+		// delete selectedElement when user deletes shape
         scene.setOnKeyPressed(ke -> {
         	if (ke.getCode() == KeyCode.DELETE && selectedElement != null) {
         		System.out.println("DELETE pressed");
@@ -239,7 +244,12 @@ public class Environment extends Application {
         		overlay = null;
         	}
         });
-
+        
+        // Copy shape
+        KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
+        Runnable copyShapeRunnable = () -> System.out.println("Accelerator Ctrl + C pressed");
+        scene.getAccelerators().put(copyShapeKeyCombo, copyShapeRunnable);
+        
         // drop event - create shape
         sceneRect.setOnDragDropped((DragEvent event) -> {
             Dragboard db = event.getDragboard();
@@ -313,6 +323,7 @@ public class Environment extends Application {
             this.selectedElement = element;
             updateOverlay();
         }
+        
     }
 
     /**
@@ -390,9 +401,11 @@ public class Environment extends Application {
         	// west
         	this.srW.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
         	this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
+        	
         	// center dot
         	this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
         	this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
+        	
         	// rotate dot
         	this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
         	this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10 - this.selectedElement.getRotationLengthOffsetY()/2);
