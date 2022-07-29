@@ -30,9 +30,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+<<<<<<< HEAD
 
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.MassType;
+=======
+>>>>>>> main
 import org.dyn4j.world.World;
 
 import java.io.IOException;
