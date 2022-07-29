@@ -265,9 +265,12 @@ public class Environment extends Application {
         stage.setMinHeight(600);
         stage.setMinWidth(800);
         stage.show();
+        
+        root.setLeftAnchor(tab, ((double) stage.getWidth())/2.0);
+        root.setLeftAnchor(changeMenu, ((double) stage.getWidth())/2.0 - shapesMenu.getChangeMenuTab().getWidth());
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
     		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0);
-        AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getChangeMenuTab().getWidth());
+    		AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getChangeMenuTab().getWidth());
     	});
         gameLoop.start();
     }
