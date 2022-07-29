@@ -267,6 +267,9 @@ public class Environment extends Application {
         Runnable pasteShapeRunnable = () -> {
         	boolean DEBUG = true;
         	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
+        	// first, create a deep copy of the copied shape using the reference to the old shape
+        	// then add that deep copy into the environment where the mouse is
+        	// line 280 is a hint for adding shapes to environment
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
         
