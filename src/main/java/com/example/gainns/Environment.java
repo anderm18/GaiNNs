@@ -248,15 +248,27 @@ public class Environment extends Application {
         // Copy shape
         KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
         Runnable copyShapeRunnable = () -> {
-//        	System.out.println("Accelerator Ctrl + C pressed");
+        	boolean DEBUG = false;
+        	if (DEBUG) System.out.println("Accelerator Ctrl + C pressed");
+        	
         	if (this.selectedElement != null) {
         		this.copiedShape = this.selectedElement;
-//        		System.out.println("Shape copied");
-//        		System.out.println("Shape name: " + this.copiedShape.getShapeName());
+        		if (DEBUG) {
+        			System.out.println("Shape copied");
+            		System.out.println("Shape name: " + this.copiedShape.getShapeName());
+        		}
         	} 
-//        	else System.out.println("No shape selected");
+        	else if (DEBUG) System.out.println("No shape selected");
         };
         scene.getAccelerators().put(copyShapeKeyCombo, copyShapeRunnable);
+        
+        // Paste shape
+        KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
+        Runnable pasteShapeRunnable = () -> {
+        	boolean DEBUG = true;
+        	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
+        };
+        scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
         
         // drop event - create shape
         sceneRect.setOnDragDropped((DragEvent event) -> {
