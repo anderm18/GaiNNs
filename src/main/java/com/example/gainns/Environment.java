@@ -738,6 +738,16 @@ public class Environment extends Application {
 	      return element;
 	 }
 	Dragable createElement(double x, double y, Dragable copied_element) {
-		return new Dragable(x, y, copied_element);
+		Dragable element = new Dragable(x, y, copied_element);
+		element.setOnMousePressed(me -> {
+		      select(element);
+		      element.setViewOrder(2);
+		      srBnd.fireEvent(me);
+		      me.consume();
+		});
+		element.setOnMouseDragged(me -> srBnd.fireEvent(me));
+		element.setOnMouseReleased(me -> srBnd.fireEvent(me));
+		element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+		return element;
 	}
 }
