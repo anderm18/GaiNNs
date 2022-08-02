@@ -101,10 +101,10 @@ class Dragable extends Group {
 		    this.ellipse.setOnMouseDragged(me -> this.ellipse.setOpacity(0.7));
 		    this.ellipse.setOnMouseReleased(me -> this.ellipse.setOpacity(1));
 		}
-    	
-    	this.rotataionDegree = copied_element.rotataionDegree;
-        this.rotationLengthOffsetY = copied_element.rotationLengthOffsetX;
-        this.rotationLengthOffsetX = copied_element.rotationLengthOffsetY;  	
+    	  	
+    	this.setRotate(copied_element.rotataionDegree, true);
+    	this.setRotationLengthOffsetX(copied_element.rotationLengthOffsetX);
+    	this.setRotationLengthOffsetY(copied_element.rotationLengthOffsetY);
     }
     public String getShapeName() {
     	return new String( myShapeName );
