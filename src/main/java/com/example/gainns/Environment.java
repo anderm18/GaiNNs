@@ -31,6 +31,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -102,10 +105,10 @@ public class Environment extends Application {
       
         
         Rectangle floorRect = createFloor(scene); //floor
-        /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
+        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
         PhysObj floorphys = new PhysObj();
         floorphys.addFixture(new BodyFixture(physicsRect));
-        floorphys.setMass(MassType.INFINITE);*/
+        floorphys.setMass(MassType.INFINITE);
 
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -119,25 +122,19 @@ public class Environment extends Application {
         env.setViewOrder(4);
         this.world = new World();
         this.world.setGravity(0, 9.81);
-        /*floorphys.translate(7.5, 7.25);
+        floorphys.translate(500/Settings.SCALE, 465/Settings.SCALE); //465 more or less lines up with floor
         this.world.addBody(floorphys);
 
-        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1.0, 1.0);
         Image img = new Image("file:img/smile.png");
-        for(int i = 0; i < 32; i++) {
-            PhysObj rectangle = new PhysObj(img);
-            BodyFixture f = new BodyFixture(rect);
-            f.setDensity(1.2);
-            f.setFriction(0.8);
-            f.setRestitution(0.4);
-            rectangle.addFixture(f);
-            rectangle.setMass(MassType.NORMAL);
-            //rectangle.translate(rnd(-3,3), 9.0+rnd(-4,2));
-            rectangle.translate(10, 0);
-            rectangle.getTransform().setRotation(rnd(-3.141,3.141));
+        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1, 1);
+        BodyFixture f = new BodyFixture(rect);
+        f.setDensity(1.2);
+        f.setFriction(0.8);
+        f.setRestitution(0.4);
+        for(int i = 0; i < 3; i++) {
+            PhysObj rectangle = new PhysObj(img, f, 900, 250);
             this.world.addBody(rectangle);
-        }*/
-
+        }
 
 
         AnimationTimer gameLoop = new AnimationTimer() {

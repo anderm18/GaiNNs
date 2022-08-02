@@ -1,6 +1,8 @@
 package com.example.gainns;
 
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 
@@ -10,9 +12,14 @@ import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
+
 
 public class PhysObj extends Body {
-
+    Random random = new Random();
+    double rnd(double from, double to) {
+        return to + (from - to) * random.nextDouble();
+    }
     static ArrayList<PhysObj> bodies = new ArrayList<PhysObj>();
 
     static Pane mainPane;
@@ -22,6 +29,21 @@ public class PhysObj extends Body {
         super();
         setTransform(getTransform());
         bodies.add(this);
+    }
+
+    public PhysObj(Image i, BodyFixture f, float posX, float posY) {	// for non visible physics objects
+        /*super();
+        setTransform(getTransform());
+        bodies.add(this);*/
+        this();
+        iv = new ImageView();
+        iv.setImage(i);
+        mainPane.getChildren().add(iv);
+        this.addFixture(f);
+        this.setMass(MassType.NORMAL);
+        this.translateToOrigin();
+        this.translate(posX/Settings.SCALE, posY/Settings.SCALE);
+        this.getTransform().setRotation(rnd(-3.141,3.141));
     }
 
     public PhysObj(Image i) {
