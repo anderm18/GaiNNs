@@ -44,6 +44,10 @@ public class ShapesMenu {
 		
 	}
 
+	boolean isCharMenuShowing() {
+		return charMenuShowing;
+	}
+
 	public shapeContainer getMenu() {
 		return items;
 	}
@@ -144,9 +148,11 @@ class shapeContainer {
 	            new ChangeListener<DragAndDropListShape>() {
 	                public void changed(ObservableValue<? extends DragAndDropListShape> ov, 
 	                		DragAndDropListShape old_val, DragAndDropListShape new_val) {
-	                        label.setText("[The shape content does not represent the final choice]"
+							if (new_val != null) {
+								label.setText("[The shape content does not represent the final choice]"
 	                        		+ "\nDebug Info: Select " + new_val.getShape().toString());
-	                        label.setTextFill(Color.web(new_val.getColor().toString()));
+	                        	label.setTextFill(Color.web(new_val.getColor().toString()));
+							}
 	            }
 	        });
 	        
