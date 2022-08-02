@@ -61,11 +61,11 @@ class Dragable extends Group {
     	if (this.myShapeName.equals("Rectangle")) {
 			this.widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
 		    this.heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
-		    setLayoutX(x);
-		    setLayoutY(y);
+		    this.setLayoutX(x);
+		    this.setLayoutY(y);
 		    this.widthProperty.set(copied_element.rectangle.widthProperty().doubleValue());
 		    this.heightProperty.set(copied_element.rectangle.heightProperty().doubleValue());
-		    this.ellipse.setFill(copied_element.rectangle.getFill());
+		    this.rectangle.setFill(copied_element.rectangle.getFill());
 		    this.getChildren().add(rectangle);
 		    
 		    // set transparency during moving
@@ -75,8 +75,8 @@ class Dragable extends Group {
 		} else if (this.myShapeName.equals("Ellipse")) {
 			this.widthProperty.addListener((v, o, n) -> { ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
 			this.heightProperty.addListener((v, o, n) -> { ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
-		    setLayoutX(x);
-		    setLayoutY(y);
+			this.setLayoutX(x);
+		    this.setLayoutY(y);
 		    this.widthProperty.set(copied_element.ellipse.getRadiusX() * 2);
 		    this.heightProperty.set(copied_element.ellipse.getRadiusY() * 2);
 		    this.ellipse.setFill(copied_element.ellipse.getFill());
@@ -90,8 +90,8 @@ class Dragable extends Group {
 			
 			this.widthProperty.addListener((v, o, n) -> { ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
 			this.heightProperty.addListener((v, o, n) -> { ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
-		    setLayoutX(x);
-		    setLayoutY(y);
+			this.setLayoutX(x);
+		    this.setLayoutY(y);
 		    this.widthProperty.set(copied_element.ellipse.getRadiusY() * 2);
 		    this.heightProperty.set(copied_element.ellipse.getRadiusY() * 2);
 		    this.ellipse.setFill(copied_element.ellipse.getFill());
@@ -108,9 +108,9 @@ class Dragable extends Group {
     	this.heightProperty = new SimpleDoubleProperty();
     	this.heightProperty.set(copied_element.heightProperty.doubleValue());
     	
-    	this.rotataionDegree = copied_element.rotataionDegree;
-        this.rotationLengthOffsetY = copied_element.rotationLengthOffsetY;
-        this.rotationLengthOffsetX = copied_element.rotationLengthOffsetX;  	
+    	this.rotataionDegree = 0;
+        this.rotationLengthOffsetY = 0;
+        this.rotationLengthOffsetX = 0;  	
     }
     public String getShapeName() {
     	return new String( myShapeName );
