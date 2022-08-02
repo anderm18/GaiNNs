@@ -108,11 +108,9 @@ public class Environment extends Application {
         handleKeyboardShortcut(scene);
         scene.setOnKeyPressed(e -> {
         	pressedKeys.add(e.getCode());
-        	System.out.println("SHIFT pressed and detected");
         });
         scene.setOnKeyReleased(e -> {
-        	pressedKeys.remove(e.getCode());
-        	System.out.println("SHIFT released");        	
+        	pressedKeys.remove(e.getCode());        	
         });
         
         Rectangle floorRect = createFloor(scene); //floor
@@ -254,7 +252,7 @@ public class Environment extends Application {
         // Copy shape
         KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
         Runnable copyShapeRunnable = () -> {
-        	boolean DEBUG = false;
+        	boolean DEBUG = true;
         	if (DEBUG) System.out.println("Accelerator Ctrl + C pressed");
         	
         	if (this.selectedElement != null) {
@@ -274,8 +272,12 @@ public class Environment extends Application {
         	boolean DEBUG = true;
         	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
         	// first, create a deep copy of the copied shape using the reference to the old shape
+        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
         	// then add that deep copy into the environment where the mouse is
-        	// line 280 is a hint for adding shapes to environment
+        	// the function below is a hint for adding shapes to environment
+        	shapesInEnv.add(pastingShape);
+        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
+        	root.getChildren().add(pastingShape);
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
 
@@ -334,6 +336,7 @@ public class Environment extends Application {
             		root.getChildren().remove(selectedElement);
             		shapesInEnv.remove(selectedElement);
             		overlay = null;
+            		selectedElement = null;
             	}
                 if (event.getCode() == KeyCode.SHIFT) {
                 	System.out.println("Press shift");
@@ -539,7 +542,6 @@ public class Environment extends Application {
             if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srNW) {
             	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		System.out.println("SHIFT key pressed");
             		double ratio = this.sHeight / this.sWidth;
             		setHSize(this.shapeLayoutX + dx, true); 
             		setVSize(this.shapeLayoutY + dx * ratio, true);
