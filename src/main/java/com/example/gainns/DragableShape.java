@@ -55,6 +55,11 @@ class Dragable extends Group {
 		}
     }
     
+    // Copy constructor
+    Dragable(double x, double y, Dragable copied_element){
+    	this.myShapeName = new String(copied_element.myShapeName);
+    	
+    }
     public String getShapeName() {
     	return new String( myShapeName );
     }

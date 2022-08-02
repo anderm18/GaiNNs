@@ -99,8 +99,14 @@ public class Environment extends Application {
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         // Listen for keys
-        scene.setOnKeyPressed(e -> pressedKeys.add(e.getCode()));
-        scene.setOnKeyReleased(e -> pressedKeys.remove(e.getCode()));
+        scene.setOnKeyPressed(e -> {
+        	pressedKeys.add(e.getCode());
+        	System.out.println("SHIFT pressed and detected");
+        });
+        scene.setOnKeyReleased(e -> {
+        	pressedKeys.remove(e.getCode());
+        	System.out.println("SHIFT released");        	
+        });
         
         Rectangle floorRect = createFloor(scene); //floor
         /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
@@ -247,7 +253,7 @@ public class Environment extends Application {
 		// delete selectedElement when user deletes shape
         scene.setOnKeyPressed(ke -> {
         	if (ke.getCode() == KeyCode.DELETE && selectedElement != null) {
-        		System.out.println("DELETE pressed");
+//        		System.out.println("DELETE pressed");
         		root.getChildren().remove(overlay);
         		root.getChildren().remove(selectedElement);
         		shapesInEnv.remove(selectedElement);
@@ -513,6 +519,7 @@ public class Environment extends Application {
             if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srNW) {
             	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		System.out.println("SHIFT key pressed");
             		double ratio = this.sHeight / this.sWidth;
             		setHSize(this.shapeLayoutX + dx, true); 
             		setVSize(this.shapeLayoutY + dx * ratio, true);
@@ -708,4 +715,7 @@ public class Environment extends Application {
 	      element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
 	      return element;
 	 }
+	Dragable createElement(double x, double y, Dragable copied_element) {
+		return new Dragable(x, y, copied_element);
+	}
 }
