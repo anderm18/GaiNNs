@@ -3,20 +3,25 @@ package com.example.gainns;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 
 class Dragable extends Group {
 
-    Rectangle rectangle = new Rectangle();
-    Ellipse ellipse = new Ellipse();
-    DoubleProperty widthProperty = new SimpleDoubleProperty();
-    DoubleProperty heightProperty = new SimpleDoubleProperty();
+	private Rectangle rectangle = new Rectangle();
+	private Ellipse ellipse = new Ellipse();
+	private DoubleProperty widthProperty = new SimpleDoubleProperty();
+	private DoubleProperty heightProperty = new SimpleDoubleProperty();
+	private double rotataionDegree;
+    private double rotationLengthOffsetY = 0;
+    private double rotationLengthOffsetX = 0;
+	private boolean charMenuShowing;
     
-    ShapesMenu shapesMenu;
-    
-    Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
+    Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1, boolean charMenuShowing){
+		this.charMenuShowing = charMenuShowing;
+    	this.rotataionDegree = 0.0;
     	if (shapeName.equals("Rectangle")) {
 			widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
 		    heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
@@ -25,7 +30,10 @@ class Dragable extends Group {
 		    widthProperty.set(shapeParam0);
 		    heightProperty.set(shapeParam1);
 		    rectangle.setFill(fill);
+		    ellipse.setFill(Color.BLUE);
+		   
 		    getChildren().add(rectangle);
+		    
 		    
 		    // set transparency during moving
 		    rectangle.setOnMouseDragged(me -> rectangle.setOpacity(0.7));
@@ -46,7 +54,37 @@ class Dragable extends Group {
 		    ellipse.setOnMouseReleased(me ->ellipse.setOpacity(1));
 		}
     }
+
+    public boolean isCharMenuShowing () {
+		return charMenuShowing;
+	}
+
+    public double getRotationLengthOffsetY(){
+    	return this.rotationLengthOffsetY;
+    }
     
+    public double getRotationLengthOffsetX() {
+    	return this.rotationLengthOffsetX;
+    }
+    
+    public void setRotationLengthOffsetY(Double rotationLengthOffsetY) {
+    	this.rotationLengthOffsetY = rotationLengthOffsetY;
+    }
+    
+    public void setRotationLengthOffsetX(Double rotationLengthOffsetX) {
+    	this.rotationLengthOffsetX = rotationLengthOffsetX;
+    }
+    
+    public void setRotate(double angle, boolean needStore) {
+    	this.setRotate(angle);
+    	if (needStore) {
+    		this.rotataionDegree = angle;
+    	}
+    }
+    
+    public double getRotationDegree() {
+    	return this.rotataionDegree;
+    }
     
     DoubleProperty widthProperty() { return widthProperty; }
     DoubleProperty heightProperty() { return heightProperty; }
