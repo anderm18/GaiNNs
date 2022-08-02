@@ -16,7 +16,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
@@ -30,7 +34,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.awt.event.KeyEvent;
 import org.dyn4j.world.World;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,8 +97,9 @@ public class Environment extends Application {
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         // Listen for keys
-        scene.setOnKeyPressed(e -> pressedKeys.add(e.getCode()));
-        scene.setOnKeyReleased(e -> pressedKeys.remove(e.getCode()));
+        
+        handleKeyboardShortcut(scene);
+      
         
         Rectangle floorRect = createFloor(scene); //floor
         /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
@@ -239,16 +243,7 @@ public class Environment extends Application {
             }
         });
         
-		    // delete selectedElement when user deletes shape
-        scene.setOnKeyPressed(ke -> {
-        	if (ke.getCode() == KeyCode.DELETE && selectedElement != null) {
-        		System.out.println("DELETE pressed");
-        		root.getChildren().remove(overlay);
-        		root.getChildren().remove(selectedElement);
-        		shapesInEnv.remove(selectedElement);
-        		overlay = null;
-        	}
-        });
+		
 
         // drop event - create shape
         sceneRect.setOnDragDropped((DragEvent event) -> {
@@ -286,7 +281,37 @@ public class Environment extends Application {
         gameLoop.start();
     }
     
-    public static void main(String[] args) {
+    private void handleKeyboardShortcut(Scene scene) {
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            KeyCombination copyCombo = new KeyCharacterCombination("c", KeyCombination.CONTROL_DOWN);
+            KeyCombination pasteCombo = new KeyCharacterCombination("v", KeyCombination.CONTROL_DOWN);
+            // KeyCombination codeCombo = new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN);
+
+            @Override
+            public void handle(KeyEvent event) {
+                if (copyCombo.match(event)) {
+                    System.out.println("Press copy");
+                }else if (pasteCombo.match(event)) {
+                    System.out.println("Press paste");
+                }
+                if (event.getCode() == KeyCode.DELETE && selectedElement != null) {
+            		System.out.println("DELETE pressed");
+            		root.getChildren().remove(overlay);
+            		root.getChildren().remove(selectedElement);
+            		shapesInEnv.remove(selectedElement);
+            		overlay = null;
+            	}
+                if (event.getCode() == KeyCode.SHIFT) {
+                	System.out.println("Press shift");
+                }
+            }
+        }); 
+        scene.setOnKeyReleased(e -> System.out.println("released"));
+        
+		
+	}
+
+	public static void main(String[] args) {
         launch();
     }
     
