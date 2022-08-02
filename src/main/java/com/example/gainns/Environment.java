@@ -38,7 +38,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.joint.RevoluteJoint;
 import org.dyn4j.geometry.MassType;
+import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.World;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -133,11 +135,20 @@ public class Environment extends Application {
         f.setDensity(1.2);
         f.setFriction(0.8);
         f.setRestitution(0.4);
-        for(int i = 0; i < 3; i++) {
+        PhysObj tempArr[] = new PhysObj[2];
+        for(int i = 0; i < 16; i++) {
             PhysObj rectangle = new PhysObj(img, f, 900, 250);
             this.world.addBody(rectangle);
+            //tempArr[i] = rectangle;
         }
-
+        Image chadImg = new Image("file:img/chad.jpg");
+        for(int i = 0; i < 2; i++) {
+            PhysObj rectangle = new PhysObj(chadImg, f, 885 + 5*i, 100);
+            this.world.addBody(rectangle);
+            tempArr[i] = rectangle;
+        }
+        RevoluteJoint<PhysObj> joint = new RevoluteJoint<PhysObj>(tempArr[0], tempArr[1], new Vector2(0.08, -0.2));
+        world.addJoint(joint);
 
         AnimationTimer gameLoop = new AnimationTimer() {
 
