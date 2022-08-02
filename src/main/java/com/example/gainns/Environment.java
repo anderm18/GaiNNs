@@ -16,9 +16,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
@@ -29,10 +31,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.awt.event.KeyEvent;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.World;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,6 +105,7 @@ public class Environment extends Application {
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         // Listen for keys
+        handleKeyboardShortcut(scene);
         scene.setOnKeyPressed(e -> {
         	pressedKeys.add(e.getCode());
         	System.out.println("SHIFT pressed and detected");
@@ -109,10 +116,10 @@ public class Environment extends Application {
         });
         
         Rectangle floorRect = createFloor(scene); //floor
-        /*org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//new org.dyn4j.geometry.Rectangle(floorRect.getWidth(), floorRect.getHeight());
+        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
         PhysObj floorphys = new PhysObj();
         floorphys.addFixture(new BodyFixture(physicsRect));
-        floorphys.setMass(MassType.INFINITE);*/
+        floorphys.setMass(MassType.INFINITE);
 
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
@@ -126,25 +133,19 @@ public class Environment extends Application {
         env.setViewOrder(4);
         this.world = new World();
         this.world.setGravity(0, 9.81);
-        /*floorphys.translate(7.5, 7.25);
+        floorphys.translate(500/Settings.SCALE, 465/Settings.SCALE); //465 more or less lines up with floor
         this.world.addBody(floorphys);
 
-        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1.0, 1.0);
         Image img = new Image("file:img/smile.png");
-        for(int i = 0; i < 32; i++) {
-            PhysObj rectangle = new PhysObj(img);
-            BodyFixture f = new BodyFixture(rect);
-            f.setDensity(1.2);
-            f.setFriction(0.8);
-            f.setRestitution(0.4);
-            rectangle.addFixture(f);
-            rectangle.setMass(MassType.NORMAL);
-            //rectangle.translate(rnd(-3,3), 9.0+rnd(-4,2));
-            rectangle.translate(10, 0);
-            rectangle.getTransform().setRotation(rnd(-3.141,3.141));
+        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1, 1);
+        BodyFixture f = new BodyFixture(rect);
+        f.setDensity(1.2);
+        f.setFriction(0.8);
+        f.setRestitution(0.4);
+        for(int i = 0; i < 3; i++) {
+            PhysObj rectangle = new PhysObj(img, f, 900, 250);
             this.world.addBody(rectangle);
-        }*/
-
+        }
 
 
         AnimationTimer gameLoop = new AnimationTimer() {
@@ -250,17 +251,6 @@ public class Environment extends Application {
             }
         });
         
-		// delete selectedElement when user deletes shape
-        scene.setOnKeyPressed(ke -> {
-        	if (ke.getCode() == KeyCode.DELETE && selectedElement != null) {
-//        		System.out.println("DELETE pressed");
-        		root.getChildren().remove(overlay);
-        		root.getChildren().remove(selectedElement);
-        		shapesInEnv.remove(selectedElement);
-        		overlay = null;
-        	}
-        });
-        
         // Copy shape
         KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
         Runnable copyShapeRunnable = () -> {
@@ -288,7 +278,7 @@ public class Environment extends Application {
         	// line 280 is a hint for adding shapes to environment
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
-        
+
         // drop event - create shape
         sceneRect.setOnDragDropped((DragEvent event) -> {
             Dragboard db = event.getDragboard();
@@ -325,7 +315,37 @@ public class Environment extends Application {
         gameLoop.start();
     }
     
-    public static void main(String[] args) {
+    private void handleKeyboardShortcut(Scene scene) {
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            KeyCombination copyCombo = new KeyCharacterCombination("c", KeyCombination.CONTROL_DOWN);
+            KeyCombination pasteCombo = new KeyCharacterCombination("v", KeyCombination.CONTROL_DOWN);
+            // KeyCombination codeCombo = new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN);
+
+            @Override
+            public void handle(KeyEvent event) {
+                if (copyCombo.match(event)) {
+                    System.out.println("Press copy");
+                }else if (pasteCombo.match(event)) {
+                    System.out.println("Press paste");
+                }
+                if (event.getCode() == KeyCode.DELETE && selectedElement != null) {
+            		System.out.println("DELETE pressed");
+            		root.getChildren().remove(overlay);
+            		root.getChildren().remove(selectedElement);
+            		shapesInEnv.remove(selectedElement);
+            		overlay = null;
+            	}
+                if (event.getCode() == KeyCode.SHIFT) {
+                	System.out.println("Press shift");
+                }
+            }
+        }); 
+        scene.setOnKeyReleased(e -> System.out.println("released"));
+        
+		
+	}
+
+	public static void main(String[] args) {
         launch();
     }
     
