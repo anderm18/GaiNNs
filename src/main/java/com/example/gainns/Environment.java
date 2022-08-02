@@ -106,12 +106,8 @@ public class Environment extends Application {
         Scene scene = new Scene(root, windowWidth, windowHeight);
         // Listen for keys
         handleKeyboardShortcut(scene);
-        scene.setOnKeyPressed(e -> {
-        	pressedKeys.add(e.getCode());
-        });
-        scene.setOnKeyReleased(e -> {
-        	pressedKeys.remove(e.getCode());        	
-        });
+                
+        this.handleKeyboardShortcut(scene);
         
         Rectangle floorRect = createFloor(scene); //floor
         org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
@@ -252,7 +248,7 @@ public class Environment extends Application {
         // Copy shape
         KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
         Runnable copyShapeRunnable = () -> {
-        	boolean DEBUG = true;
+        	boolean DEBUG = false;
         	if (DEBUG) System.out.println("Accelerator Ctrl + C pressed");
         	
         	if (this.selectedElement != null) {
@@ -269,7 +265,7 @@ public class Environment extends Application {
         // Paste shape
         KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
         Runnable pasteShapeRunnable = () -> {
-        	boolean DEBUG = true;
+        	boolean DEBUG = false;
         	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
         	// first, create a deep copy of the copied shape using the reference to the old shape
         	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
@@ -287,10 +283,12 @@ public class Environment extends Application {
             String shapeInfo = db.getString().replace("[", "!!").replace("]", "!!"); // avoid parsing bug in JAVA 1.8 for windows
             double shapeParam0 = Double.parseDouble(db.getString().split(", ")[2].split("=")[1]);
             double shapeParam1 = Double.parseDouble(shapeInfo.split(", ")[3].split("=")[0].equals("fill")? "0":shapeInfo.split(", ")[3].split("=")[1]); 
+            
             Dragable newAddedElement = createElement(mousePosXTraker, mousePosYTraker, shapeParam0, shapeParam1, Color.web(shapeInfo.split("fill=")[1].split("!!")[0]), shapeInfo.split("!!")[0]);
             shapesInEnv.add(newAddedElement);
             elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());           
             root.getChildren().add(newAddedElement);
+            
             if (db.hasString()) {
             	dragAndDropReporter.setText("Dropped: " + db.getString());
             	dragAndDropReporter.setTextFill(Color.web(shapeInfo.split("fill=")[1].split("!!")[0]));
@@ -308,8 +306,8 @@ public class Environment extends Application {
         stage.setMinWidth(800);
         stage.show();
         
-        root.setLeftAnchor(tab, ((double) stage.getWidth())/2.0);
-        root.setLeftAnchor(changeMenu, ((double) stage.getWidth())/2.0 - shapesMenu.getChangeMenuTab().getWidth());
+        AnchorPane.setLeftAnchor(tab, ((double) stage.getWidth())/2.0);
+        AnchorPane.setLeftAnchor(changeMenu, ((double) stage.getWidth())/2.0 - shapesMenu.getChangeMenuTab().getWidth());
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
     		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0);
     		AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getChangeMenuTab().getWidth());
@@ -318,35 +316,41 @@ public class Environment extends Application {
     }
     
     private void handleKeyboardShortcut(Scene scene) {
+    	boolean DEBUG = false;
+    	
     	scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            KeyCombination copyCombo = new KeyCharacterCombination("c", KeyCombination.CONTROL_DOWN);
-            KeyCombination pasteCombo = new KeyCharacterCombination("v", KeyCombination.CONTROL_DOWN);
+//    		KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
+//    		KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
             // KeyCombination codeCombo = new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN);
 
             @Override
             public void handle(KeyEvent event) {
-                if (copyCombo.match(event)) {
-                    System.out.println("Press copy");
-                }else if (pasteCombo.match(event)) {
-                    System.out.println("Press paste");
-                }
+//                if (copyShapeKeyCombo.match(event)) {
+//                    System.out.println("Ctrl + C pressed");
+//                } 
+//                if (pasteShapeKeyCombo.match(event)) {
+//                    System.out.println("Ctrl + V pressed");
+//                }
                 if (event.getCode() == KeyCode.DELETE && selectedElement != null) {
-            		System.out.println("DELETE pressed");
+            		if (DEBUG) System.out.println("DELETE pressed");
             		root.getChildren().remove(overlay);
             		root.getChildren().remove(selectedElement);
             		shapesInEnv.remove(selectedElement);
             		overlay = null;
             		selectedElement = null;
             	}
-                if (event.getCode() == KeyCode.SHIFT) {
-                	System.out.println("Press shift");
-                }
+                pressedKeys.add(event.getCode());
             }
         }); 
-        scene.setOnKeyReleased(e -> System.out.println("released"));
+    	
+        scene.setOnKeyReleased(e -> {
+        	pressedKeys.remove(e.getCode());
+        	if (DEBUG) System.out.println("released");
+        });
         
 		
 	}
+
 
 	public static void main(String[] args) {
         launch();
@@ -586,6 +590,7 @@ public class Environment extends Application {
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
+
             me.consume();
         });        
       }
