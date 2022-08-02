@@ -93,6 +93,9 @@ public class Environment extends Application {
         rectangle.setFill(Color.valueOf("#F5E799"));
         return rectangle;
     }
+    
+    // Copy and Paste Shapes: record the copied shapes
+    private Dragable copiedShape = null;
 
     //Menu bar is good for creating for general menus, not really for drag and drop. We probably
     //should use it to make a general menu (File, Edit, Help, etc). 
@@ -102,9 +105,15 @@ public class Environment extends Application {
 
         Scene scene = new Scene(root, windowWidth, windowHeight);
         // Listen for keys
-        
         handleKeyboardShortcut(scene);
-      
+        scene.setOnKeyPressed(e -> {
+        	pressedKeys.add(e.getCode());
+        	System.out.println("SHIFT pressed and detected");
+        });
+        scene.setOnKeyReleased(e -> {
+        	pressedKeys.remove(e.getCode());
+        	System.out.println("SHIFT released");        	
+        });
         
         Rectangle floorRect = createFloor(scene); //floor
         org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
@@ -242,7 +251,33 @@ public class Environment extends Application {
             }
         });
         
-		
+        // Copy shape
+        KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
+        Runnable copyShapeRunnable = () -> {
+        	boolean DEBUG = false;
+        	if (DEBUG) System.out.println("Accelerator Ctrl + C pressed");
+        	
+        	if (this.selectedElement != null) {
+        		this.copiedShape = this.selectedElement;
+        		if (DEBUG) {
+        			System.out.println("Shape copied");
+            		System.out.println("Shape name: " + this.copiedShape.getShapeName());
+        		}
+        	} 
+        	else if (DEBUG) System.out.println("No shape selected");
+        };
+        scene.getAccelerators().put(copyShapeKeyCombo, copyShapeRunnable);
+        
+        // Paste shape
+        KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
+        Runnable pasteShapeRunnable = () -> {
+        	boolean DEBUG = true;
+        	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
+        	// first, create a deep copy of the copied shape using the reference to the old shape
+        	// then add that deep copy into the environment where the mouse is
+        	// line 280 is a hint for adding shapes to environment
+        };
+        scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
 
         // drop event - create shape
         sceneRect.setOnDragDropped((DragEvent event) -> {
@@ -347,6 +382,7 @@ public class Environment extends Application {
             this.selectedElement = element;
             updateOverlay();
         }
+        
     }
 
     /**
@@ -424,9 +460,11 @@ public class Environment extends Application {
         	// west
         	this.srW.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
         	this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
+        	
         	// center dot
         	this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
         	this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
+        	
         	// rotate dot
         	this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
         	this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10 - this.selectedElement.getRotationLengthOffsetY()/2);
@@ -501,6 +539,7 @@ public class Environment extends Application {
             if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srNW) {
             	if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		System.out.println("SHIFT key pressed");
             		double ratio = this.sHeight / this.sWidth;
             		setHSize(this.shapeLayoutX + dx, true); 
             		setVSize(this.shapeLayoutY + dx * ratio, true);
@@ -696,4 +735,7 @@ public class Environment extends Application {
 	      element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
 	      return element;
 	 }
+	Dragable createElement(double x, double y, Dragable copied_element) {
+		return new Dragable(x, y, copied_element);
+	}
 }

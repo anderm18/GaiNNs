@@ -9,7 +9,8 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 
 class Dragable extends Group {
-
+	
+	private String myShapeName;
 	private Rectangle rectangle = new Rectangle();
 	private Ellipse ellipse = new Ellipse();
 	private DoubleProperty widthProperty = new SimpleDoubleProperty();
@@ -20,6 +21,7 @@ class Dragable extends Group {
     
     Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
     	this.rotataionDegree = 0.0;
+    	this.myShapeName = new String (shapeName);
     	if (shapeName.equals("Rectangle")) {
 			widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
 		    heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
@@ -48,6 +50,15 @@ class Dragable extends Group {
 		    ellipse.setOnMouseDragged(me -> ellipse.setOpacity(0.7));
 		    ellipse.setOnMouseReleased(me ->ellipse.setOpacity(1));
 		}
+    }
+    
+    // Copy constructor
+    Dragable(double x, double y, Dragable copied_element){
+    	this.myShapeName = new String(copied_element.myShapeName);
+    	
+    }
+    public String getShapeName() {
+    	return new String( myShapeName );
     }
     
     public double getRotationLengthOffsetY(){
