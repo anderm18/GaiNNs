@@ -723,7 +723,7 @@ public class Environment extends Application {
 
 
 	Dragable createElement(double x, double y, double width, double height, Paint fill, String shapeName) {
-		  Dragable element = new Dragable(x, y, fill, shapeName, width, height);
+		  Dragable element = new Dragable(x - 0.5*width, y - 0.5*height, fill, shapeName, width, height);
 	      element.setOnMousePressed(me -> {
 		      select(element);
 		      element.setViewOrder(2);
@@ -733,8 +733,11 @@ public class Environment extends Application {
 	      element.setOnMouseDragged(me -> srBnd.fireEvent(me));
 	      element.setOnMouseReleased(me -> srBnd.fireEvent(me));
 	      element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+	      System.out.println(element.getLayoutX() + " " + x);
 	      return element;
 	 }
+	
+	
 	Dragable createElement(double x, double y, Dragable copied_element) {
 		return new Dragable(x, y, copied_element);
 	}

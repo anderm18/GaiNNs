@@ -15,7 +15,7 @@ class Dragable extends Group {
 	private Ellipse ellipse = new Ellipse();
 	private DoubleProperty widthProperty = new SimpleDoubleProperty();
 	private DoubleProperty heightProperty = new SimpleDoubleProperty();
-	private double rotataionDegree;
+	private double rotataionDegree, centerX, centerY;
     private double rotationLengthOffsetY = 0;
     private double rotationLengthOffsetX = 0;
     
