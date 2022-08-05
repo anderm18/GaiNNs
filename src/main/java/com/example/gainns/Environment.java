@@ -584,8 +584,6 @@ public class Environment extends Application {
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
-            if (this.selectedElement != null) 
-            	this.selectedElement.setShapeNameCirclesAndEllipses();
             me.consume();
         });        
       }
