@@ -142,7 +142,7 @@ class Dragable extends Group {
      * @notes: use this function for every resizing move.
      */
     public void setShapeNameCirclesAndEllipses() {
-    	boolean DEBUG = true;
+    	boolean DEBUG = false;
     	if (!this.myShapeName.equals("Rectangle")) {
     		if (DEBUG) System.out.println("Dragable myShapeName before change is " + this.myShapeName);
     		if (this.widthProperty.equals(this.heightProperty)) {
