@@ -88,6 +88,27 @@ class Dragable extends Group {
     	return this.rotataionDegree;
     }
     
+    /**
+     * @effects: re-determine whether a round Dragable shape is either a circle or an ellipse
+     * @notes: use this function for every resizing move.
+     */
+    public void setShapeNameCirclesAndEllipses() {
+    	boolean DEBUG = true;
+    	if (!this.myShapeName.equals("Rectangle")) {
+    		if (DEBUG) System.out.println("Dragable myShapeName before change is " + this.myShapeName);
+    		if (this.widthProperty.equals(this.heightProperty)) {
+        		this.myShapeName = new String("Circle");    		
+        	}
+        	else {
+        		this.myShapeName = new String("Ellipse");
+        	}
+    	}
+    	else {
+    		if (DEBUG) System.out.println("Dragable myShapeName is " + this.myShapeName + " so no need to change myShapeName");
+    	}
+    	if (DEBUG) System.out.println("Dragable myShapeName changed to " + this.myShapeName);
+    }
+    
     DoubleProperty widthProperty() { return widthProperty; }
     DoubleProperty heightProperty() { return heightProperty; }
     @Override public String toString() { return "[" + getLayoutX() + ", " + getLayoutY() + ", " + widthProperty.get() + ", " + heightProperty.get() + "]"; }
