@@ -83,6 +83,7 @@ public class Environment extends Application {
     
     // hard limit: shape will not reach ground
     Rectangle2D area = new Rectangle2D(0, 0, windowWidth, windowHeight-100);
+    ShapesMenu shapesMenu = new ShapesMenu();
     
     // A container to store all pressed keys
     private Set<KeyCode> pressedKeys = new HashSet<>();
@@ -163,7 +164,6 @@ public class Environment extends Application {
         floor.setOnMousePressed(me -> select(null));
 
         //menu for shapes
-        ShapesMenu shapesMenu = new ShapesMenu(); 
         shapesMenu.createMenu(scene);
         HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
         sMenu.setPickOnBounds(false);
@@ -523,76 +523,82 @@ public class Environment extends Application {
      */
     void handleMouse(Node node) {
     	node.setOnMouseReleased(me -> {
-    		if (node == this.srRotate) {
+    		if ((node == this.srRotate) && (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing())) {
     			setRotate(me.getX(), me.getY(), true);
     			this.srRotate.setCursor(Cursor.OPEN_HAND);
     		}
     	});
         node.setOnMousePressed(me -> {
-        	this.pressedMousePosX = me.getX();
-        	this.pressedMousePosY = me.getY();
-        	this.shapeLayoutX = this.selectedElement.getLayoutX();
-        	this.shapeLayoutY = this.selectedElement.getLayoutY();
-        	this.sWidth = this.selectedElement.widthProperty().get();
-        	this.sHeight = this.selectedElement.heightProperty().get();
-        	if (node == this.srRotate) this.srRotate.setCursor(Cursor.CLOSED_HAND);
-            // me.consume();
+            if (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing()) {
+        	    this.pressedMousePosX = me.getX();
+        	    this.pressedMousePosY = me.getY();
+        	    this.shapeLayoutX = this.selectedElement.getLayoutX();
+        	    this.shapeLayoutY = this.selectedElement.getLayoutY();
+        	    this.sWidth = this.selectedElement.widthProperty().get();
+        	    this.sHeight = this.selectedElement.heightProperty().get();
+        	    if (node == this.srRotate) this.srRotate.setCursor(Cursor.CLOSED_HAND);
+                // me.consume();
+            }
         });
         
         node.setOnMouseDragged(me -> {
-            double dx = (me.getX() - this.pressedMousePosX);
-            double dy = (me.getY() - this.pressedMousePosY);
-            Object source = me.getSource();
-            if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
-            else if (source == this.srNW) {
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + dx * ratio, true);
-            	} else {
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + dy, true);
-            	}
-            }
-            else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
-            else if (source == this.srNE) { 
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            		setVSize(this.shapeLayoutY + dx * ratio * -1, true);
-            	} else {
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            		setVSize(this.shapeLayoutY + dy, true); 
-            	}
-            }
-            else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            else if (source == this.srSE) {	
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dx * ratio, false);
-            	} else {
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            	}
-            }
-            else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            else if (source == this.srSW) { 
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dx * ratio * -1, false);
-            	} else {
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            	}
-            }
-            else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
-            else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
-            else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
 
-            me.consume();
-        });        
+            if (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing()) {
+                double dx = (me.getX() - this.pressedMousePosX);
+                double dy = (me.getY() - this.pressedMousePosY);
+                Object source = me.getSource();
+                if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
+                else if (source == this.srNW) {
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    System.out.println("SHIFT key pressed");
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + dx * ratio, true);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + dy, true);
+            	    }
+                }
+                else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
+                else if (source == this.srNE) { 
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		    setVSize(this.shapeLayoutY + dx * ratio * -1, true);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		    setVSize(this.shapeLayoutY + dy, true); 
+            	    }
+                }
+                else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+                else if (source == this.srSE) {	
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dx * ratio, false);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            	    }
+                }
+                else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+                else if (source == this.srSW) { 
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dx * ratio * -1, false);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            	    }
+                }
+                else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
+                else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
+                else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
+                me.consume();
+            }
+        });
+
       }
 
     /**
@@ -730,7 +736,7 @@ public class Environment extends Application {
 
 
 	Dragable createElement(double x, double y, double width, double height, Paint fill, String shapeName) {
-		  Dragable element = new Dragable(x, y, fill, shapeName, width, height);
+		  Dragable element = new Dragable(x, y, fill, shapeName, width, height, shapesMenu.isCharMenuShowing());
 	      element.setOnMousePressed(me -> {
 		      select(element);
 		      element.setViewOrder(2);
