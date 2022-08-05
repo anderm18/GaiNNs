@@ -280,6 +280,8 @@ public class Environment extends Application {
         	}
         	else {
         		if (DEBUG) System.out.println("Detected mouse out of bounds");
+            	Image image = textToImage("Paste failed: mouse is out of bounds");
+//            	this.srRotate.setCursor(new ImageCursor(image, image.getWidth() / 2, image.getHeight() /2));
         	}
 
         };
