@@ -1,8 +1,10 @@
 package com.example.gainns;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -45,6 +47,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Random;
 
 public class Environment extends Application {
@@ -266,10 +270,14 @@ public class Environment extends Application {
         KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
         Runnable pasteShapeRunnable = () -> {
         	boolean DEBUG = true;
-        	if (this.area.getMinX() <= this.mousePosXTraker && this.mousePosXTraker <= this.area.getMaxX()
-        		&& this.area.getMinY() <= this.mousePosYTraker && this.mousePosYTraker <= this.area.getMaxY()) {
+        	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
+        	
+        	boolean legal_position = this.area.getMinX() <= this.mousePosXTraker && this.mousePosXTraker <= this.area.getMaxX()
+            		&& this.area.getMinY() <= this.mousePosYTraker && this.mousePosYTraker <= this.area.getMaxY(); 
+        	
+        	if ( legal_position	&& this.copiedShape != null) {
+        		if (DEBUG) System.out.println("Copied shape exists, position is legal, pasting...");
         		
-        		if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
 	        	// first, create a deep copy of the copied shape using the reference to the old shape
 	        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
 	        	// then add that deep copy into the environment where the mouse is
@@ -279,11 +287,43 @@ public class Environment extends Application {
 	        	root.getChildren().add(pastingShape);
         	}
         	else {
-        		if (DEBUG) System.out.println("Detected mouse out of bounds");
-            	Image image = textToImage("Paste failed: mouse is out of bounds");
-//            	this.srRotate.setCursor(new ImageCursor(image, image.getWidth() / 2, image.getHeight() /2));
-        	}
+        		if (DEBUG) System.out.println("Paste failed");
+        		// https://stackoverflow.com/questions/26454149/make-javafx-wait-and-continue-with-code
+        		
+        		double error_label_duration_millis = 3000;
+        		
+        		Task<Void> sleeper = new Task<Void>() {
+        			@Override
+        			protected Void call() throws Exception {
+        				try { Thread.sleep((long)(error_label_duration_millis + 1000)); }
+        				catch (InterruptedException e) { }
+        				return null;
+        			}
+        	    };
+    			String error_msg = "Paste failed:";
+        	    if (this.copiedShape == null) {
+        	    	error_msg += " no shape is copied.";
+        	    }
+        	    if (!legal_position) {
+        	    	error_msg += " position out of bounds.";
+        	    }
+        	    
+    			Label error_label = new Label(error_msg);
+        		error_label.setLayoutX(this.mousePosXTraker + 20);
+        		error_label.setLayoutY(this.mousePosYTraker);
+        		root.getChildren().add(error_label);
 
+        	    sleeper.setOnSucceeded(event -> {
+        	    	root.getChildren().remove(error_label);
+        	    	if (DEBUG) assert(!root.getChildren().contains(error_label));
+        	    });
+        	    new Thread(sleeper).start();
+        		
+        		FadeTransition ft = new FadeTransition(Duration.millis(error_label_duration_millis), error_label);
+        		ft.setFromValue(1.0);
+        		ft.setToValue(0.0);
+        		ft.play();
+        	}
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
 
