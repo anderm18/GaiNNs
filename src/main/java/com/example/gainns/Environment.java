@@ -590,7 +590,6 @@ public class Environment extends Application {
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
-
             me.consume();
         });        
       }
@@ -683,6 +682,7 @@ public class Environment extends Application {
             if (width < hardLimitForResize) width = hardLimitForResize;
         }
         this.selectedElement.widthProperty().set(width);
+        this.selectedElement.setShapeNameCirclesAndEllipses();
         borderOffsetCorrection();
     }
 
@@ -705,6 +705,7 @@ public class Environment extends Application {
             if (height < hardLimitForResize) height = hardLimitForResize;
         }
         this.selectedElement.heightProperty().set(height);
+        this.selectedElement.setShapeNameCirclesAndEllipses();
         borderOffsetCorrection();
     }
     
