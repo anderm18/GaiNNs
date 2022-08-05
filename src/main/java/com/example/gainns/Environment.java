@@ -265,15 +265,23 @@ public class Environment extends Application {
         // Paste shape
         KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
         Runnable pasteShapeRunnable = () -> {
-        	boolean DEBUG = false;
-        	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
-        	// first, create a deep copy of the copied shape using the reference to the old shape
-        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
-        	// then add that deep copy into the environment where the mouse is
-        	// the function below is a hint for adding shapes to environment
-        	shapesInEnv.add(pastingShape);
-        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
-        	root.getChildren().add(pastingShape);
+        	boolean DEBUG = true;
+        	if (this.area.getMinX() <= this.mousePosXTraker && this.mousePosXTraker <= this.area.getMaxX()
+        		&& this.area.getMinY() <= this.mousePosYTraker && this.mousePosYTraker <= this.area.getMaxY()) {
+        		
+        		if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
+	        	// first, create a deep copy of the copied shape using the reference to the old shape
+	        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
+	        	// then add that deep copy into the environment where the mouse is
+	        	// the function below is a hint for adding shapes to environment
+	        	shapesInEnv.add(pastingShape);
+	        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
+	        	root.getChildren().add(pastingShape);
+        	}
+        	else {
+        		if (DEBUG) System.out.println("Detected mouse out of bounds");
+        	}
+
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
 
