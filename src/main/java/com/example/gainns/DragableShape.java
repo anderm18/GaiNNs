@@ -18,8 +18,10 @@ class Dragable extends Group {
 	private double rotataionDegree;
     private double rotationLengthOffsetY = 0;
     private double rotationLengthOffsetX = 0;
+	private boolean charMenuShowing;
     
-    Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
+    Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1, boolean charMenuShowing){
+		this.charMenuShowing = charMenuShowing;
     	this.rotataionDegree = 0.0;
     	this.myShapeName = new String (shapeName);
     	if (shapeName.equals("Rectangle")) {
@@ -52,9 +54,19 @@ class Dragable extends Group {
 		}
     }
     
+	public boolean isCharMenuShowing () {
+		return charMenuShowing;
+	}
+
+	public void setCharMenuShowing (boolean b) {
+		charMenuShowing = b;
+		return;
+	}
+
     // Copy constructor
     Dragable(double x, double y, Dragable copied_element){
     	this.myShapeName = new String(copied_element.myShapeName);
+
     	this.rectangle = new Rectangle();
     	this.ellipse = new Ellipse();
     	
@@ -105,6 +117,7 @@ class Dragable extends Group {
     	this.setRotate(copied_element.rotataionDegree, true);
     	this.setRotationLengthOffsetX(copied_element.rotationLengthOffsetX);
     	this.setRotationLengthOffsetY(copied_element.rotationLengthOffsetY);
+		this.setCharMenuShowing(copied_element.isCharMenuShowing());
     }
     public String getShapeName() {
     	return new String( myShapeName );
