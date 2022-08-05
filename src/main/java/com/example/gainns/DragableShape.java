@@ -55,7 +55,56 @@ class Dragable extends Group {
     // Copy constructor
     Dragable(double x, double y, Dragable copied_element){
     	this.myShapeName = new String(copied_element.myShapeName);
+    	this.rectangle = new Rectangle();
+    	this.ellipse = new Ellipse();
     	
+    	if (this.myShapeName.equals("Rectangle")) {
+			this.widthProperty.addListener((v, o, n) -> { this.rectangle.setWidth(n.doubleValue()); });
+		    this.heightProperty.addListener((v, o, n) -> { this.rectangle.setHeight(n.doubleValue()); });
+		    this.setLayoutX(x);
+		    this.setLayoutY(y);
+		    this.widthProperty.set(copied_element.rectangle.widthProperty().doubleValue());
+		    this.heightProperty.set(copied_element.rectangle.heightProperty().doubleValue());
+		    this.rectangle.setFill(copied_element.rectangle.getFill());
+		    this.getChildren().add(this.rectangle);
+		    
+		    // set transparency during moving
+		    this.rectangle.setOnMouseDragged(me -> this.rectangle.setOpacity(0.7));
+		    this.rectangle.setOnMouseReleased(me -> this.rectangle.setOpacity(1));
+		    
+		} else if (this.myShapeName.equals("Ellipse")) {
+			this.widthProperty.addListener((v, o, n) -> { this.ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
+			this.heightProperty.addListener((v, o, n) -> { this.ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
+			this.setLayoutX(x);
+		    this.setLayoutY(y);
+		    this.widthProperty.set(copied_element.ellipse.getRadiusX() * 2);
+		    this.heightProperty.set(copied_element.ellipse.getRadiusY() * 2);
+		    this.ellipse.setFill(copied_element.ellipse.getFill());
+		    getChildren().add(this.ellipse);
+		    
+		    // set transparency during moving
+		    this.ellipse.setOnMouseDragged(me -> this.ellipse.setOpacity(0.7));
+		    this.ellipse.setOnMouseReleased(me -> this.ellipse.setOpacity(1));
+		    
+		} else if (this.myShapeName.equals("Circle")) {
+			
+			this.widthProperty.addListener((v, o, n) -> { this.ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
+			this.heightProperty.addListener((v, o, n) -> { this.ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
+			this.setLayoutX(x);
+		    this.setLayoutY(y);
+		    this.widthProperty.set(copied_element.ellipse.getRadiusY() * 2);
+		    this.heightProperty.set(copied_element.ellipse.getRadiusY() * 2);
+		    this.ellipse.setFill(copied_element.ellipse.getFill());
+		    getChildren().add(this.ellipse);
+		    
+		    // set transparency during moving
+		    this.ellipse.setOnMouseDragged(me -> this.ellipse.setOpacity(0.7));
+		    this.ellipse.setOnMouseReleased(me -> this.ellipse.setOpacity(1));
+		}
+    	  	
+    	this.setRotate(copied_element.rotataionDegree, true);
+    	this.setRotationLengthOffsetX(copied_element.rotationLengthOffsetX);
+    	this.setRotationLengthOffsetY(copied_element.rotationLengthOffsetY);
     }
     public String getShapeName() {
     	return new String( myShapeName );
