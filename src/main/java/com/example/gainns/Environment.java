@@ -269,7 +269,7 @@ public class Environment extends Application {
         // Paste shape
         KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
         Runnable pasteShapeRunnable = () -> {
-        	boolean DEBUG = true;
+        	boolean DEBUG = false;
         	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
         	
         	boolean legal_position = this.area.getMinX() <= this.mousePosXTraker && this.mousePosXTraker <= this.area.getMaxX()
@@ -292,27 +292,31 @@ public class Environment extends Application {
         		
         		double error_label_duration_millis = 3000;
         		
-        		Task<Void> sleeper = new Task<Void>() {
-        			@Override
-        			protected Void call() throws Exception {
-        				try { Thread.sleep((long)(error_label_duration_millis + 1000)); }
-        				catch (InterruptedException e) { }
-        				return null;
-        			}
-        	    };
-    			String error_msg = "Paste failed:";
+    			String error_msg = "Cannot paste here:";
         	    if (this.copiedShape == null) {
         	    	error_msg += " no shape is copied.";
+        	    	error_label_duration_millis += 500;
         	    }
         	    if (!legal_position) {
         	    	error_msg += " position out of bounds.";
+        	    	error_label_duration_millis += 500;
         	    }
+        	    final double error_label_duration_millis_final = error_label_duration_millis;
         	    
     			Label error_label = new Label(error_msg);
         		error_label.setLayoutX(this.mousePosXTraker + 20);
         		error_label.setLayoutY(this.mousePosYTraker);
         		root.getChildren().add(error_label);
 
+        		Task<Void> sleeper = new Task<Void>() {
+        			@Override
+        			protected Void call() throws Exception {
+        				try { Thread.sleep((long)(error_label_duration_millis_final + 1000)); }
+        				catch (InterruptedException e) { }
+        				return null;
+        			}
+        	    };
+        		
         	    sleeper.setOnSucceeded(event -> {
         	    	root.getChildren().remove(error_label);
         	    	if (DEBUG) assert(!root.getChildren().contains(error_label));
