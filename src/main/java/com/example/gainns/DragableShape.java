@@ -58,6 +58,11 @@ class Dragable extends Group {
 		return charMenuShowing;
 	}
 
+	public void setCharMenuShowing (boolean b) {
+		charMenuShowing = b;
+		return;
+	}
+
     // Copy constructor
     Dragable(double x, double y, Dragable copied_element){
     	this.myShapeName = new String(copied_element.myShapeName);
@@ -112,6 +117,7 @@ class Dragable extends Group {
     	this.setRotate(copied_element.rotataionDegree, true);
     	this.setRotationLengthOffsetX(copied_element.rotationLengthOffsetX);
     	this.setRotationLengthOffsetY(copied_element.rotationLengthOffsetY);
+		this.setCharMenuShowing(copied_element.isCharMenuShowing());
     }
     public String getShapeName() {
     	return new String( myShapeName );
