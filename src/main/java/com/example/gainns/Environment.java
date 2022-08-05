@@ -462,8 +462,8 @@ public class Environment extends Application {
         	this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
         	
         	// center dot
-        	this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
-        	this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
+        	this.srCen.setCenterX(this.selectedElement.getCenterX());
+        	this.srCen.setCenterY(this.selectedElement.getCenterY());
         	
         	// rotate dot
         	this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
@@ -519,6 +519,7 @@ public class Environment extends Application {
     		if (node == this.srRotate) {
     			setRotate(me.getX(), me.getY(), true);
     			this.srRotate.setCursor(Cursor.OPEN_HAND);
+    			// this.selectedElement.autoCenterUpdate();
     		}
     	});
         node.setOnMousePressed(me -> {
@@ -584,6 +585,7 @@ public class Environment extends Application {
             else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
             else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
             else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
+            this.selectedElement.autoCenterUpdate();
             me.consume();
         });        
       }
@@ -723,18 +725,19 @@ public class Environment extends Application {
 
 
 	Dragable createElement(double x, double y, double width, double height, Paint fill, String shapeName) {
-		  Dragable element = new Dragable(x - 0.5*width, y - 0.5*height, fill, shapeName, width, height);
-	      element.setOnMousePressed(me -> {
-		      select(element);
-		      element.setViewOrder(2);
-		      srBnd.fireEvent(me);
-		      me.consume();
-	      });
-	      element.setOnMouseDragged(me -> srBnd.fireEvent(me));
-	      element.setOnMouseReleased(me -> srBnd.fireEvent(me));
-	      element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
-	      System.out.println(element.getLayoutX() + " " + x);
-	      return element;
+		Dragable element = new Dragable(x, y, fill, shapeName, width, height);
+		// System.out.println("x: " + x + " Y: " + y + "width: " + width + " height: " + height);
+		element.setOnMousePressed(me -> {
+			select(element);
+			element.setViewOrder(2);
+			srBnd.fireEvent(me);
+			me.consume();
+		});
+		element.setOnMouseDragged(me -> srBnd.fireEvent(me));
+		element.setOnMouseReleased(me -> srBnd.fireEvent(me));
+		element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+		// System.out.println("Create: center X: " + element.getCenterX());
+		return element;
 	 }
 	
 	
