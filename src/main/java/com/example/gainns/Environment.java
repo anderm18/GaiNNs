@@ -34,6 +34,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
+import javafx.scene.control.Button;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -129,21 +130,9 @@ public class Environment extends Application {
         HBox env = new HBox(0, sceneRect);
         env.setViewOrder(4);
         this.world = new World();
-        this.world.setGravity(0, 9.81);
+        this.world.setGravity(0, Settings.GRAVITY);
         floorphys.translate(floorRect.getWidth()/(Settings.SCALE*2), (windowHeight - floorRect.getHeight())/Settings.SCALE);
         this.world.addBody(floorphys);
-
-        Image img = new Image("file:img/smile.png");
-        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1, 1);
-        BodyFixture f = new BodyFixture(rect);
-        f.setDensity(1.2);
-        f.setFriction(0.8);
-        f.setRestitution(0.4);
-        for(int i = 0; i < 3; i++) {
-            PhysObj rectangle = new PhysObj(img, f, 900, 250);
-            this.world.addBody(rectangle);
-        }
-
 
         AnimationTimer gameLoop = new AnimationTimer() {
 
@@ -300,6 +289,17 @@ public class Environment extends Application {
             }
             event.consume();
         });
+
+        // scene player loop
+        ScenePlayer sp = new ScenePlayer(this.world);
+        Button sceneButton = new Button("Play");
+        sceneButton.setWrapText(true);
+        sceneButton.setTranslateX(150);
+        sceneButton.setTranslateY(60);
+        sceneButton.setOnAction(actionEvent ->  {
+            sp.play();
+        });
+        root.getChildren().add(sceneButton);
         
         // set up window
         stage.setTitle("GaiNNs");
@@ -314,6 +314,8 @@ public class Environment extends Application {
     		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0);
     		AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getChangeMenuTab().getWidth());
     	});
+
+        // start the loop
         gameLoop.start();
     }
     
@@ -770,4 +772,9 @@ public class Environment extends Application {
 		element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
 		return element;
 	}
+
+    void beginPlayer(boolean begin, double time){
+        //if(begin)
+            //player(time);
+    }
 }
