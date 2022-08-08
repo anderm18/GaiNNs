@@ -78,8 +78,8 @@ public class Environment extends Application {
 	private List<Dragable> shapesInEnv = new ArrayList<Dragable>();
 	
 	// resolution offset
-	private double windowWidth = Screen.getPrimary().getBounds().getWidth()-400;
-    private double windowHeight = Screen.getPrimary().getBounds().getHeight()-300;
+	private double windowWidth = Screen.getPrimary().getBounds().getWidth() - 400;
+    private double windowHeight = Screen.getPrimary().getBounds().getHeight() - 300;
     
     // hard limit: shape will not reach ground
     Rectangle2D area = new Rectangle2D(0, 0, windowWidth, windowHeight-100);
@@ -89,7 +89,7 @@ public class Environment extends Application {
     private Set<KeyCode> pressedKeys = new HashSet<>();
     
     private Rectangle createFloor(Scene scene) {
-        Rectangle rectangle = new Rectangle(windowWidth, 100);
+        Rectangle rectangle = new Rectangle(windowWidth, Settings.SCALE);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         rectangle.setFill(Color.valueOf("#F5E799"));
         return rectangle;
@@ -111,16 +111,18 @@ public class Environment extends Application {
         this.handleKeyboardShortcut(scene);
         
         Rectangle floorRect = createFloor(scene); //floor
-        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
+        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
         PhysObj floorphys = new PhysObj();
         floorphys.addFixture(new BodyFixture(physicsRect));
         floorphys.setMass(MassType.INFINITE);
 
+        // set up the scene
         Rectangle sceneRect = new Rectangle(windowWidth, windowHeight); //env range
         sceneRect.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         sceneRect.heightProperty().bind(scene.heightProperty()); //keep as high as window
         sceneRect.setFill(Color.valueOf("#99F0F5"));
         PhysObj.setMainPane(this.root);
+
         // set layer and position for of base env
         HBox floor = new HBox(0, floorRect);
         floor.setViewOrder(3);
@@ -128,7 +130,7 @@ public class Environment extends Application {
         env.setViewOrder(4);
         this.world = new World();
         this.world.setGravity(0, 9.81);
-        floorphys.translate(500/Settings.SCALE, 465/Settings.SCALE); //465 more or less lines up with floor
+        floorphys.translate(floorRect.getWidth()/(Settings.SCALE*2), (windowHeight - floorRect.getHeight())/Settings.SCALE);
         this.world.addBody(floorphys);
 
         Image img = new Image("file:img/smile.png");
