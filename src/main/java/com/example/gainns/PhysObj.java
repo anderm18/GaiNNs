@@ -32,9 +32,6 @@ public class PhysObj extends Body {
     }
 
     public PhysObj(Image i, BodyFixture f, float posX, float posY) {	// for non visible physics objects
-        /*super();
-        setTransform(getTransform());
-        bodies.add(this);*/
         this();
         iv = new ImageView();
         iv.setImage(i);

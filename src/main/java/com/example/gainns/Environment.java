@@ -94,6 +94,12 @@ public class Environment extends Application {
         rectangle.setFill(Color.valueOf("#F5E799"));
         return rectangle;
     }
+
+    private void addPhysics() {
+        for(Dragable d : shapesInEnv) {
+
+        }
+    }
     
     // Copy and Paste Shapes: record the copied shapes
     private Dragable copiedShape = null;

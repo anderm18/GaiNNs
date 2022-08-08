@@ -32,6 +32,7 @@ public class ShapesMenu {
 
 		private Button tab = new Button("HIDE");
 		private Button changeMenu = new Button("   Scene Editor   ");
+		private Button start = new Button("Start");
 		private boolean hidden = false;
 		private boolean charMenuShowing = true;
 		
