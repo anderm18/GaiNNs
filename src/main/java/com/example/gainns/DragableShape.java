@@ -9,7 +9,8 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 
 class Dragable extends Group {
-
+	
+	private String myShapeName;
 	private Rectangle rectangle = new Rectangle();
 	private Ellipse ellipse = new Ellipse();
 	private DoubleProperty widthProperty = new SimpleDoubleProperty();
@@ -17,9 +18,12 @@ class Dragable extends Group {
 	private double rotataionDegree;
     private double rotationLengthOffsetY = 0;
     private double rotationLengthOffsetX = 0;
+	private boolean charMenuShowing;
     
-    Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1){
+    Dragable(double x, double y, Paint fill, String shapeName, double shapeParam0, double shapeParam1, boolean charMenuShowing){
+		this.charMenuShowing = charMenuShowing;
     	this.rotataionDegree = 0.0;
+    	this.myShapeName = new String (shapeName);
     	if (shapeName.equals("Rectangle")) {
 			widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
 		    heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
@@ -28,10 +32,7 @@ class Dragable extends Group {
 		    widthProperty.set(shapeParam0);
 		    heightProperty.set(shapeParam1);
 		    rectangle.setFill(fill);
-		    ellipse.setFill(Color.BLUE);
-		   
 		    getChildren().add(rectangle);
-		    
 		    
 		    // set transparency during moving
 		    rectangle.setOnMouseDragged(me -> rectangle.setOpacity(0.7));
@@ -51,6 +52,75 @@ class Dragable extends Group {
 		    ellipse.setOnMouseDragged(me -> ellipse.setOpacity(0.7));
 		    ellipse.setOnMouseReleased(me ->ellipse.setOpacity(1));
 		}
+    }
+    
+	public boolean isCharMenuShowing () {
+		return charMenuShowing;
+	}
+
+	public void setCharMenuShowing (boolean b) {
+		charMenuShowing = b;
+		return;
+	}
+
+    // Copy constructor
+    Dragable(double x, double y, Dragable copied_element){
+    	this.myShapeName = new String(copied_element.myShapeName);
+
+    	this.rectangle = new Rectangle();
+    	this.ellipse = new Ellipse();
+    	
+    	if (this.myShapeName.equals("Rectangle")) {
+			this.widthProperty.addListener((v, o, n) -> { this.rectangle.setWidth(n.doubleValue()); });
+		    this.heightProperty.addListener((v, o, n) -> { this.rectangle.setHeight(n.doubleValue()); });
+		    this.setLayoutX(x);
+		    this.setLayoutY(y);
+		    this.widthProperty.set(copied_element.rectangle.widthProperty().doubleValue());
+		    this.heightProperty.set(copied_element.rectangle.heightProperty().doubleValue());
+		    this.rectangle.setFill(copied_element.rectangle.getFill());
+		    this.getChildren().add(this.rectangle);
+		    
+		    // set transparency during moving
+		    this.rectangle.setOnMouseDragged(me -> this.rectangle.setOpacity(0.7));
+		    this.rectangle.setOnMouseReleased(me -> this.rectangle.setOpacity(1));
+		    
+		} else if (this.myShapeName.equals("Ellipse")) {
+			this.widthProperty.addListener((v, o, n) -> { this.ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
+			this.heightProperty.addListener((v, o, n) -> { this.ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
+			this.setLayoutX(x);
+		    this.setLayoutY(y);
+		    this.widthProperty.set(copied_element.ellipse.getRadiusX() * 2);
+		    this.heightProperty.set(copied_element.ellipse.getRadiusY() * 2);
+		    this.ellipse.setFill(copied_element.ellipse.getFill());
+		    getChildren().add(this.ellipse);
+		    
+		    // set transparency during moving
+		    this.ellipse.setOnMouseDragged(me -> this.ellipse.setOpacity(0.7));
+		    this.ellipse.setOnMouseReleased(me -> this.ellipse.setOpacity(1));
+		    
+		} else if (this.myShapeName.equals("Circle")) {
+			
+			this.widthProperty.addListener((v, o, n) -> { this.ellipse.setRadiusX(n.doubleValue()/2); ellipse.setCenterX(n.doubleValue()/2);});
+			this.heightProperty.addListener((v, o, n) -> { this.ellipse.setRadiusY(n.doubleValue()/2); ellipse.setCenterY(n.doubleValue()/2);});
+			this.setLayoutX(x);
+		    this.setLayoutY(y);
+		    this.widthProperty.set(copied_element.ellipse.getRadiusY() * 2);
+		    this.heightProperty.set(copied_element.ellipse.getRadiusY() * 2);
+		    this.ellipse.setFill(copied_element.ellipse.getFill());
+		    getChildren().add(this.ellipse);
+		    
+		    // set transparency during moving
+		    this.ellipse.setOnMouseDragged(me -> this.ellipse.setOpacity(0.7));
+		    this.ellipse.setOnMouseReleased(me -> this.ellipse.setOpacity(1));
+		}
+    	  	
+    	this.setRotate(copied_element.rotataionDegree, true);
+    	this.setRotationLengthOffsetX(copied_element.rotationLengthOffsetX);
+    	this.setRotationLengthOffsetY(copied_element.rotationLengthOffsetY);
+		this.setCharMenuShowing(copied_element.isCharMenuShowing());
+    }
+    public String getShapeName() {
+    	return new String( myShapeName );
     }
     
     public double getRotationLengthOffsetY(){
@@ -78,6 +148,27 @@ class Dragable extends Group {
     
     public double getRotationDegree() {
     	return this.rotataionDegree;
+    }
+    
+    /**
+     * @effects: re-determine whether a round Dragable shape is either a circle or an ellipse
+     * @notes: use this function for every resizing move.
+     */
+    public void setShapeNameCirclesAndEllipses() {
+    	boolean DEBUG = false;
+    	if (!this.myShapeName.equals("Rectangle")) {
+    		if (DEBUG) System.out.println("Dragable myShapeName before change is " + this.myShapeName);
+    		if (this.widthProperty.equals(this.heightProperty)) {
+        		this.myShapeName = new String("Circle");    		
+        	}
+        	else {
+        		this.myShapeName = new String("Ellipse");
+        	}
+    	}
+    	else {
+    		if (DEBUG) System.out.println("Dragable myShapeName is " + this.myShapeName + " so no need to change myShapeName");
+    	}
+    	if (DEBUG) System.out.println("Dragable myShapeName changed to " + this.myShapeName);
     }
     
     DoubleProperty widthProperty() { return widthProperty; }

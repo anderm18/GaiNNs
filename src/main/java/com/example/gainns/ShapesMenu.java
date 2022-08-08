@@ -34,7 +34,7 @@ public class ShapesMenu {
 		private Button changeMenu = new Button("   Scene Editor   ");
 		private boolean hidden = false;
 		private boolean charMenuShowing = true;
-	
+		
 	public void createMenu(Scene scene) { //set up shape proportions and color for menu
 //		menu.setWidth(1500);
 //		menu.setHeight(120);
@@ -42,6 +42,10 @@ public class ShapesMenu {
 //		menu.setFill(Color.valueOf("#4C4C4C"));
 //		tab.setStyle("-fx-background-color: #4C4C4C; -fx-text-fill: #FFFFFF");
 		
+	}
+
+	boolean isCharMenuShowing() {
+		return charMenuShowing;
 	}
 
 	public shapeContainer getMenu() {
@@ -88,6 +92,8 @@ public class ShapesMenu {
 			tt.play();
 			hidden = true;
 			tab.setText("SHOW");
+			
+//			this.items.shapeVisualizedList.getSelectionModel().clearSelection();
 		}
 
 		return hidden;
@@ -137,14 +143,16 @@ class shapeContainer {
 	                }
 	            }
 	        );
-	 
+		
 		shapeVisualizedList.getSelectionModel().selectedItemProperty().addListener(
 	            new ChangeListener<DragAndDropListShape>() {
 	                public void changed(ObservableValue<? extends DragAndDropListShape> ov, 
 	                		DragAndDropListShape old_val, DragAndDropListShape new_val) {
-	                        label.setText("[The shape content does not represent the final choice]"
+							if (new_val != null) {
+								label.setText("[The shape content does not represent the final choice]"
 	                        		+ "\nDebug Info: Select " + new_val.getShape().toString());
-	                        label.setTextFill(Color.web(new_val.getColor().toString()));
+	                        	label.setTextFill(Color.web(new_val.getColor().toString()));
+							}
 	            }
 	        });
 	        
