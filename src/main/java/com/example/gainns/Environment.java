@@ -523,8 +523,8 @@ public class Environment extends Application {
         	this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
         	
         	// center dot
-        	this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
-        	this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
+        	this.srCen.setCenterX(this.selectedElement.getCenterX());
+        	this.srCen.setCenterY(this.selectedElement.getCenterY());
         	
         	// rotate dot
         	this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
@@ -580,6 +580,7 @@ public class Environment extends Application {
     		if ((node == this.srRotate) && (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing())) {
     			setRotate(me.getX(), me.getY(), true);
     			this.srRotate.setCursor(Cursor.OPEN_HAND);
+    			// this.selectedElement.autoCenterUpdate();
     		}
     	});
         node.setOnMousePressed(me -> {
@@ -654,8 +655,6 @@ public class Environment extends Application {
                 else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
                 me.consume();
             }
-
-            
         });        
 
       }
@@ -809,6 +808,8 @@ public class Environment extends Application {
 	      element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
 	      return element;
 	 }
+	
+	
 	Dragable createElement(double x, double y, Dragable copied_element) {
 		Dragable element = new Dragable(x, y, copied_element);
 		element.setOnMousePressed(me -> {
