@@ -529,6 +529,7 @@ public class Environment extends Application {
         	// rotate dot
         	this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
         	this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10 - this.selectedElement.getRotationLengthOffsetY()/2);
+        	this.selectedElement.autoCenterUpdate();
         }
       }
 
