@@ -1,8 +1,10 @@
 package com.example.gainns;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -45,6 +47,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Random;
 
 public class Environment extends Application {
@@ -83,6 +87,7 @@ public class Environment extends Application {
     
     // hard limit: shape will not reach ground
     Rectangle2D area = new Rectangle2D(0, 0, windowWidth, windowHeight-100);
+    ShapesMenu shapesMenu = new ShapesMenu();
     
     // A container to store all pressed keys
     private Set<KeyCode> pressedKeys = new HashSet<>();
@@ -106,14 +111,8 @@ public class Environment extends Application {
         Scene scene = new Scene(root, windowWidth, windowHeight);
         // Listen for keys
         handleKeyboardShortcut(scene);
-        scene.setOnKeyPressed(e -> {
-        	pressedKeys.add(e.getCode());
-        	System.out.println("SHIFT pressed and detected");
-        });
-        scene.setOnKeyReleased(e -> {
-        	pressedKeys.remove(e.getCode());
-        	System.out.println("SHIFT released");        	
-        });
+                
+        this.handleKeyboardShortcut(scene);
         
         Rectangle floorRect = createFloor(scene); //floor
         org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
@@ -169,7 +168,6 @@ public class Environment extends Application {
         floor.setOnMousePressed(me -> select(null));
 
         //menu for shapes
-        ShapesMenu shapesMenu = new ShapesMenu(); 
         shapesMenu.createMenu(scene);
         HBox sMenu = new HBox(0, shapesMenu.getMenu().shapeVisualizedList);
         sMenu.setPickOnBounds(false);
@@ -271,11 +269,65 @@ public class Environment extends Application {
         // Paste shape
         KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
         Runnable pasteShapeRunnable = () -> {
-        	boolean DEBUG = true;
+        	boolean DEBUG = false;
         	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
-        	// first, create a deep copy of the copied shape using the reference to the old shape
-        	// then add that deep copy into the environment where the mouse is
-        	// line 280 is a hint for adding shapes to environment
+        	
+        	boolean legal_position = this.area.getMinX() <= this.mousePosXTraker && this.mousePosXTraker <= this.area.getMaxX()
+            		&& this.area.getMinY() <= this.mousePosYTraker && this.mousePosYTraker <= this.area.getMaxY(); 
+        	
+        	if ( legal_position	&& this.copiedShape != null) {
+        		if (DEBUG) System.out.println("Copied shape exists, position is legal, pasting...");
+        		
+	        	// first, create a deep copy of the copied shape using the reference to the old shape
+	        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
+	        	// then add that deep copy into the environment where the mouse is
+	        	// the function below is a hint for adding shapes to environment
+	        	shapesInEnv.add(pastingShape);
+	        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
+	        	root.getChildren().add(pastingShape);
+        	}
+        	else {
+        		if (DEBUG) System.out.println("Paste failed");
+        		// https://stackoverflow.com/questions/26454149/make-javafx-wait-and-continue-with-code
+        		
+        		double error_label_duration_millis = 3000;
+        		
+    			String error_msg = "Cannot paste here:";
+        	    if (this.copiedShape == null) {
+        	    	error_msg += " no shape is copied.";
+        	    	error_label_duration_millis += 500;
+        	    }
+        	    if (!legal_position) {
+        	    	error_msg += " position out of bounds.";
+        	    	error_label_duration_millis += 500;
+        	    }
+        	    final double error_label_duration_millis_final = error_label_duration_millis;
+        	    
+    			Label error_label = new Label(error_msg);
+        		error_label.setLayoutX(this.mousePosXTraker + 20);
+        		error_label.setLayoutY(this.mousePosYTraker);
+        		root.getChildren().add(error_label);
+
+        		Task<Void> sleeper = new Task<Void>() {
+        			@Override
+        			protected Void call() throws Exception {
+        				try { Thread.sleep((long)(error_label_duration_millis_final + 1000)); }
+        				catch (InterruptedException e) { }
+        				return null;
+        			}
+        	    };
+        		
+        	    sleeper.setOnSucceeded(event -> {
+        	    	root.getChildren().remove(error_label);
+        	    	if (DEBUG) assert(!root.getChildren().contains(error_label));
+        	    });
+        	    new Thread(sleeper).start();
+        		
+        		FadeTransition ft = new FadeTransition(Duration.millis(error_label_duration_millis), error_label);
+        		ft.setFromValue(1.0);
+        		ft.setToValue(0.0);
+        		ft.play();
+        	}
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
 
@@ -285,10 +337,12 @@ public class Environment extends Application {
             String shapeInfo = db.getString().replace("[", "!!").replace("]", "!!"); // avoid parsing bug in JAVA 1.8 for windows
             double shapeParam0 = Double.parseDouble(db.getString().split(", ")[2].split("=")[1]);
             double shapeParam1 = Double.parseDouble(shapeInfo.split(", ")[3].split("=")[0].equals("fill")? "0":shapeInfo.split(", ")[3].split("=")[1]); 
+            
             Dragable newAddedElement = createElement(mousePosXTraker, mousePosYTraker, shapeParam0, shapeParam1, Color.web(shapeInfo.split("fill=")[1].split("!!")[0]), shapeInfo.split("!!")[0]);
             shapesInEnv.add(newAddedElement);
             elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());           
             root.getChildren().add(newAddedElement);
+            
             if (db.hasString()) {
             	dragAndDropReporter.setText("Dropped: " + db.getString());
             	dragAndDropReporter.setTextFill(Color.web(shapeInfo.split("fill=")[1].split("!!")[0]));
@@ -306,8 +360,8 @@ public class Environment extends Application {
         stage.setMinWidth(800);
         stage.show();
         
-        root.setLeftAnchor(tab, ((double) stage.getWidth())/2.0);
-        root.setLeftAnchor(changeMenu, ((double) stage.getWidth())/2.0 - shapesMenu.getChangeMenuTab().getWidth());
+        AnchorPane.setLeftAnchor(tab, ((double) stage.getWidth())/2.0);
+        AnchorPane.setLeftAnchor(changeMenu, ((double) stage.getWidth())/2.0 - shapesMenu.getChangeMenuTab().getWidth());
         stage.widthProperty().addListener((obs, oldVal, newVal) -> { // change pos of button(tab) when window changes
     		AnchorPane.setLeftAnchor(tab, ((double)newVal)/2.0);
     		AnchorPane.setLeftAnchor(changeMenu, ((double)newVal)/2.0 - shapesMenu.getChangeMenuTab().getWidth());
@@ -316,34 +370,41 @@ public class Environment extends Application {
     }
     
     private void handleKeyboardShortcut(Scene scene) {
+    	boolean DEBUG = false;
+    	
     	scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            KeyCombination copyCombo = new KeyCharacterCombination("c", KeyCombination.CONTROL_DOWN);
-            KeyCombination pasteCombo = new KeyCharacterCombination("v", KeyCombination.CONTROL_DOWN);
+//    		KeyCombination copyShapeKeyCombo = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN);
+//    		KeyCombination pasteShapeKeyCombo = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN);
             // KeyCombination codeCombo = new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN);
 
             @Override
             public void handle(KeyEvent event) {
-                if (copyCombo.match(event)) {
-                    System.out.println("Press copy");
-                }else if (pasteCombo.match(event)) {
-                    System.out.println("Press paste");
-                }
+//                if (copyShapeKeyCombo.match(event)) {
+//                    System.out.println("Ctrl + C pressed");
+//                } 
+//                if (pasteShapeKeyCombo.match(event)) {
+//                    System.out.println("Ctrl + V pressed");
+//                }
                 if (event.getCode() == KeyCode.DELETE && selectedElement != null) {
-            		System.out.println("DELETE pressed");
+            		if (DEBUG) System.out.println("DELETE pressed");
             		root.getChildren().remove(overlay);
             		root.getChildren().remove(selectedElement);
             		shapesInEnv.remove(selectedElement);
             		overlay = null;
+            		selectedElement = null;
             	}
-                if (event.getCode() == KeyCode.SHIFT) {
-                	System.out.println("Press shift");
-                }
+                pressedKeys.add(event.getCode());
             }
         }); 
-        scene.setOnKeyReleased(e -> System.out.println("released"));
+    	
+        scene.setOnKeyReleased(e -> {
+        	pressedKeys.remove(e.getCode());
+        	if (DEBUG) System.out.println("released");
+        });
         
 		
 	}
+
 
 	public static void main(String[] args) {
         launch();
@@ -516,78 +577,86 @@ public class Environment extends Application {
      */
     void handleMouse(Node node) {
     	node.setOnMouseReleased(me -> {
-    		if (node == this.srRotate) {
+    		if ((node == this.srRotate) && (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing())) {
     			setRotate(me.getX(), me.getY(), true);
     			this.srRotate.setCursor(Cursor.OPEN_HAND);
     			// this.selectedElement.autoCenterUpdate();
     		}
     	});
         node.setOnMousePressed(me -> {
-        	this.pressedMousePosX = me.getX();
-        	this.pressedMousePosY = me.getY();
-        	this.shapeLayoutX = this.selectedElement.getLayoutX();
-        	this.shapeLayoutY = this.selectedElement.getLayoutY();
-        	this.sWidth = this.selectedElement.widthProperty().get();
-        	this.sHeight = this.selectedElement.heightProperty().get();
-        	if (node == this.srRotate) this.srRotate.setCursor(Cursor.CLOSED_HAND);
-            // me.consume();
+            if (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing()) {
+        	    this.pressedMousePosX = me.getX();
+        	    this.pressedMousePosY = me.getY();
+        	    this.shapeLayoutX = this.selectedElement.getLayoutX();
+        	    this.shapeLayoutY = this.selectedElement.getLayoutY();
+        	    this.sWidth = this.selectedElement.widthProperty().get();
+        	    this.sHeight = this.selectedElement.heightProperty().get();
+        	    if (node == this.srRotate) this.srRotate.setCursor(Cursor.CLOSED_HAND);
+                // me.consume();
+            }
         });
         
         node.setOnMouseDragged(me -> {
-            double dx = (me.getX() - this.pressedMousePosX);
-            double dy = (me.getY() - this.pressedMousePosY);
-            Object source = me.getSource();
-            if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
-            else if (source == this.srNW) {
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		System.out.println("SHIFT key pressed");
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + dx * ratio, true);
-            	} else {
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + dy, true);
-            	}
+
+            if (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing()) {
+                double dx = (me.getX() - this.pressedMousePosX);
+                double dy = (me.getY() - this.pressedMousePosY);
+                Object source = me.getSource();
+                if (source == this.srBnd) relocate(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
+                else if (source == this.srNW) {
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    System.out.println("SHIFT key pressed");
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + dx * ratio, true);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + dy, true);
+            	    }
+                }
+                else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
+                else if (source == this.srNE) { 
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		    setVSize(this.shapeLayoutY + dx * ratio * -1, true);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+            		    setVSize(this.shapeLayoutY + dy, true); 
+            	    }
+                }
+                else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
+                else if (source == this.srSE) {	
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dx * ratio, false);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            	    }
+                }
+                else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+                else if (source == this.srSW) { 
+            	    if (pressedKeys.contains(KeyCode.SHIFT)) {
+            		    double ratio = this.sHeight / this.sWidth;
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dx * ratio * -1, false);
+            	    } else {
+            		    setHSize(this.shapeLayoutX + dx, true); 
+            		    setVSize(this.shapeLayoutY + this.sHeight + dy, false);
+            	    }
+                }
+                else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
+                else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
+                else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
+                else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
+                else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
+                else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
+                me.consume();
             }
-            else if (source == this.srN) setVSize(this.shapeLayoutY + dy, true);
-            else if (source == this.srNE) { 
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            		setVSize(this.shapeLayoutY + dx * ratio * -1, true);
-            	} else {
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            		setVSize(this.shapeLayoutY + dy, true); 
-            	}
-            }
-            else if (source == this.srE) setHSize(this.shapeLayoutX + this.sWidth + dx, false);
-            else if (source == this.srSE) {	
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dx * ratio, false);
-            	} else {
-            		setHSize(this.shapeLayoutX + this.sWidth + dx, false); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            	}
-            }
-            else if (source == this.srS) setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            else if (source == this.srSW) { 
-            	if (pressedKeys.contains(KeyCode.SHIFT)) {
-            		double ratio = this.sHeight / this.sWidth;
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dx * ratio * -1, false);
-            	} else {
-            		setHSize(this.shapeLayoutX + dx, true); 
-            		setVSize(this.shapeLayoutY + this.sHeight + dy, false);
-            	}
-            }
-            else if (source == this.srW) setHSize(this.shapeLayoutX + dx, true);
-            else if (source == this.srCen) setCenter(this.shapeLayoutX + dx, this.shapeLayoutY + dy);
-            else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
-            this.selectedElement.autoCenterUpdate();
-            me.consume();
         });        
+
       }
 
     /**
@@ -678,6 +747,7 @@ public class Environment extends Application {
             if (width < hardLimitForResize) width = hardLimitForResize;
         }
         this.selectedElement.widthProperty().set(width);
+        this.selectedElement.setShapeNameCirclesAndEllipses();
         borderOffsetCorrection();
     }
 
@@ -700,6 +770,7 @@ public class Environment extends Application {
             if (height < hardLimitForResize) height = hardLimitForResize;
         }
         this.selectedElement.heightProperty().set(height);
+        this.selectedElement.setShapeNameCirclesAndEllipses();
         borderOffsetCorrection();
     }
     
@@ -725,23 +796,31 @@ public class Environment extends Application {
 
 
 	Dragable createElement(double x, double y, double width, double height, Paint fill, String shapeName) {
-		Dragable element = new Dragable(x, y, fill, shapeName, width, height);
-		// System.out.println("x: " + x + " Y: " + y + "width: " + width + " height: " + height);
-		element.setOnMousePressed(me -> {
-			select(element);
-			element.setViewOrder(2);
-			srBnd.fireEvent(me);
-			me.consume();
-		});
-		element.setOnMouseDragged(me -> srBnd.fireEvent(me));
-		element.setOnMouseReleased(me -> srBnd.fireEvent(me));
-		element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
-		// System.out.println("Create: center X: " + element.getCenterX());
-		return element;
+		  Dragable element = new Dragable(x, y, fill, shapeName, width, height, shapesMenu.isCharMenuShowing());
+	      element.setOnMousePressed(me -> {
+		      select(element);
+		      element.setViewOrder(2);
+		      srBnd.fireEvent(me);
+		      me.consume();
+	      });
+	      element.setOnMouseDragged(me -> srBnd.fireEvent(me));
+	      element.setOnMouseReleased(me -> srBnd.fireEvent(me));
+	      element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+	      return element;
 	 }
 	
 	
 	Dragable createElement(double x, double y, Dragable copied_element) {
-		return new Dragable(x, y, copied_element);
+		Dragable element = new Dragable(x, y, copied_element);
+		element.setOnMousePressed(me -> {
+		      select(element);
+		      element.setViewOrder(2);
+		      srBnd.fireEvent(me);
+		      me.consume();
+		});
+		element.setOnMouseDragged(me -> srBnd.fireEvent(me));
+		element.setOnMouseReleased(me -> srBnd.fireEvent(me));
+		element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+		return element;
 	}
 }
