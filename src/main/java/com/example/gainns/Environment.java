@@ -1,8 +1,10 @@
 package com.example.gainns;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -45,6 +47,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Random;
 
 public class Environment extends Application {
@@ -267,13 +271,63 @@ public class Environment extends Application {
         Runnable pasteShapeRunnable = () -> {
         	boolean DEBUG = false;
         	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
-        	// first, create a deep copy of the copied shape using the reference to the old shape
-        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
-        	// then add that deep copy into the environment where the mouse is
-        	// the function below is a hint for adding shapes to environment
-        	shapesInEnv.add(pastingShape);
-        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
-        	root.getChildren().add(pastingShape);
+        	
+        	boolean legal_position = this.area.getMinX() <= this.mousePosXTraker && this.mousePosXTraker <= this.area.getMaxX()
+            		&& this.area.getMinY() <= this.mousePosYTraker && this.mousePosYTraker <= this.area.getMaxY(); 
+        	
+        	if ( legal_position	&& this.copiedShape != null) {
+        		if (DEBUG) System.out.println("Copied shape exists, position is legal, pasting...");
+        		
+	        	// first, create a deep copy of the copied shape using the reference to the old shape
+	        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
+	        	// then add that deep copy into the environment where the mouse is
+	        	// the function below is a hint for adding shapes to environment
+	        	shapesInEnv.add(pastingShape);
+	        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
+	        	root.getChildren().add(pastingShape);
+        	}
+        	else {
+        		if (DEBUG) System.out.println("Paste failed");
+        		// https://stackoverflow.com/questions/26454149/make-javafx-wait-and-continue-with-code
+        		
+        		double error_label_duration_millis = 3000;
+        		
+    			String error_msg = "Cannot paste here:";
+        	    if (this.copiedShape == null) {
+        	    	error_msg += " no shape is copied.";
+        	    	error_label_duration_millis += 500;
+        	    }
+        	    if (!legal_position) {
+        	    	error_msg += " position out of bounds.";
+        	    	error_label_duration_millis += 500;
+        	    }
+        	    final double error_label_duration_millis_final = error_label_duration_millis;
+        	    
+    			Label error_label = new Label(error_msg);
+        		error_label.setLayoutX(this.mousePosXTraker + 20);
+        		error_label.setLayoutY(this.mousePosYTraker);
+        		root.getChildren().add(error_label);
+
+        		Task<Void> sleeper = new Task<Void>() {
+        			@Override
+        			protected Void call() throws Exception {
+        				try { Thread.sleep((long)(error_label_duration_millis_final + 1000)); }
+        				catch (InterruptedException e) { }
+        				return null;
+        			}
+        	    };
+        		
+        	    sleeper.setOnSucceeded(event -> {
+        	    	root.getChildren().remove(error_label);
+        	    	if (DEBUG) assert(!root.getChildren().contains(error_label));
+        	    });
+        	    new Thread(sleeper).start();
+        		
+        		FadeTransition ft = new FadeTransition(Duration.millis(error_label_duration_millis), error_label);
+        		ft.setFromValue(1.0);
+        		ft.setToValue(0.0);
+        		ft.play();
+        	}
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
 
