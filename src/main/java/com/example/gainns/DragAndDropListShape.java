@@ -8,8 +8,6 @@ import javafx.scene.shape.Shape;
 
 public class DragAndDropListShape{
 	Shape shape;
-//	double x = 12;
-//	double y = 12;
 	Color color;
 	
 //	public static void main(String[] args) {

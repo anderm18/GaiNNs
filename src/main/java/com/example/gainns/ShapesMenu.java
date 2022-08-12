@@ -14,35 +14,24 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
-//import javafx.animation.Transition.*;
 import javafx.util.Duration;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListCell;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.util.Callback;
 
 public class ShapesMenu {
 	
-		// private Rectangle menu = new Rectangle();
 		private shapeContainer items = new shapeContainer();
-
 		private Button tab = new Button("HIDE");
 		private Button changeMenu = new Button("   Scene Editor   ");
 		private boolean hidden = false;
 		private boolean charMenuShowing = true;
 		
-	public void createMenu(Scene scene) { //set up shape proportions and color for menu
-//		menu.setWidth(1500);
-//		menu.setHeight(120);
-//		menu.widthProperty().bind(scene.widthProperty());
-//		menu.setFill(Color.valueOf("#4C4C4C"));
-//		tab.setStyle("-fx-background-color: #4C4C4C; -fx-text-fill: #FFFFFF");
-		
-	}
+	public void createMenu(Scene scene) {}
 
 	boolean isCharMenuShowing() {
 		return charMenuShowing;
@@ -76,24 +65,18 @@ public class ShapesMenu {
 	public boolean tabPressed() { // if tab pressed
 		TranslateTransition tt = new TranslateTransition(Duration.millis(250), this.items.shapeVisualizedList);
 		if(hidden) {
-			//menu.setHeight(120);
 			tt.setByY(120f);
 			tt.setCycleCount(1);
-			//tt.setAutoReverse(true);
 			tt.play();
 			hidden = false;
 			tab.setText("HIDE");
 		}
 		else {
-			//menu.setHeight(0);
 			tt.setByY(-120.0f);
 			tt.setCycleCount(1);
-			//tt.setAutoReverse(true);
 			tt.play();
 			hidden = true;
 			tab.setText("SHOW");
-			
-//			this.items.shapeVisualizedList.getSelectionModel().clearSelection();
 		}
 
 		return hidden;
@@ -155,9 +138,6 @@ class shapeContainer {
 							}
 	            }
 	        });
-	        
-	        // box.getChildren().addAll(list, label);
-//	        stage.show();
 	    }
 	    
 	    static class ColorCell extends ListCell<DragAndDropListShape> {
