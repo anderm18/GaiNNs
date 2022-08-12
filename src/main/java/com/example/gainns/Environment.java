@@ -479,7 +479,7 @@ public class Environment extends Application {
      * update overlay position and size
      */
     void updateOverlay() {
-        if (this.selectedElement != null) {
+        if ((this.selectedElement != null) && (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing())) {
         	this.srBnd.setX(this.selectedElement.getLayoutX() - this.selectedElement.getRotationLengthOffsetX()/2);
         	this.srBnd.setY(this.selectedElement.getLayoutY() - this.selectedElement.getRotationLengthOffsetY()/2);
         	this.srBnd.setWidth(this.selectedElement.widthProperty().get() + this.selectedElement.getRotationLengthOffsetX());
