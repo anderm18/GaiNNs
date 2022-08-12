@@ -1,8 +1,10 @@
 package com.example.gainns;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -46,6 +48,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Random;
 
 public class Environment extends Application {
@@ -258,13 +262,63 @@ public class Environment extends Application {
         Runnable pasteShapeRunnable = () -> {
         	boolean DEBUG = false;
         	if (DEBUG) System.out.println("Accelerator Ctrl + V pressed");
-        	// first, create a deep copy of the copied shape using the reference to the old shape
-        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
-        	// then add that deep copy into the environment where the mouse is
-        	// the function below is a hint for adding shapes to environment
-        	shapesInEnv.add(pastingShape);
-        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
-        	root.getChildren().add(pastingShape);
+        	
+        	boolean legal_position = this.area.getMinX() <= this.mousePosXTraker && this.mousePosXTraker <= this.area.getMaxX()
+            		&& this.area.getMinY() <= this.mousePosYTraker && this.mousePosYTraker <= this.area.getMaxY(); 
+        	
+        	if ( legal_position	&& this.copiedShape != null) {
+        		if (DEBUG) System.out.println("Copied shape exists, position is legal, pasting...");
+        		
+	        	// first, create a deep copy of the copied shape using the reference to the old shape
+	        	Dragable pastingShape = createElement(mousePosXTraker, mousePosYTraker, copiedShape);
+	        	// then add that deep copy into the environment where the mouse is
+	        	// the function below is a hint for adding shapes to environment
+	        	shapesInEnv.add(pastingShape);
+	        	elementInEnvReporter.setText("Current element count in env: " + shapesInEnv.size());
+	        	root.getChildren().add(pastingShape);
+        	}
+        	else {
+        		if (DEBUG) System.out.println("Paste failed");
+        		// https://stackoverflow.com/questions/26454149/make-javafx-wait-and-continue-with-code
+        		
+        		double error_label_duration_millis = 3000;
+        		
+    			String error_msg = "Cannot paste here:";
+        	    if (this.copiedShape == null) {
+        	    	error_msg += " no shape is copied.";
+        	    	error_label_duration_millis += 500;
+        	    }
+        	    if (!legal_position) {
+        	    	error_msg += " position out of bounds.";
+        	    	error_label_duration_millis += 500;
+        	    }
+        	    final double error_label_duration_millis_final = error_label_duration_millis;
+        	    
+    			Label error_label = new Label(error_msg);
+        		error_label.setLayoutX(this.mousePosXTraker + 20);
+        		error_label.setLayoutY(this.mousePosYTraker);
+        		root.getChildren().add(error_label);
+
+        		Task<Void> sleeper = new Task<Void>() {
+        			@Override
+        			protected Void call() throws Exception {
+        				try { Thread.sleep((long)(error_label_duration_millis_final + 1000)); }
+        				catch (InterruptedException e) { }
+        				return null;
+        			}
+        	    };
+        		
+        	    sleeper.setOnSucceeded(event -> {
+        	    	root.getChildren().remove(error_label);
+        	    	if (DEBUG) assert(!root.getChildren().contains(error_label));
+        	    });
+        	    new Thread(sleeper).start();
+        		
+        		FadeTransition ft = new FadeTransition(Duration.millis(error_label_duration_millis), error_label);
+        		ft.setFromValue(1.0);
+        		ft.setToValue(0.0);
+        		ft.play();
+        	}
         };
         scene.getAccelerators().put(pasteShapeKeyCombo, pasteShapeRunnable);
 
@@ -473,12 +527,13 @@ public class Environment extends Application {
         	this.srW.setY((this.selectedElement.getLayoutY() + this.selectedElement.heightProperty().get() / 2) - this.resizeBlockWidthOffset);
         	
         	// center dot
-        	this.srCen.setCenterX(this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2);
-        	this.srCen.setCenterY(this.selectedElement.getLayoutY()+ this.selectedElement.heightProperty().get() / 2);
+        	this.srCen.setCenterX(this.selectedElement.getCenterX());
+        	this.srCen.setCenterY(this.selectedElement.getCenterY());
         	
         	// rotate dot
         	this.srRotate.setCenterX((this.selectedElement.getLayoutX() + this.selectedElement.widthProperty().get() / 2));
         	this.srRotate.setCenterY(this.selectedElement.getLayoutY() - 10 - this.selectedElement.getRotationLengthOffsetY()/2);
+        	this.selectedElement.autoCenterUpdate();
         }
       }
 
@@ -530,6 +585,7 @@ public class Environment extends Application {
     		if ((node == this.srRotate) && (this.selectedElement.isCharMenuShowing() == shapesMenu.isCharMenuShowing())) {
     			setRotate(me.getX(), me.getY(), true);
     			this.srRotate.setCursor(Cursor.OPEN_HAND);
+    			// this.selectedElement.autoCenterUpdate();
     		}
     	});
         node.setOnMousePressed(me -> {
@@ -604,8 +660,6 @@ public class Environment extends Application {
                 else if (source == this.srRotate) setRotate(me.getX(), me.getY(), false);
                 me.consume();
             }
-
-            
         });        
 
       }
@@ -759,6 +813,8 @@ public class Environment extends Application {
 	      element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
 	      return element;
 	 }
+	
+	
 	Dragable createElement(double x, double y, Dragable copied_element) {
 		Dragable element = new Dragable(x, y, copied_element);
 		element.setOnMousePressed(me -> {
