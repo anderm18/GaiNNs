@@ -345,7 +345,7 @@ public class Environment extends Application {
         });
 
         // scene player loop
-        ScenePlayer sp = new ScenePlayer(this.world);
+        ScenePlayer sp = new ScenePlayer(this.world, this.root);
         Button sceneButton = new Button("Play");
         sceneButton.setWrapText(true);
         sceneButton.setTranslateX(150);
@@ -828,9 +828,4 @@ public class Environment extends Application {
 		element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
 		return element;
 	}
-
-    void beginPlayer(boolean begin, double time){
-        //if(begin)
-            //player(time);
-    }
 }
