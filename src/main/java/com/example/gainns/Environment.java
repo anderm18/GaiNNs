@@ -93,7 +93,7 @@ public class Environment extends Application {
     private Set<KeyCode> pressedKeys = new HashSet<>();
     
     private Rectangle createFloor(Scene scene) {
-        Rectangle rectangle = new Rectangle(windowWidth, 100);
+        Rectangle rectangle = new Rectangle(windowWidth, Settings.SCALE);
         rectangle.widthProperty().bind(scene.widthProperty()); //keep as wide as window
         rectangle.setFill(Color.valueOf("#F5E799"));
         return rectangle;
@@ -115,7 +115,7 @@ public class Environment extends Application {
         this.handleKeyboardShortcut(scene);
         
         Rectangle floorRect = createFloor(scene); //floor
-        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(20, 1);//(floorRect.getWidth()/Settings.SCALE, floorRect.getHeight()/Settings.SCALE);
+        org.dyn4j.geometry.Rectangle physicsRect = new org.dyn4j.geometry.Rectangle(windowWidth/Settings.SCALE, 1);
         PhysObj floorphys = new PhysObj();
         floorphys.addFixture(new BodyFixture(physicsRect));
         floorphys.setMass(MassType.INFINITE);
@@ -132,7 +132,7 @@ public class Environment extends Application {
         env.setViewOrder(4);
         this.world = new World();
         this.world.setGravity(0, 9.81);
-        floorphys.translate(500/Settings.SCALE, 465/Settings.SCALE); //465 more or less lines up with floor
+        floorphys.translate(floorRect.getWidth()/(Settings.SCALE*2), (windowHeight - floorRect.getHeight())/Settings.SCALE);
         this.world.addBody(floorphys);
 
         Image img = new Image("file:img/smile.png");
@@ -145,7 +145,6 @@ public class Environment extends Application {
             PhysObj rectangle = new PhysObj(img, f, 900, 250);
             this.world.addBody(rectangle);
         }
-
 
         AnimationTimer gameLoop = new AnimationTimer() {
 
