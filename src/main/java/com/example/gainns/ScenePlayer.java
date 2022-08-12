@@ -37,6 +37,8 @@ import javafx.scene.transform.Translate;
 import javafx.scene.control.Button;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.PopupWindow.AnchorLocation;
+import javafx.animation.Animation;
 import javafx.util.Duration;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.MassType;
@@ -50,23 +52,31 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
+import java.util.Date;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+
+class CustomEvent extends ActionEvent {
+
+}
 
 public class ScenePlayer {
 
     private final World world;
-    private final ScheduledExecutorService execService;
+    private final AnchorPane root;
+    // private final ScheduledExecutorService execService;
 
     /**
      * 
      * @param world
      * @effects assign this world to the current world
      */
-    ScenePlayer(World world){
+    ScenePlayer(World world, AnchorPane root){
         this.world = world;
-        this.execService = Executors.newSingleThreadScheduledExecutor();
+        this.root = root;
+        // this.execService = Executors.newSingleThreadScheduledExecutor();
     }
-
-    public static int count = 0;
 
     /** Environment Player
      * - this environment will play out for (time) seconds and then reset at
@@ -75,33 +85,45 @@ public class ScenePlayer {
      * TODO: class or object as an env to store data
      * 
      */
-    public void play(){
-        try {
-            lol();
-            Runnable task = new Runnable() {
-                @Override
-                public void run(){
-                    System.out.println("Run Process");
-                }
-            };
 
-            Future<?> future = execService.submit(task);
-            future.get(1000, TimeUnit.MILLISECONDS);
-        } catch (final InterruptedException e) {
-            // The thread was interrupted during sleep, wait or join
-        } catch (final TimeoutException e) {
-            // Took too long!
-        } catch (final ExecutionException e) {
-            // An exception from within the Runnable task
-        }
-        finally {
-            // Record environment
-            // Clear environment
-            // this.world.removeAllBodies();
-            // execService.shutdown();
-        }
+    private int i = 10;
+
+    public void play(){
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0),
+        event -> {
+            lol();
+        }));
+
+        KeyFrame kf = new KeyFrame(Duration.seconds(0),
+        event -> {
+            //setText(String.valueOf(i--));
+            i--;
+            System.out.println("Time: " + i);
+            if (i <= 0) {
+                timeline.stop();
+                //for(PhysObj po : entities){
+                //    this.world.removeBody(po);
+                //}
+                // this.world.removeAllBodies();
+                // remove all bodies
+                i = 10;
+            }
+        });
+        timeline.getKeyFrames().addAll(kf, new KeyFrame(Duration.seconds(1)));
+        timeline.setOnFinished(event -> System.out.println("Done!"));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+        /* 
+        PlayerTask t = new PlayerTask(this.world, this.root);
+		
+		long delay = 100;
+		long repeatPeriod = 1000;
+		Timer timer = new Timer();
+		timer.schedule(t, delay, repeatPeriod);//Repeat task every 1000ms
+        */
     }
 
+    
     void lol(){
         // Create objects
         Image img = new Image("file:img/smile.png");
@@ -110,9 +132,11 @@ public class ScenePlayer {
         f.setDensity(1.2);
         f.setFriction(0.8);
         f.setRestitution(0.4);
+        PhysObj.setMainPane(this.root);
         for(int i = 0; i < 3; i++) {
             PhysObj rectangle = new PhysObj(img, f, 900, 250);
             this.world.addBody(rectangle);
         }
     }
+    
 }
