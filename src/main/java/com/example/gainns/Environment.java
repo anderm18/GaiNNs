@@ -96,8 +96,14 @@ public class Environment extends Application {
     }
 
     private void addPhysics() {
+        org.dyn4j.geometry.Rectangle rect = new org.dyn4j.geometry.Rectangle(1, 1);
+        BodyFixture f = new BodyFixture(rect);
+        f.setDensity(1.2);
+        f.setFriction(0.8);
+        f.setRestitution(0.4);
         for(Dragable d : shapesInEnv) {
-
+            PhysObj rectangle = new PhysObj(d, f, 900, 250);
+            this.world.addBody(rectangle);
         }
     }
     

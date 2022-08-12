@@ -43,6 +43,18 @@ public class PhysObj extends Body {
         this.getTransform().setRotation(rnd(-3.141,3.141));
     }
 
+    public PhysObj(Dragable d, BodyFixture f, float posX, float posY) {	// for non visible physics objects
+        this();
+        //iv = new ImageView();
+        //iv.setImage(i);
+        //mainPane.getChildren().add(iv); ADD FUNCTIONALITY FOR DRAGABLES!!
+        this.addFixture(f);
+        this.setMass(MassType.NORMAL);
+        this.translateToOrigin();
+        this.translate(posX/Settings.SCALE, posY/Settings.SCALE);
+        this.getTransform().setRotation(rnd(-3.141,3.141));
+    }
+
     public PhysObj(Image i) {
         this();		// do all the non visible stuff first
         iv = new ImageView();
