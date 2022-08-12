@@ -291,7 +291,7 @@ public class Environment extends Application {
         });
 
         // scene player loop
-        ScenePlayer sp = new ScenePlayer(this.world, this.root);
+        ScenePlayer sp = new ScenePlayer(this.world);
         Button sceneButton = new Button("Play");
         sceneButton.setWrapText(true);
         sceneButton.setTranslateX(150);
