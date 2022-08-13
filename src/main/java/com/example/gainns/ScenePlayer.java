@@ -64,8 +64,8 @@ class ObjectEvent {
         if(entities != null){
             for(PhysObj po : entities){
                 this.world.removeBody(po);
-                this.root.getChildren().remove(po.getOwner());
-            }  
+                this.root.getChildren().remove(po.getImage());
+            }
         }
     }
 }
@@ -126,7 +126,6 @@ public class ScenePlayer {
      * TODO: class or object as an env to store data
      * 
      */
-
     public void play(){
         if(started){
             timeline.stop();

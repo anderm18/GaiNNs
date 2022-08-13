@@ -58,6 +58,10 @@ public class PhysObj extends Body {
         mainPane = mp;
     }
 
+    public ImageView getImage(){
+        return iv;
+    }
+
     // updates all visual items depending on they dynamic component (body)
     public static void update() {
         Iterator<PhysObj> pi = bodies.iterator();
