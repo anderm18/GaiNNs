@@ -29,7 +29,7 @@ public class MousePanningInputHandler extends AbstractMouseInputHandler implemen
 	@Override
 	protected void onMouseRelease() {
 		this.clearPanningState();
-		super.onMouseRelease();
+		//super.onMouseRelease();
 	}
 
 	@Override

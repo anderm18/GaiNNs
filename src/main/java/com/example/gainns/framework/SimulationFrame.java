@@ -367,6 +367,7 @@ public abstract class SimulationFrame extends JFrame {
 			}
 			
 			// body rotation radius
+
 			if (this.renderBodyRotationRadius.isActive()) {
 				Vector2 c = body.getWorldCenter();
 				double r = body.getRotationDiscRadius();
@@ -378,7 +379,7 @@ public abstract class SimulationFrame extends JFrame {
 				g.setColor(Color.PINK);
 				g.draw(e);
 			}
-			
+
 			// loop over all the body fixtures for this body
 			for (BodyFixture fixture : body.getFixtures()) {
 				// fixture AABB

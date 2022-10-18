@@ -97,12 +97,15 @@ public final class Graphics2DRenderer {
 		g.draw(c);
 		
 		// draw a line so that rotation is visible
+		/*
 		Line2D.Double l = new Line2D.Double(
 				center.x * scale,
 				center.y * scale,
 				(center.x + radius) * scale,
 				center.y * scale);
 		g.draw(l);
+
+		 */
 	}
 	
 	/**
@@ -168,14 +171,14 @@ public final class Graphics2DRenderer {
 	 */
 	public static final void render(Graphics2D g, Capsule capsule, double scale, Color color) {
 		// get the local rotation and translation
-		double rotation = capsule.getRotationAngle();
+		//double rotation = capsule.getRotationAngle();
 		Vector2 center = capsule.getCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		// translate and rotate
 		g.translate(center.x * scale, center.y * scale);
-		g.rotate(rotation);
+		//g.rotate(rotation);
 		
 		double width = capsule.getLength();
 		double radius = capsule.getCapRadius();
@@ -227,13 +230,13 @@ public final class Graphics2DRenderer {
 	 */
 	public static final void render(Graphics2D g, Ellipse ellipse, double scale, Color color) {
 		// get the local rotation and translation
-		double rotation = ellipse.getRotationAngle();
+		//double rotation = ellipse.getRotationAngle();
 		Vector2 center = ellipse.getCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		g.translate(center.x * scale, center.y * scale);
-		g.rotate(rotation);
+		//g.rotate(rotation);
 		
 		double width = ellipse.getWidth();
 		double height = ellipse.getHeight();
@@ -266,14 +269,14 @@ public final class Graphics2DRenderer {
 		double theta2 = slice.getTheta() * 0.5;
 		
 		// get the local rotation and translation
-		double rotation = slice.getRotationAngle();
+		//double rotation = slice.getRotationAngle();
 		Vector2 circleCenter = slice.getCircleCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		// translate and rotate
 		g.translate(circleCenter.x * scale, circleCenter.y * scale);
-		g.rotate(rotation);
+		//g.rotate(rotation);
 		
 		// to draw the arc, java2d wants the top left x,y
 		// as if you were drawing a circle
@@ -308,14 +311,14 @@ public final class Graphics2DRenderer {
 		double height = halfEllipse.getHeight();
 		
 		// get the local rotation and translation
-		double rotation = halfEllipse.getRotationAngle();
+		//double rotation = halfEllipse.getRotationAngle();
 		Vector2 center = halfEllipse.getEllipseCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		// translate and rotate
 		g.translate(center.x * scale, center.y * scale);
-		g.rotate(rotation);
+		//g.rotate(rotation);
 		
 		// to draw the arc, java2d wants the top left x,y
 		// as if you were drawing a circle
