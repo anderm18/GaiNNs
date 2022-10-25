@@ -42,10 +42,7 @@ import org.dyn4j.world.WorldCollisionData;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -158,20 +155,33 @@ public abstract class SimulationFrame extends JFrame {
 		//setting the panel layout as null
 		panel.setLayout(null);
 		//adding a label element to the panel
-		JLabel label=new JLabel("Panel 1");
+		JLabel label=new JLabel("what shape to add?");
 		label.setBounds(10,10,800,200);
 		// changing the background color of the panel to yellow
 		//Panel 1
 		panel.setBackground(Color.yellow);
-		String[] choices = { "CHOICE 1", "CHOICE 2", "CHOICE 3", "CHOICE 4",
-				"CHOICE 5", "CHOICE 6" };
+		String[] optionsToChoose = {"Circle", "Oval", "Triangle", "Square", "None of the listed"};
 
-		final JComboBox<String> cb = new JComboBox<String>(choices);
+		JComboBox<String> jComboBox = new JComboBox<>(optionsToChoose);
+		jComboBox.setBounds(300, 50, 140, 20);
 
-		cb.setMaximumSize(cb.getPreferredSize()); // added code
-		cb.setAlignmentX(Component.CENTER_ALIGNMENT);// added code
-		//cb.setVisible(true); // Not needed
-		panel.add(cb);
+		JButton jButton = new JButton("Done");
+		jButton.setBounds(300, 100, 90, 20);
+
+		JLabel jLabel = new JLabel();
+		jLabel.setBounds(90, 100, 400, 100);
+
+		panel.add(jButton);
+		panel.add(jComboBox);
+		panel.add(jLabel);
+
+		jButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String selectedFruit = "You selected " + jComboBox.getItemAt(jComboBox.getSelectedIndex());
+				jLabel.setText(selectedFruit);
+			}
+		});
 		panel.setBounds(10,10,800,200);
 		//Panel 2
 		panel2.setBounds(10,810,800,600);
