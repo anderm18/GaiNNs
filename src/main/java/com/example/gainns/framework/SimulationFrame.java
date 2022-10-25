@@ -163,6 +163,15 @@ public abstract class SimulationFrame extends JFrame {
 		// changing the background color of the panel to yellow
 		//Panel 1
 		panel.setBackground(Color.yellow);
+		String[] choices = { "CHOICE 1", "CHOICE 2", "CHOICE 3", "CHOICE 4",
+				"CHOICE 5", "CHOICE 6" };
+
+		final JComboBox<String> cb = new JComboBox<String>(choices);
+
+		cb.setMaximumSize(cb.getPreferredSize()); // added code
+		cb.setAlignmentX(Component.CENTER_ALIGNMENT);// added code
+		//cb.setVisible(true); // Not needed
+		panel.add(cb);
 		panel.setBounds(10,10,800,200);
 		//Panel 2
 		panel2.setBounds(10,810,800,600);
@@ -173,6 +182,7 @@ public abstract class SimulationFrame extends JFrame {
 		panel2.setBorder(br);
 
 		//adding the panel to the Container of the JFrame
+
 		this.add(panel);
 		this.add(panel2);
 
