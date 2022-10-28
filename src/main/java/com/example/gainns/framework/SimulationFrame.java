@@ -32,10 +32,10 @@ import org.dyn4j.dynamics.contact.SolvedContact;
 import org.dyn4j.dynamics.joint.DistanceJoint;
 import org.dyn4j.dynamics.joint.Joint;
 import org.dyn4j.dynamics.joint.PinJoint;
-import org.dyn4j.geometry.AABB;
-import org.dyn4j.geometry.Transform;
-import org.dyn4j.geometry.Vector2;
+import org.dyn4j.geometry.*;
 import com.example.gainns.framework.input.*;
+import org.dyn4j.geometry.Polygon;
+import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.world.World;
 import org.dyn4j.world.WorldCollisionData;
 
@@ -160,7 +160,7 @@ public abstract class SimulationFrame extends JFrame {
 		// changing the background color of the panel to yellow
 		//Panel 1
 		panel.setBackground(Color.yellow);
-		String[] optionsToChoose = {"Circle", "Oval", "Triangle", "Square", "None of the listed"};
+		String[] optionsToChoose = {"Circle", "Rectangle", "Triangle", "Polygon", "Wierd", "None of the listed"};
 
 		JComboBox<String> jComboBox = new JComboBox<>(optionsToChoose);
 		jComboBox.setBounds(300, 50, 140, 20);
@@ -178,8 +178,78 @@ public abstract class SimulationFrame extends JFrame {
 		jButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String selectedFruit = "You selected " + jComboBox.getItemAt(jComboBox.getSelectedIndex());
+				String selectedFruit = jComboBox.getItemAt(jComboBox.getSelectedIndex());
+
 				jLabel.setText(selectedFruit);
+
+				if(selectedFruit.equals("Circle")) {
+					Circle cirShape = new Circle(0.5);
+					SimulationBody circle = new SimulationBody();
+					circle.addFixture(cirShape);
+					circle.setMass(MassType.NORMAL);
+					circle.translate(2.0, 2.0);
+					// test adding some force
+					circle.applyForce(new Vector2(-100.0, 0.0));
+					// set some linear damping to simulate rolling friction
+					circle.setLinearDamping(0.05);
+					world.addBody(circle);
+				}
+				// create a triangle object
+				if(selectedFruit.equals("Triangle")) {
+					Triangle triShape = new Triangle(
+							new Vector2(0.0, 0.5),
+							new Vector2(-0.5, -0.5),
+							new Vector2(0.5, -0.5));
+					SimulationBody triangle = new SimulationBody();
+					triangle.addFixture(triShape);
+					triangle.setMass(MassType.NORMAL);
+					triangle.translate(-1.0, 2.0);
+					// test having a velocity
+					triangle.getLinearVelocity().set(5.0, 0.0);
+					world.addBody(triangle);
+				}
+				if(selectedFruit.equals("Rectangle")) {
+					Rectangle rectShape = new Rectangle(1.0, 1.0);
+					SimulationBody rectangle = new SimulationBody();
+					rectangle.addFixture(rectShape);
+					rectangle.setMass(MassType.NORMAL);
+					rectangle.translate(0.0, 2.0);
+					rectangle.getLinearVelocity().set(-5.0, 0.0);
+					world.addBody(rectangle);
+				}
+				if(selectedFruit.equals("Polygon")) {
+					Polygon polyShape = Geometry.createUnitCirclePolygon(10, 1.0);
+					SimulationBody polygon = new SimulationBody();
+					polygon.addFixture(polyShape);
+					polygon.setMass(MassType.NORMAL);
+					polygon.translate(-2.5, 2.0);
+					// set the angular velocity
+					polygon.setAngularVelocity(Math.toRadians(-20.0));
+					world.addBody(polygon);
+				}
+				if(selectedFruit.equals("Wierd")){
+					Circle c1 = new Circle(0.5);
+					BodyFixture c1Fixture = new BodyFixture(c1);
+					c1Fixture.setDensity(0.5);
+					Circle c2 = new Circle(0.5);
+					BodyFixture c2Fixture = new BodyFixture(c2);
+					c2Fixture.setDensity(0.5);
+					Rectangle rm = new Rectangle(2.0, 1.0);
+					// translate the circles in local coordinates
+					c1.translate(-1.0, 0.0);
+					c2.translate(1.0, 0.0);
+					SimulationBody capsule = new SimulationBody();
+					capsule.addFixture(c1Fixture);
+					capsule.addFixture(c2Fixture);
+					capsule.addFixture(rm);
+					capsule.setMass(MassType.NORMAL);
+					capsule.translate(0.0, 4.0);
+					world.addBody(capsule);
+				}
+				if(selectedFruit.equals("None of the listed")){
+					jLabel.setText("too bad");
+				}
+
 			}
 		});
 		panel.setBounds(10,10,800,200);

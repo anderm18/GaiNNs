@@ -97,7 +97,7 @@ public final class Graphics2DRenderer {
 		g.draw(c);
 		
 		// draw a line so that rotation is visible
-		/*
+
 		Line2D.Double l = new Line2D.Double(
 				center.x * scale,
 				center.y * scale,
@@ -105,7 +105,7 @@ public final class Graphics2DRenderer {
 				center.y * scale);
 		g.draw(l);
 
-		 */
+
 	}
 	
 	/**
@@ -171,14 +171,14 @@ public final class Graphics2DRenderer {
 	 */
 	public static final void render(Graphics2D g, Capsule capsule, double scale, Color color) {
 		// get the local rotation and translation
-		//double rotation = capsule.getRotationAngle();
+		double rotation = capsule.getRotationAngle();
 		Vector2 center = capsule.getCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		// translate and rotate
 		g.translate(center.x * scale, center.y * scale);
-		//g.rotate(rotation);
+		g.rotate(rotation);
 		
 		double width = capsule.getLength();
 		double radius = capsule.getCapRadius();
@@ -230,13 +230,13 @@ public final class Graphics2DRenderer {
 	 */
 	public static final void render(Graphics2D g, Ellipse ellipse, double scale, Color color) {
 		// get the local rotation and translation
-		//double rotation = ellipse.getRotationAngle();
+		double rotation = ellipse.getRotationAngle();
 		Vector2 center = ellipse.getCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		g.translate(center.x * scale, center.y * scale);
-		//g.rotate(rotation);
+		g.rotate(rotation);
 		
 		double width = ellipse.getWidth();
 		double height = ellipse.getHeight();
