@@ -76,7 +76,7 @@ public class UsingGraphics2D extends SimulationFrame {
         // move the floor down a bit
         floor.translate(0.0, -4.0);
         this.world.addBody(floor);
-
+        /*
         // create a triangle object
         Triangle triShape = new Triangle(
                 new Vector2(0.0, 0.5),
@@ -169,6 +169,8 @@ public class UsingGraphics2D extends SimulationFrame {
         slice.setMass(MassType.NORMAL);
         slice.translate(-3.0, 3.0);
         this.world.addBody(slice);
+        */
+
     }
 
     /**

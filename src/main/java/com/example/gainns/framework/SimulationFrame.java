@@ -155,18 +155,20 @@ public abstract class SimulationFrame extends JFrame {
 		//setting the panel layout as null
 		panel.setLayout(null);
 		//adding a label element to the panel
-		JLabel label=new JLabel("what shape to add?");
+		JLabel label=new JLabel("what character to add?");
 		label.setBounds(10,10,800,200);
+		JLabel label2=new JLabel("what fixture to add?");
+		label2.setBounds(500,10,800,200);
 		// changing the background color of the panel to yellow
 		//Panel 1
 		panel.setBackground(Color.yellow);
 		String[] optionsToChoose = {"Circle", "Rectangle", "Triangle", "Polygon", "Wierd", "None of the listed"};
 
 		JComboBox<String> jComboBox = new JComboBox<>(optionsToChoose);
-		jComboBox.setBounds(300, 50, 140, 20);
+		jComboBox.setBounds(200, 50, 140, 20);
 
 		JButton jButton = new JButton("Done");
-		jButton.setBounds(300, 100, 90, 20);
+		jButton.setBounds(200, 100, 90, 20);
 
 		JLabel jLabel = new JLabel();
 		jLabel.setBounds(90, 100, 400, 100);
@@ -256,6 +258,7 @@ public abstract class SimulationFrame extends JFrame {
 		//Panel 2
 		panel2.setBounds(10,810,800,600);
 		panel.add(label);
+		panel.add(label2);
 		panel2.add(this.canvas);
 		// Panel border
 		panel.setBorder(br);
