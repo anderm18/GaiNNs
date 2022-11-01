@@ -77,7 +77,7 @@ public class MousePickingInputHandler extends AbstractMouseInputHandler implemen
 				
 				// ignore infinite bodies
 				if (b.getMass().isInfinite()) {
-					//continue;
+					continue;
 				}
 				
 				// check point contains and take the first
