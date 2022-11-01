@@ -13,4 +13,9 @@
       <module name="GaiNNs" target="15" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GaiNNs" options="--add-exports org.dyn4j/org.dyn4j.resources=com.example.gainns" />
+    </option>
+  </component>
 </project>
