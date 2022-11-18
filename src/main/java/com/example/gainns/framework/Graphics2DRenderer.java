@@ -269,14 +269,14 @@ public final class Graphics2DRenderer {
 		double theta2 = slice.getTheta() * 0.5;
 		
 		// get the local rotation and translation
-		//double rotation = slice.getRotationAngle();
+		double rotation = slice.getRotationAngle();
 		Vector2 circleCenter = slice.getCircleCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		// translate and rotate
 		g.translate(circleCenter.x * scale, circleCenter.y * scale);
-		//g.rotate(rotation);
+		g.rotate(rotation);
 		
 		// to draw the arc, java2d wants the top left x,y
 		// as if you were drawing a circle
