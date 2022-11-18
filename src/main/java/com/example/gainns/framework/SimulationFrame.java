@@ -162,6 +162,8 @@ public abstract class SimulationFrame extends JFrame {
 		panel.setBackground(Color.yellow);
 		String[] optionsToChoose = {"Circle", "Rectangle", "Triangle", "Polygon", "Wierd", "None of the listed"};
 
+
+
 		JComboBox<String> jComboBox = new JComboBox<>(optionsToChoose);
 		jComboBox.setBounds(300, 50, 140, 20);
 
@@ -194,6 +196,9 @@ public abstract class SimulationFrame extends JFrame {
 					circle.setLinearDamping(0.05);
 					world.addBody(circle);
 				}
+<<<<<<< Updated upstream
+=======
+
 				// create a triangle object
 				if(selectedFruit.equals("Triangle")) {
 					Triangle triShape = new Triangle(
@@ -232,6 +237,103 @@ public abstract class SimulationFrame extends JFrame {
 					BodyFixture c1Fixture = new BodyFixture(c1);
 					c1Fixture.setDensity(0.5);
 					Circle c2 = new Circle(0.5);
+					BodyFixture c2Fixture = new BodyFixture(c2);
+					c2Fixture.setDensity(0.5);
+					Rectangle rm = new Rectangle(2.0, 1.0);
+					// translate the circles in local coordinates
+					c1.translate(-1.0, 0.0);
+					c2.translate(1.0, 0.0);
+					SimulationBody capsule = new SimulationBody();
+					capsule.addFixture(c1Fixture);
+					capsule.addFixture(c2Fixture);
+					capsule.addFixture(rm);
+					capsule.setMass(MassType.NORMAL);
+					capsule.translate(0.0, 4.0);
+					world.addBody(capsule);
+				}
+				if(selectedFruit.equals("None of the listed")){
+					jLabel.setText("too bad");
+				}
+
+			}
+		});
+
+		jButton2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String selectedFruit = jComboBox2.getItemAt(jComboBox2.getSelectedIndex());
+
+				jLabel2.setText(selectedFruit);
+
+
+
+				if(selectedFruit.equals("Rectangle")) {
+					Rectangle floorRect = new Rectangle(15.0, 1.0);
+					SimulationBody floor = new SimulationBody();
+					floor.addFixture(new BodyFixture(floorRect));
+					floor.setMass(MassType.INFINITE);
+					// move the floor down a bit
+					floor.translate(0.0, 0.0);
+					world.addBody(floor);
+				}
+				/*
+>>>>>>> Stashed changes
+				// create a triangle object
+				if(selectedFruit.equals("Triangle")) {
+					Triangle triShape = new Triangle(
+							new Vector2(0.0, 0.5),
+							new Vector2(-0.5, -0.5),
+							new Vector2(0.5, -0.5));
+					SimulationBody triangle = new SimulationBody();
+					triangle.addFixture(triShape);
+					triangle.setMass(MassType.NORMAL);
+					triangle.translate(-1.0, 2.0);
+					// test having a velocity
+					triangle.getLinearVelocity().set(5.0, 0.0);
+					world.addBody(triangle);
+				}
+				if(selectedFruit.equals("Rectangle")) {
+					Rectangle rectShape = new Rectangle(1.0, 1.0);
+					SimulationBody rectangle = new SimulationBody();
+					rectangle.addFixture(rectShape);
+					rectangle.setMass(MassType.NORMAL);
+					rectangle.translate(0.0, 2.0);
+					rectangle.getLinearVelocity().set(-5.0, 0.0);
+					world.addBody(rectangle);
+				}
+				if(selectedFruit.equals("Polygon")) {
+					Polygon polyShape = Geometry.createUnitCirclePolygon(10, 1.0);
+					SimulationBody polygon = new SimulationBody();
+					polygon.addFixture(polyShape);
+					polygon.setMass(MassType.NORMAL);
+					polygon.translate(-2.5, 2.0);
+					// set the angular velocity
+					polygon.setAngularVelocity(Math.toRadians(-20.0));
+					world.addBody(polygon);
+				}
+<<<<<<< Updated upstream
+=======
+
+				 */
+
+				if(selectedFruit.equals("Polygon")) {
+					Polygon floorPoly = Geometry.createUnitCirclePolygon(10, 1.0);
+					SimulationBody floor = new SimulationBody();
+					floor.addFixture(new BodyFixture(floorPoly));
+					floor.setMass(MassType.INFINITE);
+					// move the floor down a bit
+					floor.translate(0.0, 0.0);
+					world.addBody(floor);
+				}
+
+
+				/*
+>>>>>>> Stashed changes
+				if(selectedFruit.equals("Wierd")){
+					Circle c1 = new Circle(0.5);
+					BodyFixture c1Fixture = new BodyFixture(c1);
+					c1Fixture.setDensity(0.5);
+					Circle c2 = new Circle(0.5);\
 					BodyFixture c2Fixture = new BodyFixture(c2);
 					c2Fixture.setDensity(0.5);
 					Rectangle rm = new Rectangle(2.0, 1.0);
