@@ -68,9 +68,9 @@ public class UsingGraphics2D extends SimulationFrame {
     protected void initializeWorld() {
         // create all your bodies/joints
 
-        // create the floor
         Rectangle floorRect = new Rectangle(15.0, 1.0);
-        SimulationBody floor = new SimulationBody();
+        SimulationBody floor = new SimulationBody();        // create the floor
+
         floor.addFixture(new BodyFixture(floorRect));
         floor.setMass(MassType.INFINITE);
         // move the floor down a bit
