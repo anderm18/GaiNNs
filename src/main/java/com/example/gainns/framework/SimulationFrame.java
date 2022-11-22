@@ -150,15 +150,19 @@ public abstract class SimulationFrame extends JFrame {
 		Border br = BorderFactory.createLineBorder(Color.black);
 		//Container c=getContentPane();
 		//Creating a JPanel for the JFrame
+
+		//https://stackoverflow.com/questions/51452691/how-to-save-login-information-for-an-actionlistener-java
 		JPanel panel=new JPanel();
 		JPanel panel2=new JPanel();
 		//setting the panel layout as null
 		panel.setLayout(null);
 		//adding a label element to the panel
 		JLabel label=new JLabel("what character to add?");
-		label.setBounds(10,10,800,200);
+		label.setBounds(10,0,800,200);
 		JLabel label2=new JLabel("what fixture to add?");
-		label2.setBounds(500,10,800,200);
+		label2.setBounds(400,0,800,200);
+		JLabel label3 = new JLabel("dimensions of fixture");
+		label3.setBounds(400,70,800,200);
 		// changing the background color of the panel to yellow
 		//Panel 1
 		panel.setBackground(Color.yellow);
@@ -182,6 +186,16 @@ public abstract class SimulationFrame extends JFrame {
 
 		JLabel jLabel2 = new JLabel();
 		jLabel2.setBounds(650, 10, 400, 100);
+
+		// x Field
+		JTextField xField = new JTextField(20);
+		xField.setBounds(450,70,165,25);
+		panel.add(xField);
+
+		// y Field
+		JTextField yField = new JTextField(20);
+		yField.setBounds(450,70,165,25);
+		panel.add(yField);
 
 		panel.add(jButton);
 		panel.add(jButton2);
@@ -369,6 +383,7 @@ public abstract class SimulationFrame extends JFrame {
 		panel2.setBounds(10,810,800,600);
 		panel.add(label);
 		panel.add(label2);
+		panel.add(label3);
 		panel2.add(this.canvas);
 		// Panel border
 		panel.setBorder(br);
