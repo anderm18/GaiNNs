@@ -25,6 +25,7 @@
 package com.example.gainns.framework;
 
 import org.dyn4j.collision.AxisAlignedBounds;
+import org.dyn4j.dynamics.joint.RevoluteJoint;
 import org.dyn4j.collision.Bounds;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.contact.ContactConstraint;
@@ -357,6 +358,46 @@ public abstract class SimulationFrame extends JFrame {
 					leftTibia.translate(new Vector2(-0.1328125, -2.1171875));
 					leftTibia.setMass(MassType.NORMAL);
 					world.addBody(leftTibia);
+
+					// Head to Neck
+					RevoluteJoint<SimulationBody> headToNeck = new RevoluteJoint<SimulationBody>(head, neck, new Vector2(0.01, -0.2));
+					world.addJoint(headToNeck);
+
+					// Neck to Torso
+					RevoluteJoint<SimulationBody> neckToTorso = new RevoluteJoint<SimulationBody>(neck, torso, new Vector2(0.01, -0.35));
+					world.addJoint(neckToTorso);
+
+					// Torso to Left Humerus
+					RevoluteJoint<SimulationBody> torsoToLeftHumerus = new RevoluteJoint<SimulationBody>(torso, leftHumerus, new Vector2(-0.4, -0.4));
+					world.addJoint(torsoToLeftHumerus);
+
+					// Torso to Right Humerus
+					RevoluteJoint<SimulationBody> torsoToRightHumerus = new RevoluteJoint<SimulationBody>(torso, rightHumerus, new Vector2(0.4, -0.4));
+					world.addJoint(torsoToRightHumerus);
+
+					// Right Humerus to Right Ulna
+					RevoluteJoint<SimulationBody> rightHumerusToRightUlna = new RevoluteJoint<SimulationBody>(rightHumerus, rightUlna, new Vector2(0.43, -0.82));
+					world.addJoint(rightHumerusToRightUlna);
+
+					// Left Humerus to Left Ulna
+					RevoluteJoint<SimulationBody> leftHumerusToLeftUlna = new RevoluteJoint<SimulationBody>(leftHumerus, leftUlna, new Vector2(-0.4, -0.81));
+					world.addJoint(leftHumerusToLeftUlna);
+
+					// Torso to Right Femur
+					RevoluteJoint<SimulationBody> torsoToRightFemur = new RevoluteJoint<SimulationBody>(torso, rightFemur, new Vector2(0.16, -1.25));
+					world.addJoint(torsoToRightFemur);
+
+					// Torso to Left Femur
+					RevoluteJoint<SimulationBody> torsoToLeftFemur = new RevoluteJoint<SimulationBody>(torso, leftFemur, new Vector2(-0.13, -1.25));
+					world.addJoint(torsoToLeftFemur);
+
+					// Right Femur to Right Tibia
+					RevoluteJoint<SimulationBody> rightFemurToRightTibia = new RevoluteJoint<SimulationBody>(rightFemur, rightTibia, new Vector2(0.17, -1.9));
+					world.addJoint(rightFemurToRightTibia);
+
+					// Left Femur to Left Tibia
+					RevoluteJoint<SimulationBody> leftFemurToLeftTibia = new RevoluteJoint<SimulationBody>(leftFemur, leftTibia, new Vector2(-0.14, -1.9));
+					world.addJoint(leftFemurToLeftTibia);
 				}
 				if(selectedFruit.equals("None of the listed")){
 					jLabel.setText("too bad");
