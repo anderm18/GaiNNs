@@ -311,14 +311,14 @@ public final class Graphics2DRenderer {
 		double height = halfEllipse.getHeight();
 		
 		// get the local rotation and translation
-		//double rotation = halfEllipse.getRotationAngle();
+		double rotation = halfEllipse.getRotationAngle();
 		Vector2 center = halfEllipse.getEllipseCenter();
 		
 		// save the old transform
 		AffineTransform oTransform = g.getTransform();
 		// translate and rotate
 		g.translate(center.x * scale, center.y * scale);
-		//g.rotate(rotation);
+		g.rotate(rotation);
 		
 		// to draw the arc, java2d wants the top left x,y
 		// as if you were drawing a circle
