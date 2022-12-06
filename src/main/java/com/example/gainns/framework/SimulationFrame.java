@@ -189,14 +189,14 @@ public abstract class SimulationFrame extends JFrame {
 		jLabel2.setBounds(650, 10, 400, 100);
 
 		// x Field
-		JTextField xField = new JTextField(20);
-		xField.setBounds(450,70,165,25);
-		//panel.add(xField);
+		JTextField xField = new JTextField(10);
+		xField.setBounds(550,155,50,25);
+		panel.add(xField);
 
 		// y Field
-		JTextField yField = new JTextField(20);
-		yField.setBounds(450,70,165,25);
-		//panel.add(yField);
+		JTextField yField = new JTextField(10);
+		yField.setBounds(625,155,50,25);
+		panel.add(yField);
 
 		panel.add(jButton);
 		panel.add(jButton2);
@@ -411,6 +411,9 @@ public abstract class SimulationFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String selectedFruit = jComboBox2.getItemAt(jComboBox2.getSelectedIndex());
 
+				double x = Double.parseDouble(xField.getText());
+				double y = Double.parseDouble(yField.getText());
+
 				jLabel2.setText(selectedFruit);
 
 				if(selectedFruit.equals("Rectangle")) {
@@ -419,7 +422,7 @@ public abstract class SimulationFrame extends JFrame {
 					floor.addFixture(new BodyFixture(floorRect));
 					floor.setMass(MassType.INFINITE);
 					// move the floor down a bit
-					floor.translate(0.0, 0.0);
+					floor.translate(x, y);
 					world.addBody(floor);
 				}
 				/*
@@ -469,7 +472,7 @@ public abstract class SimulationFrame extends JFrame {
 					floor.addFixture(new BodyFixture(floorPoly));
 					floor.setMass(MassType.NORMAL);
 					// move the floor down a bit
-					floor.translate(0.0, 0.0);
+					floor.translate(x, y);
 					world.addBody(floor);
 				}
 
