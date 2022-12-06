@@ -25,6 +25,7 @@
 package com.example.gainns.framework;
 
 import org.dyn4j.collision.AxisAlignedBounds;
+import org.dyn4j.dynamics.joint.RevoluteJoint;
 import org.dyn4j.collision.Bounds;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.contact.ContactConstraint;
@@ -150,19 +151,23 @@ public abstract class SimulationFrame extends JFrame {
 		Border br = BorderFactory.createLineBorder(Color.black);
 		//Container c=getContentPane();
 		//Creating a JPanel for the JFrame
+
+		//https://stackoverflow.com/questions/51452691/how-to-save-login-information-for-an-actionlistener-java
 		JPanel panel=new JPanel();
 		JPanel panel2=new JPanel();
 		//setting the panel layout as null
 		panel.setLayout(null);
 		//adding a label element to the panel
 		JLabel label=new JLabel("what character to add?");
-		label.setBounds(10,10,800,200);
+		label.setBounds(10,0,800,200);
 		JLabel label2=new JLabel("what fixture to add?");
-		label2.setBounds(500,10,800,200);
+		label2.setBounds(400,0,800,200);
+		JLabel label3 = new JLabel("dimensions of fixture");
+		label3.setBounds(400,70,800,200);
 		// changing the background color of the panel to yellow
 		//Panel 1
 		panel.setBackground(Color.yellow);
-		String[] optionsToChoose = {"Circle", "Rectangle", "Triangle", "Polygon", "Wierd", "None of the listed"};
+		String[] optionsToChoose = {"Circle", "Rectangle", "Triangle", "Polygon", "Wierd", "DudeWithJoints","None of the listed"};
 		String[] optionsToChoose2 = {"Rectangle","Polygon"};
 
 		JComboBox<String> jComboBox = new JComboBox<>(optionsToChoose);
@@ -182,6 +187,16 @@ public abstract class SimulationFrame extends JFrame {
 
 		JLabel jLabel2 = new JLabel();
 		jLabel2.setBounds(650, 10, 400, 100);
+
+		// x Field
+		JTextField xField = new JTextField(20);
+		xField.setBounds(450,70,165,25);
+		//panel.add(xField);
+
+		// y Field
+		JTextField yField = new JTextField(20);
+		yField.setBounds(450,70,165,25);
+		//panel.add(yField);
 
 		panel.add(jButton);
 		panel.add(jButton2);
@@ -260,6 +275,129 @@ public abstract class SimulationFrame extends JFrame {
 					capsule.setMass(MassType.NORMAL);
 					capsule.translate(0.0, 4.0);
 					world.addBody(capsule);
+				}
+				if(selectedFruit.equals("DudeWithJoints")){
+
+					// Head
+					SimulationBody head = new SimulationBody();
+					head.addFixture(Geometry.createCircle(0.25));
+					head.setMass(MassType.NORMAL);
+					world.addBody(head);
+
+					// Torso
+					SimulationBody torso = new SimulationBody();
+					torso.addFixture(Geometry.createRectangle(0.5, 1.0));
+					{
+						Convex c = Geometry.createRectangle(1.0, 0.25);
+						c.translate(new Vector2(0.00390625, 0.375));
+						torso.addFixture(c);
+					}
+					torso.translate(new Vector2(0.0234375, -0.8125));
+					torso.setMass(MassType.NORMAL);
+					world.addBody(torso);
+
+					// Right Humerus
+					SimulationBody rightHumerus = new SimulationBody();
+					rightHumerus.addFixture(Geometry.createRectangle(0.25, 0.5));
+					rightHumerus.translate(new Vector2(0.4375, -0.609375));
+					rightHumerus.setMass(MassType.NORMAL);
+					world.addBody(rightHumerus);
+
+					// Right Ulna
+					SimulationBody rightUlna = new SimulationBody();
+					rightUlna.addFixture(Geometry.createRectangle(0.25, 0.4));
+					rightUlna.translate(new Vector2(0.44140625, -0.98828125));
+					rightUlna.setMass(MassType.NORMAL);
+					world.addBody(rightUlna);
+
+					// Neck
+					SimulationBody neck = new SimulationBody();
+					neck.addFixture(Geometry.createRectangle(0.15, 0.2));
+					neck.translate(new Vector2(0.015625, -0.2734375));
+					neck.setMass(MassType.NORMAL);
+					world.addBody(neck);
+
+					// Left Humerus
+					SimulationBody leftHumerus = new SimulationBody();
+					leftHumerus.addFixture(Geometry.createRectangle(0.25, 0.5));
+					leftHumerus.translate(new Vector2(-0.3828125, -0.609375));
+					leftHumerus.setMass(MassType.NORMAL);
+					world.addBody(leftHumerus);
+
+					// Left Ulna
+					SimulationBody leftUlna = new SimulationBody();
+					leftUlna.addFixture(Geometry.createRectangle(0.25, 0.4));
+					leftUlna.translate(new Vector2(-0.3828125, -0.9765625));
+					leftUlna.setMass(MassType.NORMAL);
+					world.addBody(leftUlna);
+
+					// Right Femur
+					SimulationBody rightFemur = new SimulationBody();
+					rightFemur.addFixture(Geometry.createRectangle(0.25, 0.75));
+					rightFemur.translate(new Vector2(0.1796875, -1.5703125));
+					rightFemur.setMass(MassType.NORMAL);
+					world.addBody(rightFemur);
+
+					// Left Femur
+					SimulationBody leftFemur = new SimulationBody();
+					leftFemur.addFixture(Geometry.createRectangle(0.25, 0.75));
+					leftFemur.translate(new Vector2(-0.1328125, -1.5703125));
+					leftFemur.setMass(MassType.NORMAL);
+					world.addBody(leftFemur);
+
+					// Right Tibia
+					SimulationBody rightTibia = new SimulationBody();
+					rightTibia.addFixture(Geometry.createRectangle(0.25, 0.5));
+					rightTibia.translate(new Vector2(0.18359375, -2.11328125));
+					rightTibia.setMass(MassType.NORMAL);
+					world.addBody(rightTibia);
+
+					// Left Tibia
+					SimulationBody leftTibia = new SimulationBody();
+					leftTibia.addFixture(Geometry.createRectangle(0.25, 0.5));
+					leftTibia.translate(new Vector2(-0.1328125, -2.1171875));
+					leftTibia.setMass(MassType.NORMAL);
+					world.addBody(leftTibia);
+
+					// Head to Neck
+					RevoluteJoint<SimulationBody> headToNeck = new RevoluteJoint<SimulationBody>(head, neck, new Vector2(0.01, -0.2));
+					world.addJoint(headToNeck);
+
+					// Neck to Torso
+					RevoluteJoint<SimulationBody> neckToTorso = new RevoluteJoint<SimulationBody>(neck, torso, new Vector2(0.01, -0.35));
+					world.addJoint(neckToTorso);
+
+					// Torso to Left Humerus
+					RevoluteJoint<SimulationBody> torsoToLeftHumerus = new RevoluteJoint<SimulationBody>(torso, leftHumerus, new Vector2(-0.4, -0.4));
+					world.addJoint(torsoToLeftHumerus);
+
+					// Torso to Right Humerus
+					RevoluteJoint<SimulationBody> torsoToRightHumerus = new RevoluteJoint<SimulationBody>(torso, rightHumerus, new Vector2(0.4, -0.4));
+					world.addJoint(torsoToRightHumerus);
+
+					// Right Humerus to Right Ulna
+					RevoluteJoint<SimulationBody> rightHumerusToRightUlna = new RevoluteJoint<SimulationBody>(rightHumerus, rightUlna, new Vector2(0.43, -0.82));
+					world.addJoint(rightHumerusToRightUlna);
+
+					// Left Humerus to Left Ulna
+					RevoluteJoint<SimulationBody> leftHumerusToLeftUlna = new RevoluteJoint<SimulationBody>(leftHumerus, leftUlna, new Vector2(-0.4, -0.81));
+					world.addJoint(leftHumerusToLeftUlna);
+
+					// Torso to Right Femur
+					RevoluteJoint<SimulationBody> torsoToRightFemur = new RevoluteJoint<SimulationBody>(torso, rightFemur, new Vector2(0.16, -1.25));
+					world.addJoint(torsoToRightFemur);
+
+					// Torso to Left Femur
+					RevoluteJoint<SimulationBody> torsoToLeftFemur = new RevoluteJoint<SimulationBody>(torso, leftFemur, new Vector2(-0.13, -1.25));
+					world.addJoint(torsoToLeftFemur);
+
+					// Right Femur to Right Tibia
+					RevoluteJoint<SimulationBody> rightFemurToRightTibia = new RevoluteJoint<SimulationBody>(rightFemur, rightTibia, new Vector2(0.17, -1.9));
+					world.addJoint(rightFemurToRightTibia);
+
+					// Left Femur to Left Tibia
+					RevoluteJoint<SimulationBody> leftFemurToLeftTibia = new RevoluteJoint<SimulationBody>(leftFemur, leftTibia, new Vector2(-0.14, -1.9));
+					world.addJoint(leftFemurToLeftTibia);
 				}
 				if(selectedFruit.equals("None of the listed")){
 					jLabel.setText("too bad");
@@ -369,6 +507,7 @@ public abstract class SimulationFrame extends JFrame {
 		panel2.setBounds(10,810,800,600);
 		panel.add(label);
 		panel.add(label2);
+		panel.add(label3);
 		panel2.add(this.canvas);
 		// Panel border
 		panel.setBorder(br);

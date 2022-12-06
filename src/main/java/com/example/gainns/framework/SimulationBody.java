@@ -63,7 +63,8 @@ public class SimulationBody extends Body {
 		AffineTransform lt = new AffineTransform();
 		lt.translate(this.transform.getTranslationX() * scale, this.transform.getTranslationY() * scale);
 		lt.rotate(0);
-		//lt.rotate(this.transform.getRotationAngle());
+		//COMMENT OUT BELOW TO REMOVE ROTATE
+		lt.rotate(this.transform.getRotationAngle());
 		
 		// apply the transform
 		g.transform(lt);
