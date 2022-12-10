@@ -158,6 +158,7 @@ public abstract class SimulationFrame extends JFrame {
 		//setting the panel layout as null
 		panel.setLayout(null);
 		//adding a label element to the panel
+		//creates the textual labels to be used in understanmding the enviroment
 		JLabel label=new JLabel("what character to add?");
 		label.setBounds(10,0,800,200);
 		JLabel label2=new JLabel("what fixture to add?");
@@ -166,7 +167,11 @@ public abstract class SimulationFrame extends JFrame {
 		label3.setBounds(400,70,800,200);
 		// changing the background color of the panel to yellow
 		//Panel 1
-		panel.setBackground(Color.yellow);
+
+		//new panel where the options are made
+		//the options to choose are shown below and therefore the user
+		//can select what models they want to see in their program
+		panel.setBackground(Color.PINK);
 		String[] optionsToChoose = {"Circle", "Rectangle", "Triangle", "Polygon", "Wierd", "DudeWithJoints","None of the listed"};
 		String[] optionsToChoose2 = {"Rectangle","Polygon"};
 
@@ -204,6 +209,8 @@ public abstract class SimulationFrame extends JFrame {
 		panel.add(jComboBox2);
 		//panel.add(jLabel);
 
+
+		//action listener for the scene item selection
 		jButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -276,6 +283,8 @@ public abstract class SimulationFrame extends JFrame {
 					capsule.translate(0.0, 4.0);
 					world.addBody(capsule);
 				}
+				//experimented with joints here
+				//NOTE VERY USEFUL TO UNDERSTAND TO MOVE ON WITH THE GYN IMPLEMENTATION
 				if(selectedFruit.equals("DudeWithJoints")){
 
 					// Head
@@ -408,6 +417,7 @@ public abstract class SimulationFrame extends JFrame {
 
 		jButton2.addActionListener(new ActionListener() {
 			@Override
+			//adds the scene fixtures for the enviroment of the game
 			public void actionPerformed(ActionEvent e) {
 				String selectedFruit = jComboBox2.getItemAt(jComboBox2.getSelectedIndex());
 

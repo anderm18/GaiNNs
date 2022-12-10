@@ -56,7 +56,6 @@ public class UsingGraphics2D extends SimulationFrame {
      */
     public UsingGraphics2D() {
         super("Graphics2D Example", 45.0);
-
     }
 
     /**
@@ -76,6 +75,8 @@ public class UsingGraphics2D extends SimulationFrame {
         // move the floor down a bit
         floor.translate(0.0, -4.0);
         this.world.addBody(floor);
+
+        //creates the iniital objects to be put in the scene of the environment without any in game additions
         /*
         // create a triangle object
         Triangle triShape = new Triangle(
